@@ -1,0 +1,21 @@
+# JavaScript dependencies and generated app files
+**/node_modules/
+**/.expo/
+**/dist/
+**/web-build/
+**/expo-env.d.ts
+
+# Python environments and generated files
+**/.venv/
+**/venv/
+**/__pycache__/
+*.py[cod]
+
+# Local configuration and secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db

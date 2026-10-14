@@ -80,6 +80,7 @@ header {
 }
 
 .barraSintomas {
+    margin-top: 1rem;
     width: 100%;
     background: linear-gradient(90deg,
     var(--scale-0) 0%,
@@ -96,4 +97,61 @@ header {
     border-radius: 0.5rem;
     padding: 1rem;
     box-shadow: var(--shadow-card-raised);
+}
+
+.box2 img {
+    width: 8rem;
+    height: 9rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+}
+
+.box1 {
+    padding: 3rem 1rem;
+}
+
+.box2 {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    text-align: start;
+}
+
+.medicamentos {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    text-align: start;
+    width: 95%;
+    color: var(--black-60);
+    margin-top: 2rem;
+    margin: 1rem auto;
+    box-shadow: var(--shadow-card-raised);
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin-bottom:0;
+}
+
+.medicamentos img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    display: block;
+    margin-right: 1rem;
+    opacity: 0.5;
+}
+
+.medicamentosFooter {
+    display: flex;
+    width: 35%;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-100);
+    margin: 0 auto;
+    text-align: center;
+    color: var(--white);
+    padding: 0.3rem;
+    border-radius: 0 0 0.5rem 0.5rem;
 }
