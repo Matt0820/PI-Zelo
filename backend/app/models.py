@@ -1,3 +1,10 @@
+"""Modelos ORM do Zelo.
+
+Cada classe representa uma tabela do banco. A estrutura foi pensada para manter
+as informações do usuário em um único contexto e vincular sintomas, medicações e
+orientações ao seu respectivo usuário.
+"""
+
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text
@@ -7,6 +14,8 @@ from app.database import Base
 
 
 class User(Base):
+    """Entidade principal do sistema, que concentra os registros do paciente."""
+
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -16,12 +25,15 @@ class User(Base):
     ativo: Mapped[bool] = mapped_column(Boolean, default=True)
     criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
+    # Relações 1:N: um usuário pode ter muitos sintomas, medicamentos e orientações.
     sintomas: Mapped[list['Symptom']] = relationship(back_populates='usuario')
     medicacoes: Mapped[list['Medication']] = relationship(back_populates='usuario')
     orientacoes: Mapped[list['Orientation']] = relationship(back_populates='usuario')
 
 
 class Symptom(Base):
+    """Registro de sintoma informado pelo usuário ou cuidador."""
+
     __tablename__ = 'symptoms'
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -36,6 +48,8 @@ class Symptom(Base):
 
 
 class Medication(Base):
+    """Medicamento cadastrado para acompanhamento e controle de uso."""
+
     __tablename__ = 'medications'
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -51,6 +65,8 @@ class Medication(Base):
 
 
 class Orientation(Base):
+    """Orientação orientada a cuidado, segurança ou acompanhamento do paciente."""
+
     __tablename__ = 'orientations'
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

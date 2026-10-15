@@ -1,3 +1,9 @@
+/**
+ * Tela de login do app Zelo.
+ *
+ * Esta interface concentra a autenticação de usuários e mantém o fluxo simples:
+ * validar dados, chamar a API e encaminhar para a home do app.
+ */
 import { useState } from 'react';
 import {
   Alert,
@@ -25,6 +31,7 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
   const [entrando, setEntrando] = useState(false);
 
   async function entrar() {
+    // Validação local para evitar requisições com dados vazios ou inválidos.
     if (!email.trim() || !senha) {
       Alert.alert('Faltam alguns dados', 'Preencha seu email e sua senha para continuar.');
       return;
@@ -46,6 +53,7 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
   }
 
   function entrarCom(provedor: string) {
+    // Login social ainda está em fase de planejamento/integracao futura.
     Alert.alert(
       `Login com ${provedor}`,
       `A integração com ${provedor} ainda precisa ser configurada.`,

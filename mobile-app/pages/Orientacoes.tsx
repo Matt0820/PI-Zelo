@@ -1,3 +1,9 @@
+/**
+ * Tela de orientações do cuidado.
+ *
+ * Aqui as mensagens da equipe ficam organizadas por categoria e prioridade,
+ * permitindo que o responsável veja rapidamente o que requer atenção.
+ */
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Orientacao } from '../types';
@@ -20,6 +26,8 @@ const prioridadeTexto: Record<Orientacao['prioridade'], string> = {
 };
 
 export default function OrientacoesScreen({ orientacoes, onVoltar }: OrientacoesScreenProps) {
+  // As orientações são exibidas como cartões, destacando nível de urgência e
+  // contexto do cuidado para leitura rápida e entendimento do caso.
   return (
     <SafeAreaView style={estilos.safeArea} edges={['top', 'left', 'right']}>
       <View style={estilos.cabecalho}>

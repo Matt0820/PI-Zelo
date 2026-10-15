@@ -1,3 +1,9 @@
+/**
+ * Tela principal do app após o login.
+ *
+ * Centraliza o resumo do dia, as orientações mais recentes e os acessos rápidos
+ * para sintomas e medicações. Ela serve como dashboard administrativo do cuidado.
+ */
 import { useState } from 'react';
 import {
   Alert,
@@ -50,6 +56,7 @@ export default function HomeScreen({
     ]);
   }
 
+  // Mantém a orientação mais recente em destaque para facilitar a leitura.
   const orientacaoAtual = orientacoes[0];
 
   return (

@@ -1,3 +1,10 @@
+/**
+ * Aplicativo principal do Zelo.
+ *
+ * Este componente centraliza o estado global da autenticação, navegação e dados
+ * carregados do backend. Ele atua como orquestrador entre a interface e o serviço
+ * de API, facilitando a manutenção e a evolução das telas do app.
+ */
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
@@ -35,6 +42,7 @@ const STORAGE_KEYS = {
 };
 
 export default function App() {
+  // Estado de navegação: controla qual tela deve ser renderizada.
   const [pagina, setPagina] = useState<'registro' | 'login' | 'legal' | 'home' | 'sintomas' | 'medicacoes' | 'orientacoes'>('registro');
   const [documentoLegal, setDocumentoLegal] = useState<'termos' | 'privacidade'>('termos');
   const [nome, setNome] = useState('');
@@ -51,6 +59,7 @@ export default function App() {
     : null;
 
   useEffect(() => {
+    // Carrega o perfil persistido para manter a sessão consistente ao abrir o app.
     async function carregarPersistencia() {
       try {
         const perfilSalvo = await AsyncStorage.getItem(STORAGE_KEYS.perfil);
@@ -69,6 +78,7 @@ export default function App() {
   }, []);
 
   async function carregarDadosUsuario(id: number) {
+    // Executa as consultas em paralelo para reduzir o tempo de carregamento inicial.
     const [listaSintomas, listaMedicacoes, listaOrientacoes] = await Promise.all([
       buscarSintomas(id),
       buscarMedicacoes(id),

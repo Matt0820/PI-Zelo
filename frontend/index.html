@@ -2,6 +2,11 @@
 <html lang="pt-BR">
 
 <head>
+    <!--
+        Estrutura base da página inicial do protótipo web do Zelo.
+        A ideia aqui é apresentar a home do paciente/acompanhante com foco em
+        informação rápida: sintomas, medicamentos e orientação de cuidado.
+    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0E968C">
@@ -11,9 +16,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./styles/home.css" </head>
+    <link rel="stylesheet" href="./styles/home.css">
+</head>
 
 <body>
+    <!-- Cabeçalho com identidade visual e navegação simples. -->
     <header>
         <div class="logoContainer">
             <img src="./images/logo.png" alt="Logo Zelo" class="logo">
@@ -31,9 +38,13 @@
             </span>
         </div>
     </header>
+
+    <!-- Seção de orientação de cuidado: comunica rapidamente a prioridade do dia. -->
     <nav class="direcionamentoDeCuidado">
         <p>Direcionamento de Cuidados:</p>
     </nav>
+
+    <!-- Blocos principais de status e sintomas. -->
     <div class="twoBoxContent">
         <div class="box1">
             <h3>Sintomas</h3>
@@ -44,12 +55,16 @@
             <h2>Local de <br> Dor</h2>
         </div>
     </div>
+
+    <!-- Área de medicamentos com mensagem de vazio para indicar ausência de registros. -->
     <div class="medicamentos">
         <img src="../frontend/images/483462.png">
         <h2>Não Há Medicamentos Cadastrados</h2>
     </div>
+
+    <!-- Rodapé do painel com acesso para mais detalhes sobre medicamentos. -->
     <div class="medicamentosFooter">
-        <h3>Medicamentos <i class=" fa-solid fa-arrow-right"></i> </h3>
+        <h3>Medicamentos <i class="fa-solid fa-arrow-right"></i></h3>
     </div>
     <script src="https://kit.fontawesome.com/fdcb33e12e.js" crossorigin="anonymous"></script>
 </body>

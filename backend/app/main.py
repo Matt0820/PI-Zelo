@@ -1,3 +1,11 @@
+"""API principal do projeto Zelo.
+
+Este módulo expõe os endpoints usados pelo protótipo web e pelo aplicativo
+mobile para gerenciar usuários, sintomas, medicamentos e orientações.
+A organização das rotas foi pensada para facilitar manutenção e para manter a
+persistência centralizada em um único backend.
+"""
+
 import hashlib
 import hmac
 from typing import Annotated
@@ -30,6 +38,8 @@ app = FastAPI(
     swagger_ui_parameters={"persistAuthorization": True},
 )
 
+# A API é consumida por clientes web e mobile, por isso a CORS é liberada em modo
+de desenvolvimento para manter a integração simples.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -41,11 +51,13 @@ app.add_middleware(
 
 @app.on_event('startup')
 def startup() -> None:
+    """Garante que as tabelas estejam criadas ao iniciar a aplicação."""
     Base.metadata.create_all(bind=engine)
 
 
 @app.get('/health', response_model=HealthResponse)
 def health_check(db: Annotated[Session, Depends(get_db)]) -> dict:
+    """Valida se a aplicação e o banco MySQL estão funcionando."""
     try:
         db.execute(text('SELECT 1'))
         return {'status': 'ok', 'database': 'mysql'}
@@ -58,6 +70,7 @@ def health_check(db: Annotated[Session, Depends(get_db)]) -> dict:
 
 @app.post('/api/users', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) -> User:
+    """Cria um novo usuário e persiste o hash da senha."""
     existing = db.scalar(select(User).where(User.email == payload.email))
     if existing:
         raise HTTPException(
@@ -65,6 +78,7 @@ def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) ->
             detail='Já existe um usuário com este e-mail.',
         )
 
+    # O hash é gerado em texto puro para evitar armazenar senha em claro.
     user = User(
         nome=payload.nome,
         email=str(payload.email),
@@ -79,6 +93,7 @@ def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) ->
 
 @app.post('/api/auth/login', response_model=UserResponse)
 def login(payload: UserLogin, db: Annotated[Session, Depends(get_db)]) -> User:
+    """Valida o login do usuário com comparação segura do hash."""
     user = db.scalar(select(User).where(User.email == str(payload.email)))
     senha_hash = hashlib.sha256(payload.senha.encode('utf-8')).hexdigest()
     if not user or not user.ativo or not hmac.compare_digest(user.senha_hash, senha_hash):
@@ -91,11 +106,13 @@ def login(payload: UserLogin, db: Annotated[Session, Depends(get_db)]) -> User:
 
 @app.get('/api/users', response_model=list[UserResponse])
 def list_users(db: Annotated[Session, Depends(get_db)]) -> list[User]:
+    """Lista todos os usuários cadastrados."""
     return db.scalars(select(User)).all()
 
 
 @app.get('/api/users/{user_id}', response_model=UserResponse)
 def get_user(user_id: int, db: Annotated[Session, Depends(get_db)]) -> User:
+    """Retorna um usuário específico pelo identificador."""
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
@@ -108,6 +125,7 @@ def create_symptom(
     payload: SymptomCreate,
     db: Annotated[Session, Depends(get_db)],
 ) -> Symptom:
+    """Cria um sintoma vinculado ao usuário informado."""
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
@@ -127,6 +145,7 @@ def create_symptom(
 
 @app.get('/api/users/{user_id}/symptoms', response_model=list[SymptomResponse])
 def list_symptoms(user_id: int, db: Annotated[Session, Depends(get_db)]) -> list[Symptom]:
+    """Lista sintomas de um usuário específico."""
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
@@ -139,6 +158,7 @@ def create_medication(
     payload: MedicationCreate,
     db: Annotated[Session, Depends(get_db)],
 ) -> Medication:
+    """Cria um medicamento vinculado ao usuário."""
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
@@ -160,6 +180,7 @@ def create_medication(
 
 @app.get('/api/users/{user_id}/medications', response_model=list[MedicationResponse])
 def list_medications(user_id: int, db: Annotated[Session, Depends(get_db)]) -> list[Medication]:
+    """Lista medicamentos cadastrados para um usuário."""
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
@@ -172,6 +193,7 @@ def create_orientation(
     payload: OrientationCreate,
     db: Annotated[Session, Depends(get_db)],
 ) -> Orientation:
+    """Cria uma orientação vinculada ao usuário."""
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
@@ -191,6 +213,7 @@ def create_orientation(
 
 @app.get('/api/users/{user_id}/orientations', response_model=list[OrientationResponse])
 def list_orientations(user_id: int, db: Annotated[Session, Depends(get_db)]) -> list[Orientation]:
+    """Lista orientações cadastradas para um usuário."""
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
@@ -199,6 +222,7 @@ def list_orientations(user_id: int, db: Annotated[Session, Depends(get_db)]) -> 
 
 @app.get('/')
 def root() -> dict:
+    """Endpoint inicial com links para documentação da API."""
     return {
         'message': 'Zelo API ativa',
         'docs': '/docs',

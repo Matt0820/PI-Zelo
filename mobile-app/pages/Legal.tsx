@@ -1,3 +1,9 @@
+/**
+ * Tela de termos e privacidade do app.
+ *
+ * Centraliza as informações legais com duas abas: termos de uso e política de
+ * privacidade. Essa separação facilita a manutenção à medida que o projeto cresce.
+ */
 import {
   Pressable,
   ScrollView,
@@ -20,6 +26,8 @@ type SecaoLegal = {
   texto: string;
 };
 
+// O conteúdo legal está organizado por documento para facilitar o controle de
+// textos específicos, versões e futuras atualizações de conformidade.
 const documentos: Record<DocumentoLegal, { titulo: string; secoes: SecaoLegal[] }> = {
   termos: {
     titulo: 'Termos de uso',

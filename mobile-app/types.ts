@@ -1,3 +1,10 @@
+/**
+ * Tipos compartilhados pelo app mobile.
+ *
+ * Este módulo funciona como contrato central para as telas. Ao manter cada dado
+ * tipado aqui, o restante do app evita inconsistências de estrutura e facilita
+ * a manutenção ao evoluir os modelos do sistema.
+ */
 export type GravidadeSintoma = 'leve' | 'moderada' | 'grave';
 export type StatusMedicacao = 'agendada' | 'tomada' | 'atrasada';
 export type CategoriaOrientacao = 'cuidados' | 'sintoma' | 'medicacao';

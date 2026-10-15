@@ -1,3 +1,10 @@
+/**
+ * Cliente HTTP do app mobile para comunicação com a API do Zelo.
+ *
+ * Centraliza a base URL, os endpoints e a conversão de resposta em modelos do
+ * aplicativo. Isso facilita manutenção, porque qualquer mudança na API pode ser
+ * ajustada em um único lugar.
+ */
 import { Platform } from 'react-native';
 import type { Medicacao, Orientacao, Sintoma } from './types';
 
@@ -44,6 +51,12 @@ type OrientacaoApi = {
 };
 
 async function requisicao<T>(path: string, options: RequestInit = {}): Promise<T> {
+  /**
+   * Wrapper genérico para qualquer chamada à API.
+   *
+   * Mantém o tratamento de erro e a serialização em um único ponto, reduzindo
+   * duplicação e padronizando mensagens para o restante do app.
+   */
   let response: Response;
   try {
     response = await fetch(`${API_URL}${path}`, {

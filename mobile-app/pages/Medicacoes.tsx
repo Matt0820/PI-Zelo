@@ -1,3 +1,9 @@
+/**
+ * Tela de cadastro e visualização de medicações.
+ *
+ * O objetivo da tela é permitir registrar a rotina do paciente, controlar o
+ * status de cada remédio e manter uma lista de acompanhamento diretamente no app.
+ */
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -24,6 +30,8 @@ const statusOpcoes: Array<{ label: string; value: StatusMedicacao }> = [
 ];
 
 export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: MedicacoesScreenProps) {
+  // Os dados iniciais vêm do estado global da aplicação, mas a tela também mantém
+  // uma lista local para refletir inserções imediatamente sem recarregar a tela.
   const [nome, setNome] = useState('Paracetamol');
   const [dose, setDose] = useState('500mg');
   const [horario, setHorario] = useState('08:00');
@@ -37,6 +45,8 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
   }, [medicacoes]);
 
   async function registrarMedicacao() {
+    // Validação mínima antes de salvar: um nome sempre precisa existir para evitar
+    // registros vazios no histórico do paciente.
     if (!nome.trim()) {
       Alert.alert('Medicamento sem nome', 'Informe o nome da medicação.');
       return;

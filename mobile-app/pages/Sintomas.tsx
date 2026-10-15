@@ -1,3 +1,9 @@
+/**
+ * Tela de registro de sintomas.
+ *
+ * Mantém o histórico de como o paciente está se sentindo e facilita a coleta de
+ * observações relevantes para que a equipe de cuidado acompanhe a evolução.
+ */
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -24,6 +30,8 @@ const opcoesGravidade: Array<{ label: string; value: GravidadeSintoma }> = [
 ];
 
 export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: SintomasScreenProps) {
+  // A tela usa valores pré-populados para acelerar a entrada e reduzir fricção em
+  // uso de rotina, mas o usuário pode alterar tudo ao salvar um novo registro.
   const [nome, setNome] = useState('Dor no corpo');
   const [gravidade, setGravidade] = useState<GravidadeSintoma>('moderada');
   const [momento, setMomento] = useState('Hoje pela manhã');
@@ -35,6 +43,7 @@ export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: Sintoma
   }, [sintomas]);
 
   async function registrarSintoma() {
+    // O nome do sintoma é obrigatório para evitar registros inúteis ou ambíguos.
     if (!nome.trim()) {
       Alert.alert('Sintoma sem nome', 'Informe o sintoma que está sentindo.');
       return;
