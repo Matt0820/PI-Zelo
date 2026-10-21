@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso ao Sistema | Zelo - Cuidados Paliativos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/zelo-design-system.css">
+  <link rel="stylesheet" href="./styles/paciente.css">
+  <style>
+    .login-container {
+      max-width: 520px;
+      margin: 40px auto;
+      padding: 0 20px 40px;
+    }
+    .test-credentials-card {
+      background-color: var(--zelo-surface-soft);
+      border: 1px dashed var(--zelo-primary);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 24px;
+    }
+    .quick-login-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .quick-btn {
+      background-color: var(--zelo-surface);
+      border: 1px solid var(--zelo-border);
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--zelo-primary);
+      cursor: pointer;
+      text-align: left;
+      transition: all var(--transition-fast);
+    }
+    .quick-btn:hover {
+      border-color: var(--zelo-primary);
+      background-color: var(--zelo-primary-light);
+    }
+    .quick-btn span {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: normal;
+      color: var(--zelo-text-muted);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body style="background-color: var(--zelo-bg);">
+  <div id="a11y-container"></div>
+
+  <div class="login-container">
+    <!-- Cabeçalho Institucional com Logo Zelo em Alta Resolução -->
+    <div style="text-align: center; margin-bottom: 24px;">
+      <a href="index.html">
+        <img src="./images/logo.png" alt="Zelo" style="width: 110px; height: auto; margin-bottom: 12px; display: inline-block;">
+      </a>
+      <h1 style="font-size: 1.85rem; color: var(--zelo-primary); margin-bottom: 4px;">Zelo</h1>
+      <p class="text-muted" style="font-size: 1rem; line-height: 1.4;">
+        Plataforma Digital de Comunicação e Cuidado Domiciliar em Cuidados Paliativos
+      </p>
+    </div>
+
+    <!-- Card Principal de Login -->
+    <div class="card" style="border-width: 2px;">
+      <!-- Seletor de Perfil -->
+      <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+        <button type="button" id="tab-assistencial" class="btn btn-primary" style="flex: 1; font-size: 0.95rem; padding: 10px 4px;" onclick="selectTab('assistencial')">
+          Equipe de Saúde / Admin
+        </button>
+        <button type="button" id="tab-paciente" class="btn btn-secondary" style="flex: 1; font-size: 0.95rem; padding: 10px 4px;" onclick="selectTab('paciente')">
+          Paciente / Cuidador
+        </button>
+      </div>
+
+      <div id="login-feedback" class="alert-box alert-danger" style="display: none; margin-bottom: 16px;">
+        <span id="feedback-text">Identificador ou senha incorretos.</span>
+      </div>
+
+      <form id="form-login" onsubmit="handleLoginSubmit(event)">
+        <div style="margin-bottom: 16px;">
+          <label for="input-identificador" id="label-identificador" style="display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">
+            E-mail Institucional ou CRM/COREN:
+          </label>
+          <input 
+            type="text" 
+            id="input-identificador" 
+            class="search-input" 
+            placeholder="medico@zelo.saude.gov.br" 
+            required 
+            style="width: 100%; min-height: 50px; font-size: 1.05rem;"
+            value="medico@zelo.saude.gov.br"
+          >
+        </div>
+
+        <div style="margin-bottom: 22px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label for="input-senha" style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0;">
+              Senha de Acesso:
+            </label>
+          </div>
+          <input 
+            type="password" 
+            id="input-senha" 
+            class="search-input" 
+            placeholder="Digite sua senha" 
+            required 
+            style="width: 100%; min-height: 50px; font-size: 1.05rem;"
+            value="medico123"
+          >
+        </div>
+
+        <button type="submit" id="btn-entrar" class="btn btn-primary btn-elderly" style="width: 100%; font-size: 1.15rem; margin-bottom: 12px;">
+          Entrar no Sistema
+        </button>
+      </form>
+    </div>
+
+    <!-- Seção de Acesso Rápido para Avaliadores e Testes -->
+    <div class="test-credentials-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <strong style="color: var(--zelo-primary); font-size: 0.95rem;">Contas de Teste Prontas (1 Toque):</strong>
+        <span class="badge badge-novo">Avaliação Rápida</span>
+      </div>
+      <p class="text-small text-muted" style="margin-top: 4px; margin-bottom: 8px;">
+        Clique em qualquer perfil abaixo para preencher automaticamente as credenciais e testar:
+      </p>
+
+      <div class="quick-login-grid">
+        <button type="button" class="quick-btn" onclick="quickFill('admin@zelo.saude.gov.br', 'admin123', 'assistencial')">
+          Administrador
+          <span>admin@zelo.saude.gov.br</span>
+        </button>
+
+        <button type="button" class="quick-btn" onclick="quickFill('medico@zelo.saude.gov.br', 'medico123', 'assistencial')">
+          Dr. Alexandre (Médico)
+          <span>medico@zelo.saude.gov.br</span>
+        </button>
+
+        <button type="button" class="quick-btn" onclick="quickFill('enfermeira@zelo.saude.gov.br', 'enf123', 'assistencial')">
+          Enfª Mariana (Enfermeira)
+          <span>enfermeira@zelo.saude.gov.br</span>
+        </button>
+
+        <button type="button" class="quick-btn" onclick="quickFill('123.456.789-00', 'paciente123', 'paciente')">
+          Paciente / Cuidador
+          <span>CPF 123.456.789-00</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Orientações Clínicas e Administrativas sobre o Cadastro -->
+    <div class="card" style="margin-top: 20px; background-color: var(--zelo-surface-soft);">
+      <h3 style="font-size: 1rem; color: var(--zelo-primary); margin-bottom: 8px;">
+        Diretriz de Segurança no Cadastro de Pacientes:
+      </h3>
+      <p class="text-small text-muted" style="line-height: 1.5; margin-bottom: 0;">
+        Em conformidade com as normas sanitárias e a segurança no uso de analgésicos opioides, o cadastro do paciente e cuidador é <strong>iniciado pela equipe de saúde assistencial</strong> na admissão domiciliar, garantindo a vinculação médica segura. O paciente/cuidador realiza então a ativação da sua senha pessoal com o CPF ou Cartão SUS fornecido.
+      </p>
+    </div>
+
+    <footer style="margin-top: 28px; text-align: center; color: var(--zelo-text-muted); font-size: 0.85rem;">
+      <a href="index.html" style="color: var(--zelo-primary); font-weight: 600;">&larr; Voltar para a Apresentação do Sistema</a><br>
+      <span style="display: inline-block; margin-top: 6px;">Zelo - Cuidados Paliativos Domiciliares</span>
+    </footer>
+  </div>
+
+  <script src="./scripts/acessibilidade.js"></script>
+  <script src="./scripts/auth.js"></script>
+  <script>
+    let activeTab = 'assistencial';
+
+    function selectTab(tab) {
+      activeTab = tab;
+      const tabA = document.getElementById('tab-assistencial');
+      const tabP = document.getElementById('tab-paciente');
+      const label = document.getElementById('label-identificador');
+      const input = document.getElementById('input-identificador');
+      const senha = document.getElementById('input-senha');
+
+      if (tab === 'assistencial') {
+        tabA.className = 'btn btn-primary';
+        tabP.className = 'btn btn-secondary';
+        label.innerText = 'E-mail Institucional ou CRM/COREN:';
+        input.placeholder = 'medico@zelo.saude.gov.br';
+        input.value = 'medico@zelo.saude.gov.br';
+        senha.value = 'medico123';
+      } else {
+        tabA.className = 'btn btn-secondary';
+        tabP.className = 'btn btn-primary';
+        label.innerText = 'CPF ou Cartão SUS (CNS) do Paciente/Cuidador:';
+        input.placeholder = '123.456.789-00';
+        input.value = '123.456.789-00';
+        senha.value = 'paciente123';
+      }
+    }
+
+    function quickFill(identificador, senhaVal, tab) {
+      selectTab(tab);
+      document.getElementById('input-identificador').value = identificador;
+      document.getElementById('input-senha').value = senhaVal;
+      // Realiza login imediatamente
+      doLogin(identificador, senhaVal);
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const ident = document.getElementById('input-identificador').value.trim();
+      const senha = document.getElementById('input-senha').value.trim();
+      await doLogin(ident, senha);
+    }
+
+    async function doLogin(ident, senha) {
+      const fb = document.getElementById('login-feedback');
+      const fbText = document.getElementById('feedback-text');
+      const btn = document.getElementById('btn-entrar');
+
+      fb.style.display = 'none';
+      btn.disabled = true;
+      btn.innerText = 'Autenticando...';
+
+      const result = await AuthService.login(ident, senha);
+      btn.disabled = false;
+      btn.innerText = 'Entrar no Sistema';
+
+      if (result.success) {
+        AuthService.redirectAfterLogin(result.user);
+      } else {
+        fbText.innerText = result.message || 'Credenciais inválidas. Tente novamente.';
+        fb.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

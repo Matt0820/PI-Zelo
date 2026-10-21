@@ -1,0 +1,563 @@
+/**
+ * ESTILOS DO PORTAL ASSISTENCIAL / EQUIPE MÉDICA E DE ENFERMAGEM
+ * Sistema Zelo - Cuidados Paliativos
+ */
+
+/* Layout Geral Assistencial com Sidebar */
+.assistencial-layout {
+  display: flex;
+  min-height: calc(100vh - 45px); /* Descontando a barra a11y */
+}
+
+/* Sidebar de Navegação Assistencial */
+.assistencial-sidebar {
+  width: 260px;
+  background-color: var(--zelo-surface);
+  border-right: 1px solid var(--zelo-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--zelo-border);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--zelo-text);
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--zelo-primary);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--zelo-primary);
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--zelo-text-muted);
+  display: block;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 16px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-item a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--zelo-text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  min-height: var(--touch-target-min);
+  transition: all var(--transition-fast);
+}
+
+.sidebar-item a:hover {
+  background-color: var(--zelo-surface-soft);
+  color: var(--zelo-primary);
+}
+
+.sidebar-item.active a {
+  background-color: var(--zelo-primary-light);
+  color: var(--zelo-primary);
+  font-weight: 700;
+}
+
+.sidebar-item .item-badge {
+  margin-left: auto;
+  background-color: var(--zelo-danger);
+  color: #FFFFFF;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+}
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--zelo-border);
+  background-color: var(--zelo-surface-soft);
+  font-size: 0.8rem;
+  color: var(--zelo-text-muted);
+}
+
+/* Área Principal de Conteúdo */
+.assistencial-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Topbar Assistencial */
+.assistencial-topbar {
+  background-color: var(--zelo-surface);
+  border-bottom: 1px solid var(--zelo-border);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.topbar-info h2 {
+  font-size: 1.5rem;
+}
+
+.topbar-subtitle {
+  font-size: 0.875rem;
+  color: var(--zelo-text-muted);
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--zelo-primary-light);
+  color: var(--zelo-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Conteúdo da Página */
+.assistencial-content {
+  padding: 32px;
+  max-width: 1380px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Grid de Métricas / KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background-color: var(--zelo-surface);
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.kpi-label {
+  font-size: 0.9rem;
+  color: var(--zelo-text-muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--zelo-primary);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.kpi-hint {
+  font-size: 0.8rem;
+  color: var(--zelo-text-muted);
+}
+
+/* Grids Operacionais da Visão Geral */
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* Cards de Itens para Leitura */
+.item-leitura {
+  background-color: var(--zelo-surface);
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  transition: border-color var(--transition-fast);
+}
+
+.item-leitura:hover {
+  border-color: var(--zelo-primary);
+}
+
+.item-leitura-info h4 {
+  font-size: 1.15rem;
+  margin-bottom: 4px;
+}
+
+.item-leitura-desc {
+  font-size: 0.9rem;
+  color: var(--zelo-text-muted);
+}
+
+/* Rastreabilidade / Linha do Tempo */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 24px;
+  border-left: 2px solid var(--zelo-border);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--zelo-primary);
+}
+
+.timeline-date {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--zelo-primary);
+  margin-bottom: 2px;
+}
+
+.timeline-text {
+  font-size: 0.9rem;
+  color: var(--zelo-text);
+}
+
+/* Seção de Filtros */
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 260px;
+  padding: 12px 16px;
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  background-color: var(--zelo-surface);
+  color: var(--zelo-text);
+}
+
+.select-filter {
+  padding: 12px 16px;
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  background-color: var(--zelo-surface);
+  color: var(--zelo-text);
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   SISTEMA DE ABAS DO DETALHE DO PACIENTE
+   ========================================================================== */
+.patient-header-card {
+  background-color: var(--zelo-surface);
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.patient-title-group h2 {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.patient-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.patient-tabs-nav {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--zelo-border);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  padding: 12px 20px;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--zelo-text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--zelo-primary);
+}
+
+.tab-btn.active {
+  color: var(--zelo-primary);
+  border-bottom-color: var(--zelo-primary);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Régua Visual ESAS Multidimensional */
+.esas-visual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.esas-metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--zelo-border);
+  font-size: 0.95rem;
+}
+
+.esas-metric-row:last-child {
+  border-bottom: none;
+}
+
+.esas-score-badge {
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  color: #FFFFFF;
+  min-width: 44px;
+  text-align: center;
+}
+
+.esas-score-0-1 { background-color: var(--esas-0-1); }
+.esas-score-2-3 { background-color: var(--esas-2-3); }
+.esas-score-4   { background-color: var(--esas-4); color: #000000; }
+.esas-score-5-6 { background-color: var(--esas-5-6); }
+.esas-score-7-10{ background-color: var(--esas-7-10); }
+
+/* Gráficos de Barras com Equivalente Textual */
+.chart-container {
+  background-color: var(--zelo-surface);
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.simple-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  height: 180px;
+  padding: 20px 10px 0;
+  border-bottom: 2px solid var(--zelo-border);
+  margin-bottom: 12px;
+}
+
+.bar-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar-val {
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+  color: var(--zelo-text);
+}
+
+.bar-fill {
+  width: 48px;
+  background-color: var(--zelo-primary);
+  border-radius: 4px 4px 0 0;
+  transition: height var(--transition-normal);
+}
+
+.bar-label {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--zelo-text-muted);
+}
+
+/* ==========================================================================
+   PAINEL DO SCRIPT VALIDADO (CHATBOT ZELO - RESPOSTAS DA DOR)
+   ========================================================================== */
+.triage-report-card {
+  background-color: var(--zelo-surface);
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.script-item {
+  border-left: 3px solid var(--zelo-primary);
+  padding-left: 16px;
+  margin-bottom: 20px;
+}
+
+.script-question {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--zelo-text);
+  margin-bottom: 4px;
+}
+
+.script-meta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--zelo-primary);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.script-answer {
+  background-color: var(--zelo-surface-soft);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--zelo-text);
+  display: inline-block;
+  font-weight: 600;
+}
+
+/* Mapa Corporal Interativo */
+.body-map-container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--zelo-surface-soft);
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+}
+
+.body-silhouette-card {
+  background-color: var(--zelo-surface);
+  border: 1px solid var(--zelo-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  width: 260px;
+}
+
+/* Responsividade do Painel Assistencial */
+@media (max-width: 1024px) {
+  .assistencial-sidebar {
+    width: 220px;
+  }
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+  }
+  .esas-visual-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .assistencial-layout {
+    flex-direction: column;
+  }
+  .assistencial-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--zelo-border);
+  }
+  .sidebar-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+  }
+  .sidebar-item a {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  .assistencial-content {
+    padding: 16px;
+  }
+  .assistencial-topbar {
+    padding: 12px 16px;
+  }
+}

@@ -1,71 +1,210 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <!--
-        Estrutura base da página inicial do protótipo web do Zelo.
-        A ideia aqui é apresentar a home do paciente/acompanhante com foco em
-        informação rápida: sintomas, medicamentos e orientação de cuidado.
-    -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0E968C">
-    <title>Home | Zelo</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./styles/home.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zelo - Cuidados Paliativos Oncologicos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/zelo-design-system.css">
+  <style>
+    .portal-hero {
+      background: linear-gradient(135deg, #09635D 0%, #064541 100%);
+      color: #FFFFFF;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .portal-hero-logo {
+      max-height: 90px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+    }
+    .portal-hero h1 {
+      color: #FFFFFF;
+      font-size: 2.4rem;
+      margin-bottom: 8px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .portal-hero p {
+      font-size: 1.15rem;
+      max-width: 800px;
+      margin: 0 auto 20px;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+      max-width: 1200px;
+      margin: -32px auto 48px;
+      padding: 0 20px;
+    }
+    .portal-card {
+      background-color: var(--zelo-surface);
+      border: 2px solid var(--zelo-border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all var(--transition-fast);
+    }
+    .portal-card:hover {
+      border-color: var(--zelo-primary);
+      transform: translateY(-4px);
+    }
+    .tech-badge {
+      display: inline-block;
+      background: var(--zelo-surface-soft);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--zelo-text-muted);
+      margin: 4px 4px 4px 0;
+    }
+  </style>
 </head>
-
 <body>
-    <!-- Cabeçalho com identidade visual e navegação simples. -->
-    <header>
-        <div class="logoContainer">
-            <img src="./images/logo.png" alt="Logo Zelo" class="logo">
-        </div>
-        <div class="headerContent">
-            <h6>Nome do Responsável</h6>
-            <h3>Nome do Paciente</h3>
-        </div>
-        <div class="rightHeaderContent">
-            <span class="notificationIcon">
-                <i class="fa-solid fa-bell"></i>
-            </span>
-            <span class="menuIcon">
-                <i class="fa-solid fa-bars"></i>
-            </span>
-        </div>
-    </header>
+  <div id="a11y-container"></div>
 
-    <!-- Seção de orientação de cuidado: comunica rapidamente a prioridade do dia. -->
-    <nav class="direcionamentoDeCuidado">
-        <p>Direcionamento de Cuidados:</p>
-    </nav>
-
-    <!-- Blocos principais de status e sintomas. -->
-    <div class="twoBoxContent">
-        <div class="box1">
-            <h3>Sintomas</h3>
-            <div class="barraSintomas"></div>
-        </div>
-        <div class="box2">
-            <img src="../frontend/images/imagem_2026-10-07_205604753-removebg-preview.png" alt="Local de dor">
-            <h2>Local de <br> Dor</h2>
-        </div>
+  <header class="portal-hero">
+    <img src="./images/logo.png" alt="Logotipo Oficial Zelo - Cuidados Paliativos" class="portal-hero-logo">
+    <h1>ZELO</h1>
+    <p>
+      Plataforma Digital para Comunicacao, Triagem e Acompanhamento de Pessoas Idosas em Cuidados Paliativos Oncologicos
+    </p>
+    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+      <span class="badge badge-novo" style="background: rgba(255,255,255,0.15); color: #FFFFFF; border-color: rgba(255,255,255,0.3); font-size: 0.85rem;">
+        Aplicacao Independente
+      </span>
+      <span class="badge badge-novo" style="background: rgba(255,255,255,0.15); color: #FFFFFF; border-color: rgba(255,255,255,0.3); font-size: 0.85rem;">
+        Script Validado por Juizes (IVC 0,95)
+      </span>
+      <span class="badge badge-novo" style="background: rgba(255,255,255,0.15); color: #FFFFFF; border-color: rgba(255,255,255,0.3); font-size: 0.85rem;">
+        Acessibilidade WCAG 2.2 AA
+      </span>
     </div>
 
-    <!-- Área de medicamentos com mensagem de vazio para indicar ausência de registros. -->
-    <div class="medicamentos">
-        <img src="../frontend/images/483462.png">
-        <h2>Não Há Medicamentos Cadastrados</h2>
+    <div>
+      <a href="login.html" class="btn btn-primary" style="background: #FFFFFF; color: var(--zelo-primary); font-weight: 800; padding: 12px 28px; font-size: 1.1rem; border-color: #FFFFFF; box-shadow: 0 4px 16px rgba(0,0,0,0.18);">
+        Acessar Sistema Zelo (Login Unificado)
+      </a>
     </div>
+  </header>
 
-    <!-- Rodapé do painel com acesso para mais detalhes sobre medicamentos. -->
-    <div class="medicamentosFooter">
-        <h3>Medicamentos <i class="fa-solid fa-arrow-right"></i></h3>
-    </div>
-    <script src="https://kit.fontawesome.com/fdcb33e12e.js" crossorigin="anonymous"></script>
+  <main>
+    <section class="portal-grid" aria-label="Modulos do Sistema Zelo">
+      <!-- Card Perfil 1: Equipe Assistencial / Medica -->
+      <article class="portal-card" style="border-top: 6px solid var(--zelo-primary);">
+        <div>
+          <span class="badge badge-novo" style="margin-bottom: 8px;">Modulo Web Assistencial</span>
+          <h2 style="font-size: 1.6rem; margin-bottom: 12px; color: var(--zelo-primary);">Portal da Equipe Assistencial e Medica</h2>
+          <p class="text-muted" style="line-height: 1.6; margin-bottom: 16px;">
+            Ambiente operacional estruturado para enfermeiros e medicos realizarem o monitoramento clinico remoto de pessoas idosas em cuidados paliativos domiciliares.
+          </p>
+          <ul style="padding-left: 20px; line-height: 1.6; font-size: 0.95rem; margin-bottom: 24px; color: var(--zelo-text);">
+            <li><strong>Dashboard e Visao Geral:</strong> Indicadores operacionais do dia, rastreabilidade e triagem prioritaria.</li>
+            <li><strong>Lista e Prontuario Completo:</strong> Dados clinicos (CID-10, PPS score, comorbidades e cuidador).</li>
+            <li><strong>Historico ESAS Multidimensional:</strong> Graficos evolutivos com equivalentes textuais acessiveis.</li>
+            <li><strong>Auditoria da Triagem da Dor:</strong> Execucao auditavel do script validado por especialistas (IVC 0,95).</li>
+            <li><strong>Central de Alertas:</strong> Ciclo rastreavel com estados Novo, Em revisao e Tratado.</li>
+            <li><strong>Acompanhamento e Comunicacao:</strong> Telemonitoramento e orientacoes seguras conforme a Resolucao Cofen 634/2020.</li>
+          </ul>
+        </div>
+        <div>
+          <a href="./assistencial/dashboard.html" class="btn btn-primary btn-elderly" style="width: 100%; text-align: center;">
+            Acessar Painel Assistencial
+          </a>
+        </div>
+      </article>
+
+      <!-- Card Perfil 2: Paciente e Cuidador Familiar -->
+      <article class="portal-card" style="border-top: 6px solid var(--zelo-success);">
+        <div>
+          <span class="badge badge-tratado" style="margin-bottom: 8px;">Modulo Domiciliar</span>
+          <h2 style="font-size: 1.6rem; margin-bottom: 12px; color: var(--zelo-success);">Paciente e Cuidador Familiar</h2>
+          <p class="text-muted" style="line-height: 1.6; margin-bottom: 16px;">
+            Interface acolhedora desenvolvida sob preceitos de Design Thinking e Interacao Humano-Computador para pessoas idosas e suas redes de apoio familiar.
+          </p>
+          <ul style="padding-left: 20px; line-height: 1.6; font-size: 0.95rem; margin-bottom: 24px; color: var(--zelo-text);">
+            <li><strong>Ergonomia para Idosos:</strong> Tipografia base de 18px, alto contraste e botoes com altura de 56px.</li>
+            <li><strong>ESAS em Passos Sequenciais:</strong> Avaliacao de um sintoma por tela com revisao antes do envio.</li>
+            <li><strong>Chatbot Zelo (Dor):</strong> Gatilho automatico para dor com intensidade igual ou superior a 7.</li>
+            <li><strong>Sinais de Alarme em Destaque:</strong> Avisos explicitos para situacoes de emergencia medica.</li>
+            <li><strong>Medicamentos e Resgate:</strong> Registro de horarios, confirmacao de dose e solicitacao de dose extra.</li>
+            <li><strong>Mapa Corporal:</strong> Apontamento direto de regioes anatomicas de dor, edema ou lesoes.</li>
+          </ul>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <a href="./paciente/index.html" class="btn btn-primary btn-elderly" style="width: 100%; background-color: var(--zelo-success); border-color: var(--zelo-success); text-align: center;">
+            Acessar Home do Paciente
+          </a>
+          <a href="./paciente/login.html" class="btn btn-secondary" style="width: 100%; text-align: center;">
+            Ver Fluxo de Login & Onboarding
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <!-- Fundamentos e Arquitetura -->
+    <section style="max-width: 1200px; margin: 0 auto 48px; padding: 0 20px;">
+      <div class="card">
+        <h3 style="color: var(--zelo-primary); margin-bottom: 16px; font-size: 1.4rem;">
+          Fundamentos Cientificos, IHC e Arquitetura do Software Zelo
+        </h3>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          <div>
+            <h4 style="margin-bottom: 8px;">Base Cientifica da Literatura</h4>
+            <p class="text-small text-muted" style="line-height: 1.6;">
+              O sistema utiliza como base de conhecimento a pesquisa metodologica de Grzybowski (2023), que triangulou revisao de escopo de 26 artigos, levantamento de 128 prontuarios de idosos em cuidados paliativos exclusivos e validacao de conteudo por 21 juizes especialistas.
+            </p>
+          </div>
+
+          <div>
+            <h4 style="margin-bottom: 8px;">Principios de IHC e Design Thinking</h4>
+            <p class="text-small text-muted" style="line-height: 1.6;">
+              Aderencia as 10 Heurísticas de Nielsen (Visibilidade do status, Prevencao de perda de dados, Reconhecimento em vez de memorizacao) e normas WCAG 2.2 AA para idosos (alvos minimos de 48px, contraste cromático, redundancia textual e atalhos de acessibilidade).
+            </p>
+          </div>
+
+          <div>
+            <h4 style="margin-bottom: 8px;">O Script Validado da Dor (Chatbot Zelo)</h4>
+            <p class="text-small text-muted" style="line-height: 1.6;">
+              Arvore de decisao clinica validada com IVC medio de 0,95. Classifica semiologia da dor (Somatica, Neuropatica, Visceral), duracao (Aguda vs Cronica), adesao a dose de resgate, fatores de piora e orientacoes nao farmacologicas de enfermagem.
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--zelo-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <span class="tech-badge">FastAPI Python</span>
+            <span class="tech-badge">SQLAlchemy</span>
+            <span class="tech-badge">HTML5 Semantico</span>
+            <span class="tech-badge">CSS3 Custom Properties</span>
+            <span class="tech-badge">Vanilla JS Reativo</span>
+            <span class="tech-badge">WCAG 2.2 AA</span>
+          </div>
+          <div>
+            <a href="http://localhost:8000/docs" target="_blank" class="btn btn-secondary" style="min-height: 38px; padding: 6px 14px; font-size: 0.85rem;">
+              API Swagger / Docs
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="text-align: center; padding: 24px; color: var(--zelo-text-muted); font-size: 0.85rem; border-top: 1px solid var(--zelo-border);">
+    Zelo - Cuidados Paliativos Oncologicos
+  </footer>
+
+  <script src="./scripts/acessibilidade.js"></script>
+  <script src="./scripts/zelo-store.js"></script>
 </body>
 </html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visao Geral do Acompanhamento | Zelo Assistencial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/zelo-design-system.css">
+  <link rel="stylesheet" href="../styles/assistencial.css">
+</head>
+<body>
+  <div id="a11y-container"></div>
+
+  <div class="assistencial-layout">
+    <aside class="assistencial-sidebar" aria-label="Menu Principal da Equipe">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-logo" style="display: flex; align-items: center; gap: 10px;">
+          <img src="../images/logo.png" alt="Zelo" style="height: 42px; width: auto; object-fit: contain;">
+          <div>
+            <span class="brand-title" style="display: block; line-height: 1.1;">zelo</span>
+            <span class="brand-subtitle">Equipe Assistencial</span>
+          </div>
+        </a>
+      </div>
+
+      <nav>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item active">
+            <a href="dashboard.html" aria-current="page">
+              Visao geral
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="pacientes.html">
+              Pacientes
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="alertas.html">
+              Alertas
+              <span class="item-badge" id="sidebar-badge-alertas" style="display: none;">0</span>
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="acompanhamento.html">
+              Acompanhamento
+            </a>
+          </li>
+          <li class="sidebar-item" style="margin-top: 16px; border-top: 1px solid var(--zelo-border); padding-top: 12px;">
+            <a href="simulador-triagem.html" style="color: var(--zelo-primary);">
+              Testar Chatbot Zelo
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="../index.html">
+              Sair / Trocar Perfil
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p><strong>Acesso Restrito:</strong> Pacientes vinculados ao servico de cuidados paliativos.</p>
+        <p style="margin-bottom: 0;">Trilha de auditoria e sigilo ativo (LGPD / Resolucao CNS 466/2012).</p>
+      </div>
+    </aside>
+
+    <main class="assistencial-main">
+      <header class="assistencial-topbar">
+        <div class="topbar-info">
+          <h2>Visao geral do acompanhamento</h2>
+          <span class="topbar-subtitle">09 de outubro de 2026 &middot; Leitura operacional dos pacientes vinculados</span>
+        </div>
+        <div class="topbar-user">
+          <div class="user-avatar" title="Perfil do profissional">BT</div>
+          <div>
+            <strong>Enf. Bruna Tres</strong><br>
+            <span class="text-muted text-small">Cuidados Paliativos &middot; COREN-PR 330719</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="assistencial-content">
+        <div class="alert-box alert-warning" role="note">
+          <div>
+            <strong>Regras clinicas e esteira de trabalho da equipe:</strong><br>
+            Alertas estruturados a partir da escala ESAS e da arvore de decisao validada por 21 juizes especialistas. Os estados <em>Novo</em>, <em>Em revisao</em> e <em>Tratado</em> garantem rastreabilidade ao monitoramento multiprofissional.
+          </div>
+        </div>
+
+        <section class="kpi-grid" aria-label="Indicadores Operacionais do Dia">
+          <div class="kpi-card">
+            <div class="kpi-label">Pacientes vinculados</div>
+            <div class="kpi-value" id="kpi-total-pacientes">4</div>
+            <div class="kpi-hint">Conjunto demonstrativo da coorte</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pacientes com registro</div>
+            <div class="kpi-value" id="kpi-com-registro">3</div>
+            <div class="kpi-hint">Atualizacoes de 07 a 09/10/2026</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Itens para leitura rapida</div>
+            <div class="kpi-value" id="kpi-itens-leitura" style="color: var(--zelo-danger);">2</div>
+            <div class="kpi-hint">Status Novo e Em revisao</div>
+          </div>
+        </section>
+
+        <div class="dashboard-columns">
+          <section class="card" aria-labelledby="sec-leitura-title">
+            <div class="card-header">
+              <h3 id="sec-leitura-title">Itens para leitura</h3>
+              <span class="badge badge-novo">Triagem Prioritaria</span>
+            </div>
+            <div id="itens-leitura-container">
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="sec-rastreab-title">
+            <div class="card-header">
+              <h3 id="sec-rastreab-title">Rastreabilidade</h3>
+              <a href="pacientes.html" class="btn btn-secondary" style="min-height: 36px; padding: 4px 12px; font-size: 0.85rem;">Ver pacientes</a>
+            </div>
+            <div id="timeline-container">
+            </div>
+            <p class="text-small text-muted" style="margin-top: 16px; border-top: 1px solid var(--zelo-border); padding-top: 10px;">
+              Origem, autoria e trilha de auditoria clinica registradas conforme as diretrizes do Cofen e SUS.
+            </p>
+          </section>
+        </div>
+
+        <section class="card" aria-labelledby="sec-pacientes-title">
+          <div class="card-header">
+            <h3 id="sec-pacientes-title">Pacientes vinculados a equipe</h3>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-primary" onclick="AssistencialController.openNovoPacienteModal()">
+                + Cadastrar Novo Paciente
+              </button>
+              <a href="pacientes.html" class="btn btn-secondary">Abrir lista completa</a>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="zelo-table">
+              <thead>
+                <tr>
+                  <th scope="col">Paciente</th>
+                  <th scope="col">Ultimo registro</th>
+                  <th scope="col">Estado proposto</th>
+                  <th scope="col">Informacao e Sintoma Critico</th>
+                  <th scope="col" style="text-align: right;">Acao</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-pacientes-body">
+              </tbody>
+            </table>
+          </div>
+          <p class="text-small text-muted" style="margin-top: 14px;">
+            Conjunto demonstrativo baseado no perfil clinico-epidemiologico levantado por Grzybowski (2023).
+          </p>
+        </section>
+
+        <footer style="margin-top: 32px; padding: 16px; text-align: center; color: var(--zelo-text-muted); font-size: 0.85rem;">
+          Zelo &middot; Sistema Web para Acompanhamento e Triagem em Cuidados Paliativos
+        </footer>
+      </div>
+    </main>
+  </div>
+
+  <script src="../scripts/acessibilidade.js"></script>
+  <script src="../scripts/auth.js"></script>
+  <script src="../scripts/zelo-store.js"></script>
+  <script src="../scripts/assistencial.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AssistencialController.initDashboard();
+    });
+  </script>
+</body>
+</html>
