@@ -72,18 +72,26 @@
 
   <script src="../scripts/acessibilidade.js"></script>
   <script src="../scripts/zelo-store.js"></script>
+  <script src="../scripts/auditoria-zelo.js"></script>
   <script>
-    // Sintomas oficiais da escala ESAS (Edmonton Symptom Assessment System)
-    const sintomasESAS = [
+    // Sintomas oficiais da escala ESAS (Edmonton Symptom Assessment System) + Constipação Intestinal
+    const sintomasESAS = (typeof ESAS_SYMPTOMS !== 'undefined') ? ESAS_SYMPTOMS.map(s => ({
+      key: s.id,
+      label: s.nome,
+      minDesc: s.minDesc,
+      maxDesc: s.maxDesc,
+      question: s.question
+    })) : [
       { key: 'dor', label: 'Dor', minDesc: '0 · Sem dor', maxDesc: '10 · Pior dor possível', question: 'Indique na escala o número que melhor descreve a intensidade da sua dor neste momento:' },
       { key: 'cansaco', label: 'Cansaço / Fadiga', minDesc: '0 · Sem cansaço', maxDesc: '10 · Pior cansaço possível', question: 'Como está o seu nível de cansaço ou fraqueza física agora?' },
-      { key: 'nausea', label: 'Náusea', minDesc: '0 · Sem náusea', maxDesc: '10 · Pior náusea (enjoo)', question: 'Você está sentindo enjoo ou vontade de vomitar hoje?' },
-      { key: 'depressao', label: 'Tristeza / Desânimo', minDesc: '0 · Sem tristeza', maxDesc: '10 · Pior tristeza possível', question: 'Como o senhor (a) avalia o sentimento de tristeza ou desânimo hoje?' },
+      { key: 'nausea', label: 'Náusea / Enjoo', minDesc: '0 · Sem náusea', maxDesc: '10 · Pior náusea (enjoo)', question: 'Você está sentindo enjoo ou vontade de vomitar hoje?' },
+      { key: 'depressao', label: 'Tristeza / Depressão', minDesc: '0 · Sem tristeza', maxDesc: '10 · Pior tristeza possível', question: 'Como o senhor (a) avalia o sentimento de tristeza ou desânimo hoje?' },
       { key: 'ansiedade', label: 'Ansiedade / Agitação', minDesc: '0 · Sem ansiedade', maxDesc: '10 · Pior ansiedade possível', question: 'Como você sente seu estado de calma ou ansiedade neste momento?' },
       { key: 'sonolencia', label: 'Sonolência', minDesc: '0 · Sem sono excessivo', maxDesc: '10 · Pior sonolência', question: 'Como avalia a vontade de dormir ou sonolência durante o dia?' },
       { key: 'apetite', label: 'Falta de Apetite', minDesc: '0 · Bom apetite', maxDesc: '10 · Pior falta de apetite', question: 'Como foi a alimentação e a vontade de comer nas últimas refeições?' },
-      { key: 'mal_estar', label: 'Mal-Estar Geral', minDesc: '0 · Bem-estar pleno', maxDesc: '10 · Pior mal-estar', question: 'De maneira geral, como o senhor (a) sente o seu corpo hoje?' },
-      { key: 'falta_de_ar', label: 'Falta de Ar / Dispneia', minDesc: '0 · Sem falta de ar', maxDesc: '10 · Pior falta de ar', question: 'Você tem sentido cansaço ao respirar ou falta de ar no repouso?' }
+      { key: 'mal_estar', label: 'Sensação de Mal-Estar', minDesc: '0 · Bem-estar pleno', maxDesc: '10 · Pior mal-estar', question: 'De maneira geral, como o senhor (a) sente o seu corpo hoje?' },
+      { key: 'falta_de_ar', label: 'Falta de Ar / Dispneia', minDesc: '0 · Sem falta de ar', maxDesc: '10 · Pior falta de ar', question: 'Você tem sentido cansaço ao respirar ou falta de ar no repouso?' },
+      { key: 'constipacao', label: 'Intestino Preso / Constipação', minDesc: '0 · Hábito normal', maxDesc: '10 · Pior constipação possível', question: 'Como avalia a dificuldade ou prisão de ventre para evacuar nas últimas 24h?' }
     ];
 
     let currentStep = 0;
@@ -96,7 +104,8 @@
       sonolencia: 3,
       apetite: 4,
       mal_estar: 4,
-      falta_de_ar: 1
+      falta_de_ar: 1,
+      constipacao: 2
     };
 
     function renderStep() {
@@ -107,7 +116,7 @@
       container.innerHTML = `
         <div class="step-header">
           <div class="step-indicator">
-            <span>Passo ${currentStep + 1} de 9 · ${item.label}</span>
+            <span>Passo ${currentStep + 1} de 10 · ${item.label}</span>
             <span style="font-size: 0.85rem; font-weight: 600; color: var(--zelo-text-muted);">ESAS</span>
           </div>
 
@@ -141,7 +150,7 @@
 
         <div style="display: flex; flex-direction: column; gap: 12px;">
           <button type="button" class="btn btn-primary btn-elderly" onclick="nextStep()">
-            ${currentStep === 8 ? 'Revisar todas as respostas' : 'Continuar'}
+            ${currentStep === 9 ? 'Revisar todas as respostas' : 'Continuar'}
           </button>
           ${currentStep > 0 ? `
             <button type="button" class="btn btn-secondary btn-elderly" onclick="prevStep()">
@@ -162,7 +171,7 @@
     }
 
     function nextStep() {
-      if (currentStep < 8) {
+      if (currentStep < 9) {
         currentStep++;
         renderStep();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -181,12 +190,13 @@
 
     function renderReview() {
       const container = document.getElementById('step-container');
-      const dorElevada = (userAnswers.dor >= 7);
+      const temGatilhoCritico = Object.values(userAnswers).some(val => Number(val) >= 7);
+      const dorElevada = (Number(userAnswers.dor) >= 7);
 
       container.innerHTML = `
         <div class="step-header">
           <h2 class="symptom-title">Revise suas respostas</h2>
-          <p class="lead">Nove respostas concluídas. Confira os valores; clique em <strong>Editar</strong> para mudar qualquer sintoma:</p>
+          <p class="lead">Dez sintomas avaliados. Confira os valores; clique em <strong>Editar</strong> para mudar qualquer sintoma:</p>
         </div>
 
         <div class="card" style="margin-bottom: 24px;">
@@ -197,6 +207,7 @@
                 <span style="font-weight: 800; margin-left: 8px; font-size: 1.15rem; color: ${userAnswers[s.key] >= 7 ? 'var(--zelo-danger)' : 'var(--zelo-primary)'};">
                   ${userAnswers[s.key]}/10
                 </span>
+                ${userAnswers[s.key] >= 7 ? '<span class="badge badge-grave" style="margin-left: 6px;">Grave (≥ 7)</span>' : ''}
               </div>
               <button type="button" class="btn btn-secondary" style="min-height: 36px; padding: 4px 12px; font-size: 0.85rem;" onclick="goToStep(${idx})">
                 Editar
@@ -205,20 +216,27 @@
           `).join('')}
         </div>
 
-        ${dorElevada ? `
+        ${temGatilhoCritico ? `
           <div class="alert-box alert-danger">
             <div>
-              <strong>Atenção: Dor em intensidade grave (${userAnswers.dor}/10)</strong><br>
-              Ao concluir, o <strong>Chatbot Zelo</strong> será acionado automaticamente para auxiliar no alívio da sua dor e acionar a equipe médica e de enfermagem.
+              <strong>Atenção: Sintoma(s) em intensidade grave (≥ 7/10) identificado(s)!</strong><br>
+              Ao enviar, o <strong>Chatbot Zelo</strong> será aberto automaticamente iniciando pela triagem de segurança e manejo de conforto, e a equipe de saúde será notificada.
             </div>
           </div>
-        ` : ''}
+        ` : `
+          <div class="alert-box alert-info">
+            <div>
+              <strong>Sintomas sob controle (Leve ou Moderado).</strong><br>
+              Suas respostas serão enviadas para o acompanhamento da equipe do Hospice Erasto Gaertner.
+            </div>
+          </div>
+        `}
 
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <button type="button" class="btn btn-primary btn-elderly" onclick="concluirRegistro()">
-            ${dorElevada ? 'Concluir e Iniciar Triagem da Dor (Zelo)' : 'Concluir e Enviar Avaliação'}
+            ${temGatilhoCritico ? 'Concluir e Iniciar Triagem Zelo' : 'Concluir e Enviar Avaliação'}
           </button>
-          <button type="button" class="btn btn-secondary btn-elderly" onclick="currentStep = 8; renderStep();">
+          <button type="button" class="btn btn-secondary btn-elderly" onclick="currentStep = 9; renderStep();">
             Voltar ao último passo
           </button>
         </div>
@@ -233,14 +251,16 @@
 
     function concluirRegistro() {
       const patId = Number(localStorage.getItem('zelo_selected_patient_id') || 1);
+      const temGatilhoCritico = Object.values(userAnswers).some(val => Number(val) >= 7);
+
       // Salva no ZeloStore e sincroniza com o banco de dados
       ZeloStore.saveESAS(patId, userAnswers, 'Registro realizado pelo paciente/cuidador no aplicativo.');
 
-      if (userAnswers.dor >= 7) {
+      if (temGatilhoCritico) {
         // Redireciona para o Chatbot com o script validado
         location.href = 'chatbot-zelo.html?dor=' + userAnswers.dor + '&patientId=' + patId;
       } else {
-        alert('Avaliacao ESAS salva com sucesso! O prontuario da equipe medica foi atualizado em tempo real.');
+        alert('Avaliação ESAS salva com sucesso! Seus sintomas estão estáveis e o prontuário da equipe médica foi atualizado.');
         location.href = 'index.html';
       }
     }

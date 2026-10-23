@@ -4,6 +4,24 @@
  * Estruturado a partir das caracteristicas clinicas da pesquisa de base.
  */
 
+// Definição Canônica dos 10 Sintomas da Escala ESAS + Constipação Intestinal
+const ESAS_SYMPTOMS = [
+  { id: 'dor', nome: 'Dor', minDesc: '0 · Sem dor', maxDesc: '10 · Pior dor possível', question: 'Indique na escala o número que melhor descreve a intensidade da sua dor neste momento:' },
+  { id: 'cansaco', nome: 'Cansaço / Fadiga', minDesc: '0 · Sem cansaço', maxDesc: '10 · Pior cansaço possível', question: 'Como está o seu nível de cansaço ou fraqueza física agora?' },
+  { id: 'nausea', nome: 'Náusea / Enjoo', minDesc: '0 · Sem náusea', maxDesc: '10 · Pior náusea (enjoo)', question: 'Você está sentindo enjoo ou vontade de vomitar hoje?' },
+  { id: 'depressao', nome: 'Tristeza / Depressão', minDesc: '0 · Sem tristeza', maxDesc: '10 · Pior tristeza possível', question: 'Como o senhor (a) avalia o sentimento de tristeza ou desânimo hoje?' },
+  { id: 'ansiedade', nome: 'Ansiedade / Agitação', minDesc: '0 · Sem ansiedade', maxDesc: '10 · Pior ansiedade possível', question: 'Como você sente seu estado de calma ou ansiedade neste momento?' },
+  { id: 'sonolencia', nome: 'Sonolência', minDesc: '0 · Sem sono excessivo', maxDesc: '10 · Pior sonolência', question: 'Como avalia a vontade de dormir ou sonolência durante o dia?' },
+  { id: 'apetite', nome: 'Falta de Apetite', minDesc: '0 · Bom apetite', maxDesc: '10 · Pior falta de apetite', question: 'Como foi a alimentação e a vontade de comer nas últimas refeições?' },
+  { id: 'mal_estar', nome: 'Sensação de Mal-Estar', minDesc: '0 · Bem-estar pleno', maxDesc: '10 · Pior mal-estar', question: 'De maneira geral, como o senhor (a) sente o seu corpo hoje?' },
+  { id: 'falta_de_ar', nome: 'Falta de Ar / Dispneia', minDesc: '0 · Sem falta de ar', maxDesc: '10 · Pior falta de ar', question: 'Você tem sentido cansaço ao respirar ou falta de ar no repouso?' },
+  { id: 'constipacao', nome: 'Intestino Preso / Constipação', minDesc: '0 · Hábito intestinal normal', maxDesc: '10 · Pior constipação possível', question: 'Como avalia a dificuldade ou prisão de ventre para evacuar nas últimas 24h?' }
+];
+
+if (typeof window !== 'undefined') {
+  window.ESAS_SYMPTOMS = ESAS_SYMPTOMS;
+}
+
 const ZeloStore = {
   apiBaseUrl: window.location.origin && window.location.origin.startsWith('http') 
     ? window.location.origin 
@@ -622,7 +640,9 @@ const ZeloStore = {
   },
 
   saveESAS(patientId, sintomas, observacao = '') {
-    const acionou = (Number(sintomas.dor) >= 7);
+    const scores = Object.values(sintomas).map(v => Number(v) || 0);
+    const maxScore = scores.length > 0 ? Math.max(...scores) : 0;
+    const acionou = (maxScore >= 7);
     const nowStr = new Date().toLocaleString('pt-BR');
     const newEsas = {
       id: Date.now(),
@@ -640,9 +660,18 @@ const ZeloStore = {
     const paciente = this.getPatientById(patientId);
     if (paciente) {
       paciente.ultimoRegistro = nowStr;
-      paciente.sintomaCritico = `Dor ${sintomas.dor}/10 (${sintomas.dor >= 7 ? 'Grave' : (sintomas.dor >= 4 ? 'Moderada' : 'Leve')})`;
-      paciente.estadoProposto = acionou ? 'Novo' : 'Tratado';
-      paciente.resumoInfo = acionou ? 'Dor grave registrada ->' : 'Registro ESAS atualizado ->';
+      const dorNum = Number(sintomas.dor) || 0;
+      paciente.sintomaCritico = `Dor ${dorNum}/10 (${dorNum >= 7 ? 'Grave' : (dorNum >= 4 ? 'Moderada' : 'Leve')})`;
+      if (acionou) {
+        paciente.estadoProposto = 'Novo';
+        paciente.resumoInfo = 'Sintoma grave registrado (ESAS >= 7) ->';
+      } else if (maxScore >= 4) {
+        paciente.estadoProposto = 'Moderado';
+        paciente.resumoInfo = 'Sintomas moderados sob controle ->';
+      } else {
+        paciente.estadoProposto = 'Tratado';
+        paciente.resumoInfo = 'Registro ESAS atualizado (Estável) ->';
+      }
     }
 
     if (acionou) {
@@ -728,20 +757,32 @@ const ZeloStore = {
     this.saveToStorage();
 
     if (this.isApiOnline) {
+      const durStr = String(sessionData.duracao || '').toLowerCase();
+      const maisDe2 = durStr.includes('mais de 2') || durStr.includes('crônica') || durStr.includes('cronica');
+      const caracStr = String(sessionData.caracteristica || '').toLowerCase();
+      let caracClean = 'somatica';
+      if (caracStr.includes('neuro')) caracClean = 'neuropatica';
+      else if (caracStr.includes('visc')) caracClean = 'visceral';
+      else if (caracStr.includes('nenhum')) caracClean = 'nenhuma';
+
       fetch(`${this.apiBaseUrl}/api/users/${patientId}/triagem-dor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          intensidade_dor: Number(sessionData.intensidadeDor) || 8,
-          caracteristica_dor: sessionData.caracteristica || 'Somática',
-          duracao: sessionData.duracao || 'Aguda',
+          intensidade_dor: Math.min(10, Math.max(7, Number(sessionData.intensidadeDor) || 8)),
+          caracteristica_dor: caracClean,
+          mais_de_duas_semanas: maisDe2,
+          tipo_dor: maisDe2 ? 'cronica' : 'aguda',
           fez_dose_resgate: String(sessionData.doseResgate).toLowerCase().includes('sim'),
-          remedios_foram_efetivos: String(sessionData.medicamentosEfetivos).toLowerCase().includes('sim'),
-          tem_acompanhamento: true,
-          outros_sintomas: sessionData.sintomasAssociados || 'Nenhum',
-          fatores_piora: sessionData.fatoresPiora || 'Movimentação',
-          solicitou_agendamento: Boolean(sessionData.solicitouAgendamento),
-          desfecho_conduta: sessionData.desfecho || 'Orientação domiciliar'
+          medicamentos_efetivos: String(sessionData.medicamentosEfetivos).toLowerCase().includes('sim'),
+          em_acompanhamento: true,
+          tem_sintoma_acompanhante: Boolean(sessionData.sintomasAssociados && !String(sessionData.sintomasAssociados).toLowerCase().includes('não')),
+          sintoma_acompanhante_desc: sessionData.sintomasAssociados || null,
+          tem_fator_piora: Boolean(sessionData.fatoresPiora && !String(sessionData.fatoresPiora).toLowerCase().includes('não')),
+          fator_piora_desc: sessionData.fatoresPiora || null,
+          alerta_sinais_alarme_exibido: true,
+          medidas_nao_farmacologicas_exibidas: true,
+          solicitou_agendamento: Boolean(sessionData.solicitouAgendamento)
         })
       }).catch(err => console.warn('Erro ao sincronizar triagem de dor no backend:', err));
     }

@@ -69,6 +69,14 @@
       </header>
 
       <div class="assistencial-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <a href="alertas.html" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; min-height: 44px;">
+            &larr; Voltar para Central de Alertas
+          </a>
+          <a href="pacientes.html" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; min-height: 44px;">
+            &larr; Voltar para Lista de Pacientes
+          </a>
+        </div>
         <section class="patient-header-card" aria-label="Identificacao do Paciente">
           <div class="patient-title-group">
             <h2 id="detalhe-nome">Leovegildo Coimbra Nunes</h2>
@@ -81,6 +89,11 @@
               <span class="badge badge-novo">PPS: <span id="detalhe-pps">70%</span></span>
               <span class="badge badge-revisao"><span id="detalhe-cid">Neoplasia Maligna de Prostata (C61)</span></span>
               <span class="badge badge-tratado">Paliativos Exclusivos</span>
+              <span class="badge badge-neutral" style="background: #FAF6F0; color: #4A433C; border: 1px solid #D6CEC2;">📍 Distância: 34 km (Fora do raio de 30 km do HEG)</span>
+              <span class="badge badge-neutral" style="background: #EBF5F8; color: #1A365D; border: 1px solid #2B6CB0;">Dispositivos: SNE &middot; Hipodermóclise</span>
+            </div>
+            <div style="background: var(--zelo-danger-bg); border-left: 4px solid var(--zelo-danger); padding: 8px 12px; border-radius: 6px; margin-top: 10px; font-size: 0.88rem;">
+              <strong>⚠️ Alerta de Segurança e Comorbidades:</strong> Alergia severa a Dipirona Sódica &middot; Hipertensão Arterial Sistêmica (HAS) &middot; Diabetes Mellitus tipo 2.
             </div>
             <p class="text-small text-muted" style="margin-top: 8px; margin-bottom: 0;">
               Ultimo registro no domicilio: <strong id="detalhe-ultimo-registro">09/10/2026 &middot; 09:00</strong>
@@ -99,22 +112,22 @@
 
         <nav class="patient-tabs-nav" aria-label="Abas do Prontuario">
           <button type="button" class="tab-btn active" data-tab="esas">
-            Historico ESAS
+            📊 Histórico ESAS
           </button>
           <button type="button" class="tab-btn" data-tab="triage">
-            Respostas de Dor (Script Validado)
+            💬 Triagem de Dor (Script Validado)
           </button>
           <button type="button" class="tab-btn" data-tab="evolucoes">
-            Evolucoes da Equipe
+            📋 Evoluções da Equipe
           </button>
           <button type="button" class="tab-btn" data-tab="mapa">
-            Local de Dor e Lesoes
+            🗺️ Local de Dor e Lesões
           </button>
           <button type="button" class="tab-btn" data-tab="meds">
-            Medicamentos (RENAME)
+            💊 Medicamentos (RENAME)
           </button>
           <button type="button" class="tab-btn" data-tab="info">
-            Dados Pessoais e Clinicos
+            👤 Dados Pessoais e Clínicos
           </button>
         </nav>
 

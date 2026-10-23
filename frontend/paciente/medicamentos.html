@@ -3,20 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Medicamentos do Dia | Zelo</title>
+  <title>Medicamentos e Receitas | Zelo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/zelo-design-system.css">
   <link rel="stylesheet" href="../styles/paciente.css">
+  <style>
+    .sub-tabs-nav {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      background: var(--zelo-surface);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1.5px solid var(--zelo-border);
+    }
+    .sub-tab-btn {
+      flex: 1;
+      min-height: 48px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      background: transparent;
+      color: var(--zelo-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .sub-tab-btn.active {
+      background: var(--zelo-primary);
+      color: #FFFFFF;
+    }
+  </style>
 </head>
 <body style="background-color: var(--zelo-bg);">
 
   <div class="paciente-container">
     <header class="paciente-header">
       <div class="paciente-header-titles">
-        <p>Acompanhamento de Remédios</p>
-        <h1>Medicamentos</h1>
+        <p>Acompanhamento Farmacológico</p>
+        <h1>Meus Remédios</h1>
       </div>
       <div>
         <a href="index.html" class="btn btn-secondary" style="min-height: 38px; padding: 4px 12px; font-size: 0.85rem; color: #FFFFFF; background: transparent; border-color: rgba(255,255,255,0.4);">
@@ -26,61 +56,92 @@
     </header>
 
     <main class="paciente-body">
-      <!-- Botão de Destaque: Dose de Resgate para Dor Intensa -->
-      <section class="card" style="border: 2px solid var(--zelo-danger); background-color: var(--zelo-danger-bg); margin-bottom: 24px;">
-        <h3 style="color: var(--zelo-danger); margin-bottom: 6px;">Dor Aguda Intensa?</h3>
-        <p class="text-small" style="color: var(--zelo-text); margin-bottom: 12px;">
-          Se a dor estiver muito forte antes do horário do próximo remédio, utilize a dose de resgate prescrita pelo seu médico:
+      <!-- Botão de Destaque Superior: Dose de Resgate para Dor Forte -->
+      <section class="card" style="border: 2px solid var(--zelo-danger); background-color: var(--zelo-danger-bg); margin-bottom: 20px;">
+        <h3 style="color: var(--zelo-danger); margin-bottom: 6px; font-size: 1.15rem;">🚨 Dor Forte ou Crise Inesperada?</h3>
+        <p class="text-small" style="color: var(--zelo-text); margin-bottom: 12px; font-size: 0.95rem;">
+          Se a dor estiver muito forte antes do horário do próximo remédio, utilize a <strong>Dose de Resgate</strong> prescrita pelo seu médico:
         </p>
-        <button type="button" class="btn btn-danger btn-elderly" style="width: 100%;" onclick="confirmarDoseResgate()">
+        <button type="button" class="btn btn-danger btn-elderly" style="width: 100%; min-height: 54px; font-size: 1.05rem;" onclick="confirmarDoseResgate()">
           + Registrar Dose de Resgate (Morfina 10mg)
         </button>
       </section>
 
-      <!-- Lista de Remédios Programados de Hoje -->
-      <h2 style="font-size: 1.35rem; margin-bottom: 16px;">Remédios Programados para Hoje</h2>
-      <div id="lista-medicamentos" style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card" style="border-left: 4px solid var(--zelo-success);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 800; font-size: 1.15rem;">Codeína 30mg</span>
-            <span class="badge badge-tratado">Tomado às 08:00</span>
-          </div>
-          <p class="text-muted text-small" style="margin-bottom: 8px;">1 comprimido de 6 em 6 horas (08:00, 14:00, 20:00, 02:00)</p>
-          <button type="button" class="btn btn-secondary" style="width: 100%;" disabled>Confirmado: Dose da Manha</button>
-        </div>
+      <!-- 3 Sub-abas Obrigatórias: Hoje | Meus Medicamentos | Receitas -->
+      <div class="sub-tabs-nav" role="tablist" aria-label="Navegação entre abas de medicamentos">
+        <button type="button" class="sub-tab-btn active" id="tab-btn-hoje" role="tab" aria-selected="true" onclick="alternarSubAba('hoje')">
+          Horários de Hoje
+        </button>
+        <button type="button" class="sub-tab-btn" id="tab-btn-remedios" role="tab" aria-selected="false" onclick="alternarSubAba('remedios')">
+          Meus Medicamentos
+        </button>
+        <button type="button" class="sub-tab-btn" id="tab-btn-receitas" role="tab" aria-selected="false" onclick="alternarSubAba('receitas')">
+          Receitas Médicas
+        </button>
+      </div>
 
-        <div class="card" style="border-left: 4px solid var(--zelo-primary);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 800; font-size: 1.15rem;">Codeína 30mg (Próxima Dose)</span>
-            <span class="badge badge-novo">Hoje às 14:00</span>
-          </div>
-          <p class="text-muted text-small" style="margin-bottom: 8px;">1 comprimido após o almoço</p>
-          <button type="button" class="btn btn-primary btn-elderly" style="width: 100%;" onclick="alert('Dose das 14:00 confirmada no histórico!')">
-            Confirmar Ingestão das 14:00
-          </button>
-        </div>
-
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 800; font-size: 1.15rem;">Gabapentina 300mg</span>
-            <span class="badge badge-novo">Às 20:00</span>
-          </div>
-          <p class="text-muted text-small" style="margin-bottom: 0;">1 cápsula à noite antes de dormir</p>
-        </div>
-
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 800; font-size: 1.15rem;">Paracetamol 500mg</span>
-            <span class="badge badge-revisao">Se necessário</span>
-          </div>
-          <p class="text-muted text-small" style="margin-bottom: 0;">Tomar se dor leve/moderada (máx. a cada 6h)</p>
+      <!-- ABA 1: HORÁRIOS DE HOJE -->
+      <div id="aba-hoje" style="display: block;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 14px;">Agenda de Remédios para Hoje</h2>
+        <div id="lista-medicamentos" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Preenchido via script -->
         </div>
       </div>
 
-      <div class="alert-box alert-info" style="margin-top: 24px;">
-        <div>
-          <strong>Aviso Importante:</strong><br>
-          Nunca altere a dosagem dos seus medicamentos sem a orientação expressa da sua equipe médica assistencial.
+      <!-- ABA 2: MEUS MEDICAMENTOS (BASE RENAME) -->
+      <div id="aba-remedios" style="display: none;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 14px;">Medicamentos Contínuos Prescritos (RENAME)</h2>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="card" style="border-left: 5px solid var(--zelo-primary);">
+            <h3 style="font-size: 1.15rem; margin-bottom: 4px;">Sulfato de Morfina 10mg</h3>
+            <p class="text-small text-muted" style="margin-bottom: 6px;"><strong>Classe:</strong> Analgésico Opioide Forte (RENAME)</p>
+            <p style="margin-bottom: 6px;"><strong>Posologia:</strong> 1 comprimido a cada 4 horas se dor intensa (Dose de Resgate SOS).</p>
+            <p class="text-small" style="color: var(--zelo-primary); margin-bottom: 0;"><strong>Atenção:</strong> Não ultrapassar o intervalo mínimo de 4 horas entre doses.</p>
+          </div>
+
+          <div class="card" style="border-left: 5px solid var(--zelo-primary);">
+            <h3 style="font-size: 1.15rem; margin-bottom: 4px;">Fosfato de Codeína 30mg</h3>
+            <p class="text-small text-muted" style="margin-bottom: 6px;"><strong>Classe:</strong> Analgésico Opioide Fraco (RENAME)</p>
+            <p style="margin-bottom: 6px;"><strong>Posologia:</strong> 1 comprimido a cada 6 horas (08:00, 14:00, 20:00, 02:00).</p>
+            <p class="text-small" style="color: var(--zelo-primary); margin-bottom: 0;"><strong>Finalidade:</strong> Analgesia basal regular para controle contínuo.</p>
+          </div>
+
+          <div class="card" style="border-left: 5px solid var(--zelo-primary);">
+            <h3 style="font-size: 1.15rem; margin-bottom: 4px;">Gabapentina 300mg</h3>
+            <p class="text-small text-muted" style="margin-bottom: 6px;"><strong>Classe:</strong> Anticonvulsivante / Adjuvante para Dor Neuropática</p>
+            <p style="margin-bottom: 6px;"><strong>Posologia:</strong> 1 cápsula à noite (20:00) ao deitar.</p>
+            <p class="text-small" style="color: var(--zelo-primary); margin-bottom: 0;"><strong>Finalidade:</strong> Controle de sensação de choque, queimação e formigamento.</p>
+          </div>
+
+          <div class="card" style="border-left: 5px solid var(--zelo-primary);">
+            <h3 style="font-size: 1.15rem; margin-bottom: 4px;">Lactulose 667mg/mL Xarope</h3>
+            <p class="text-small text-muted" style="margin-bottom: 6px;"><strong>Classe:</strong> Laxativo Osmótico (Profilático obrigatório)</p>
+            <p style="margin-bottom: 6px;"><strong>Posologia:</strong> 15 mL via oral duas vezes ao dia (08:00 e 20:00).</p>
+            <p class="text-small" style="color: var(--zelo-primary); margin-bottom: 0;"><strong>Finalidade:</strong> Prevenção de constipação induzida por opioides.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 3: RECEITAS MÉDICAS -->
+      <div id="aba-receitas" style="display: none;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 14px;">Receitas Médicas Ativas</h2>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="card" style="border: 2px solid var(--zelo-primary);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span class="badge badge-novo">Receita de Controle Especial (Amarela/Azul)</span>
+              <span style="font-weight: 700; color: var(--zelo-primary);">Vigência: 30 dias</span>
+            </div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 4px;">Receita HEG-2026-0891</h3>
+            <p class="text-small text-muted" style="margin-bottom: 8px;">
+              <strong>Prescritor:</strong> Dr. Alexandre Prado (CRM/PR 24890 &middot; Paliativista HEG)<br>
+              <strong>Data da Prescrição:</strong> 15/10/2026 &middot; <strong>Válida até:</strong> 14/11/2026
+            </p>
+            <p style="margin-bottom: 0; font-size: 0.95rem;">
+              • Sulfato de Morfina 10mg comprimidos (Dose de Resgate SOS)<br>
+              • Fosfato de Codeína 30mg comprimidos (Uso contínuo 6/6h)<br>
+              • Gabapentina 300mg cápsulas (1 cápsula à noite)
+            </p>
+          </div>
         </div>
       </div>
     </main>
@@ -112,9 +173,20 @@
 
   <script src="../scripts/acessibilidade.js"></script>
   <script src="../scripts/zelo-store.js"></script>
+  <script src="../scripts/auditoria-zelo.js"></script>
   <script>
     function getPatientId() {
       return Number(localStorage.getItem('zelo_selected_patient_id') || 1);
+    }
+
+    function alternarSubAba(aba) {
+      document.getElementById('aba-hoje').style.display = (aba === 'hoje') ? 'block' : 'none';
+      document.getElementById('aba-remedios').style.display = (aba === 'remedios') ? 'block' : 'none';
+      document.getElementById('aba-receitas').style.display = (aba === 'receitas') ? 'block' : 'none';
+
+      document.getElementById('tab-btn-hoje').classList.toggle('active', aba === 'hoje');
+      document.getElementById('tab-btn-remedios').classList.toggle('active', aba === 'remedios');
+      document.getElementById('tab-btn-receitas').classList.toggle('active', aba === 'receitas');
     }
 
     function renderMedicamentosPaciente() {
@@ -134,22 +206,22 @@
         return;
       }
 
-      lista.innerHTML = meds.map((m, idx) => `
-        <div class="card" style="border-left: 4px solid ${m.aplicado ? 'var(--zelo-success)' : (m.ehResgate ? 'var(--zelo-danger)' : 'var(--zelo-primary)')};">
+      lista.innerHTML = meds.map((m) => `
+        <div class="card" style="border-left: 5px solid ${m.aplicado ? 'var(--zelo-success)' : (m.ehResgate ? 'var(--zelo-danger)' : 'var(--zelo-primary)')};">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 4px;">
             <div>
               <span style="font-weight: 800; font-size: 1.15rem; color: var(--zelo-text);">${m.nome}</span>
               ${m.ehResgate ? '<span class="badge badge-grave" style="margin-left: 6px;">Dose de Resgate</span>' : ''}
             </div>
             <span class="badge ${m.aplicado ? 'badge-tratado' : 'badge-novo'}">
-              ${m.aplicado ? 'Confirmado Hoje' : m.horario}
+              ${m.aplicado ? '✓ Confirmado Hoje' : m.horario}
             </span>
           </div>
-          <p class="text-muted text-small" style="margin-bottom: 6px;">${m.posologia}</p>
+          <p class="text-muted text-small" style="margin-bottom: 6px; font-size: 0.95rem;">${m.posologia}</p>
           ${m.observacao ? `<p class="text-small" style="color: var(--zelo-primary); margin-bottom: 10px;">${m.observacao}</p>` : ''}
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-            <button type="button" class="btn ${m.aplicado ? 'btn-secondary' : 'btn-primary'} btn-elderly" style="flex: 1;" ${m.aplicado ? 'disabled' : ''} onclick="confirmarTomada(${m.id})">
-              ${m.aplicado ? 'Dose Confirmada no Prontuário' : 'Confirmar Ingestão'}
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px;">
+            <button type="button" class="btn ${m.aplicado ? 'btn-secondary' : 'btn-primary'} btn-elderly" style="flex: 1; min-height: 52px; font-size: 1rem;" ${m.aplicado ? 'disabled' : ''} onclick="confirmarTomada(${m.id})">
+              ${m.aplicado ? '✓ Já foi tomado' : '✓ Confirmar que já tomei'}
             </button>
           </div>
         </div>
@@ -166,25 +238,15 @@
     }
 
     function confirmarDoseResgate() {
-      if (confirm('Deseja confirmar a tomada da Dose de Resgate prescrita pelo médico? Esta informação será comunicada imediatamente à equipe de saúde.')) {
+      if (confirm('Deseja confirmar a tomada da Dose de Resgate para dor forte? Esta informação será comunicada imediatamente à equipe do Hospice.')) {
         const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         const patId = getPatientId();
         
-        // Registra alerta e nota de resgate no ZeloStore
         ZeloStore.addRescueDoseRecord(patId);
         renderMedicamentosPaciente();
         alert('Dose de resgate anotada às ' + hora + '! Um alerta prioritário foi enviado para a equipe de saúde.');
       }
     }
-
-    window.addEventListener('storage', () => {
-      ZeloStore.loadFromStorage();
-      renderMedicamentosPaciente();
-    });
-
-    window.addEventListener('zelo:data-changed', () => {
-      renderMedicamentosPaciente();
-    });
 
     document.addEventListener('DOMContentLoaded', () => {
       renderMedicamentosPaciente();

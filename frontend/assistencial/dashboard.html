@@ -90,21 +90,26 @@
           </div>
         </div>
 
-        <section class="kpi-grid" aria-label="Indicadores Operacionais do Dia">
+        <section class="kpi-grid" aria-label="Indicadores Operacionais do Turno" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
           <div class="kpi-card">
-            <div class="kpi-label">Pacientes vinculados</div>
-            <div class="kpi-value" id="kpi-total-pacientes">4</div>
-            <div class="kpi-hint">Conjunto demonstrativo da coorte</div>
+            <div class="kpi-label">Pacientes Monitorados</div>
+            <div class="kpi-value" id="kpi-total-pacientes">24</div>
+            <div class="kpi-hint"><span class="badge badge-neutral" style="font-size: 0.8rem;">18 fora do raio de 30 km</span></div>
+          </div>
+          <div class="kpi-card" style="border-color: var(--zelo-danger); background: #FFFDFC;">
+            <div class="kpi-label" style="color: var(--zelo-danger); font-weight: 700;">Alertas Críticos (ESAS ≥ 7)</div>
+            <div class="kpi-value" id="kpi-criticos" style="color: var(--zelo-danger);">2</div>
+            <div class="kpi-hint"><span class="badge badge-grave" style="font-size: 0.8rem;">Gatilho Chatbot Ativo</span></div>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Pacientes com registro</div>
-            <div class="kpi-value" id="kpi-com-registro">3</div>
-            <div class="kpi-hint">Atualizacoes de 07 a 09/10/2026</div>
+            <div class="kpi-label">Em Acompanhamento / Triagem</div>
+            <div class="kpi-value" id="kpi-em-acompanhamento">4</div>
+            <div class="kpi-hint"><span class="badge badge-revisao" style="font-size: 0.8rem;">Aguardam retorno telefônico</span></div>
           </div>
           <div class="kpi-card">
-            <div class="kpi-label">Itens para leitura rapida</div>
-            <div class="kpi-value" id="kpi-itens-leitura" style="color: var(--zelo-danger);">2</div>
-            <div class="kpi-hint">Status Novo e Em revisao</div>
+            <div class="kpi-label">Sintomas Controlados (ESAS ≤ 3)</div>
+            <div class="kpi-value" id="kpi-sintomas-controlados" style="color: var(--zelo-primary);">18</div>
+            <div class="kpi-hint"><span class="badge badge-tratado" style="font-size: 0.8rem;">Conforto domiciliar mantido</span></div>
           </div>
         </section>
 

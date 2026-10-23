@@ -1,3 +1,19 @@
+// Definição Canônica dos 10 Sintomas da Escala ESAS + Constipação Intestinal (WCAG 2.2 & Validação Clínica)
+if (typeof window !== 'undefined' && typeof window.ESAS_SYMPTOMS === 'undefined') {
+  window.ESAS_SYMPTOMS = [
+    { id: 'dor', nome: 'Dor', minDesc: '0 · Sem dor', maxDesc: '10 · Pior dor possível', question: 'Indique na escala o número que melhor descreve a intensidade da sua dor neste momento:' },
+    { id: 'cansaco', nome: 'Cansaço / Fadiga', minDesc: '0 · Sem cansaço', maxDesc: '10 · Pior cansaço possível', question: 'Como está o seu nível de cansaço ou fraqueza física agora?' },
+    { id: 'nausea', nome: 'Náusea / Enjoo', minDesc: '0 · Sem náusea', maxDesc: '10 · Pior náusea (enjoo)', question: 'Você está sentindo enjoo ou vontade de vomitar hoje?' },
+    { id: 'depressao', nome: 'Tristeza / Depressão', minDesc: '0 · Sem tristeza', maxDesc: '10 · Pior tristeza possível', question: 'Como o senhor (a) avalia o sentimento de tristeza ou desânimo hoje?' },
+    { id: 'ansiedade', nome: 'Ansiedade / Agitação', minDesc: '0 · Sem ansiedade', maxDesc: '10 · Pior ansiedade possível', question: 'Como você sente seu estado de calma ou ansiedade neste momento?' },
+    { id: 'sonolencia', nome: 'Sonolência', minDesc: '0 · Sem sono excessivo', maxDesc: '10 · Pior sonolência', question: 'Como avalia a vontade de dormir ou sonolência durante o dia?' },
+    { id: 'apetite', nome: 'Falta de Apetite', minDesc: '0 · Bom apetite', maxDesc: '10 · Pior falta de apetite', question: 'Como foi a alimentação e a vontade de comer nas últimas refeições?' },
+    { id: 'mal_estar', nome: 'Sensação de Mal-Estar', minDesc: '0 · Bem-estar pleno', maxDesc: '10 · Pior mal-estar', question: 'De maneira geral, como o senhor (a) sente o seu corpo hoje?' },
+    { id: 'falta_de_ar', nome: 'Falta de Ar / Dispneia', minDesc: '0 · Sem falta de ar', maxDesc: '10 · Pior falta de ar', question: 'Você tem sentido cansaço ao respirar ou falta de ar no repouso?' },
+    { id: 'constipacao', nome: 'Intestino Preso / Constipação', minDesc: '0 · Hábito normal', maxDesc: '10 · Pior constipação possível', question: 'Como avalia a dificuldade ou prisão de ventre para evacuar nas últimas 24h?' }
+  ];
+}
+
 /**
  * MODULO DE ACESSIBILIDADE GLOBAL (WCAG 2.2 AA/AAA & IHC PARA IDOSOS)
  * Sistema Zelo - Cuidados Paliativos Oncologicos

@@ -3,20 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Local de Dor ou Lesão | Zelo</title>
+  <title>Mapa Corporal: Dor, Inchaço ou Ferida | Zelo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/zelo-design-system.css">
   <link rel="stylesheet" href="../styles/paciente.css">
+  <style>
+    .body-view-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .body-view-btn {
+      flex: 1;
+      min-height: 48px;
+      border: 2px solid var(--zelo-border-strong);
+      border-radius: 10px;
+      background: var(--zelo-surface);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .body-view-btn.active {
+      background: var(--zelo-primary);
+      color: #FFFFFF;
+      border-color: var(--zelo-primary);
+    }
+    .svg-body-card {
+      background: var(--zelo-surface);
+      border: 2px solid var(--zelo-border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .svg-body-container {
+      width: 160px;
+      height: 260px;
+      margin-bottom: 12px;
+    }
+    .anat-btn {
+      min-height: 52px;
+      border: 2px solid var(--zelo-border);
+      border-radius: 10px;
+      background: var(--zelo-surface);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--zelo-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    .anat-btn.selected {
+      background: var(--zelo-primary);
+      color: #FFFFFF;
+      border-color: var(--zelo-primary);
+    }
+    .preview-box {
+      margin-top: 10px;
+      max-height: 200px;
+      display: none;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid var(--zelo-border);
+    }
+    .preview-box img {
+      width: 100%;
+      height: auto;
+      max-height: 200px;
+      object-fit: cover;
+    }
+  </style>
 </head>
 <body style="background-color: var(--zelo-bg);">
 
   <div class="paciente-container">
     <header class="paciente-header">
       <div class="paciente-header-titles">
-        <p>Mapeamento Corporal</p>
-        <h1>Local de Dor ou Lesão</h1>
+        <p>Mapeamento Anatômico &middot; Zelo</p>
+        <h1>Mapa Corporal</h1>
       </div>
       <div>
         <a href="index.html" class="btn btn-secondary" style="min-height: 38px; padding: 4px 12px; font-size: 0.85rem; color: #FFFFFF; background: transparent; border-color: rgba(255,255,255,0.4);">
@@ -26,73 +97,78 @@
     </header>
 
     <main class="paciente-body">
-      <p class="lead" style="margin-bottom: 20px;">
-        Toque na parte do corpo onde o senhor (a) está sentindo dor, inchaço ou ferida:
-      </p>
-
-      <!-- Tipo de Queixa -->
-      <div style="margin-bottom: 20px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Tipo de Queixa:</label>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button type="button" class="btn btn-primary btn-elderly queixa-tipo-btn active" data-tipo="dor" style="flex: 1;">
-            Dor
-          </button>
-          <button type="button" class="btn btn-secondary btn-elderly queixa-tipo-btn" data-tipo="edema" style="flex: 1;">
-            Inchaço (Edema)
-          </button>
-          <button type="button" class="btn btn-secondary btn-elderly queixa-tipo-btn" data-tipo="lesao" style="flex: 1;">
-            Lesão ou Ferida
-          </button>
-        </div>
+      <!-- 1. Abas de Tipo de Queixa Clínica -->
+      <label style="display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">1. O que deseja apontar hoje?</label>
+      <div style="display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-primary queixa-tipo-btn active" data-tipo="Dor" style="flex: 1; min-height: 52px; font-size: 1rem;">
+          🔴 Local de Dor
+        </button>
+        <button type="button" class="btn btn-secondary queixa-tipo-btn" data-tipo="Inchaço (Edema)" style="flex: 1; min-height: 52px; font-size: 1rem;">
+          🟣 Inchaço (Edema)
+        </button>
+        <button type="button" class="btn btn-secondary queixa-tipo-btn" data-tipo="Ferida na Pele (Lesão)" style="flex: 1; min-height: 52px; font-size: 1rem;">
+          🩹 Ferida / Lesão
+        </button>
       </div>
 
-      <!-- Seleção de Regiões Anatômicas em Botões Amplos -->
-      <div style="margin-bottom: 24px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Região do Corpo:</label>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Costas e Região Escapular">
-            Costas / Escápulas
-          </button>
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Coluna Lombar">
-            Coluna Lombar
-          </button>
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Abdômen / Barriga">
-            Abdômen / Barriga
-          </button>
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Tórax / Peito">
-            Tórax / Peito
-          </button>
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Pernas, Joelhos ou Pés">
-            Pernas ou Pés
-          </button>
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Braços, Ombros ou Mãos">
-            Braços ou Mãos
-          </button>
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Cabeça ou Pescoço">
-            Cabeça ou Pescoço
-          </button>
-          <button type="button" class="btn btn-secondary regiao-btn" data-regiao="Região Pélvica / Quadril">
-            Quadril / Pélvis
-          </button>
+      <!-- 2. Alternância de Visão Corporal: Frente vs. Costas -->
+      <label style="display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">2. Visão do Corpo:</label>
+      <div class="body-view-toggle">
+        <button type="button" class="body-view-btn active" id="btn-visao-frente" onclick="alternarVisao('frente')">
+          Frente do Corpo
+        </button>
+        <button type="button" class="body-view-btn" id="btn-visao-costas" onclick="alternarVisao('costas')">
+          Costas
+        </button>
+      </div>
+
+      <!-- 3. Silhueta Corporal SVG e Regiões Anatômicas Amplas -->
+      <div class="svg-body-card">
+        <div class="svg-body-container" id="svg-silhueta">
+          <svg viewBox="0 0 100 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Silhueta do corpo humano">
+            <!-- Cabeça -->
+            <circle cx="50" cy="20" r="14" fill="#D5E7E5" stroke="#1B5E4A" stroke-width="2"/>
+            <!-- Tronco -->
+            <rect x="34" y="38" width="32" height="52" rx="6" fill="#D5E7E5" stroke="#1B5E4A" stroke-width="2"/>
+            <!-- Braço Esquerdo -->
+            <rect x="18" y="42" width="12" height="55" rx="5" fill="#D5E7E5" stroke="#1B5E4A" stroke-width="2"/>
+            <!-- Braço Direito -->
+            <rect x="70" y="42" width="12" height="55" rx="5" fill="#D5E7E5" stroke="#1B5E4A" stroke-width="2"/>
+            <!-- Perna Esquerda -->
+            <rect x="34" y="94" width="13" height="74" rx="5" fill="#D5E7E5" stroke="#1B5E4A" stroke-width="2"/>
+            <!-- Perna Direita -->
+            <rect x="53" y="94" width="13" height="74" rx="5" fill="#D5E7E5" stroke="#1B5E4A" stroke-width="2"/>
+          </svg>
         </div>
+        <p style="font-size: 0.9rem; color: var(--zelo-text-muted); margin-bottom: 0;" id="legenda-visao">
+          Visualizando a <strong>Frente do Corpo</strong>. Escolha a região abaixo:
+        </p>
+      </div>
+
+      <!-- Grade de Regiões Anatômicas Adaptada à Visão -->
+      <div id="grid-regioes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+        <!-- Preenchido via script com alvos amplos >= 52px -->
       </div>
 
       <!-- Feedback de Seleção -->
-      <div class="esas-selection-feedback" id="feedback-regiao">
-        Nenhuma região selecionada ainda. Toque em uma das opções acima.
+      <div class="esas-selection-feedback" id="feedback-regiao" style="margin-bottom: 20px;">
+        Toque em uma região do corpo acima para apontar o local.
       </div>
 
-      <!-- Anexo de Foto Opcional -->
-      <div class="card" style="margin-bottom: 24px;">
-        <h4 style="margin-bottom: 8px;">Enviar Foto da Lesão ou Inchaço (Opcional):</h4>
+      <!-- 4. Anexo de Foto Clínica com Pré-visualização -->
+      <div class="card" style="margin-bottom: 24px;" id="card-foto-anexo">
+        <h4 style="margin-bottom: 6px; font-size: 1.05rem;">📷 Incluir Foto da Região (Opcional):</h4>
         <p class="text-small text-muted" style="margin-bottom: 12px;">
-          Se houver ferida ou inchaço, você pode anexar uma foto para a equipe de enfermagem avaliar.
+          Se houver ferida, vermelhidão ou inchaço, envie uma foto para auxiliar a enfermagem no monitoramento domiciliar.
         </p>
-        <input type="file" id="foto-input" accept="image/*" class="search-input" style="width: 100%;">
+        <input type="file" id="foto-input" accept="image/*" onchange="previewImage(event)" class="search-input" style="width: 100%; min-height: 48px;" aria-label="Anexar foto da ferida ou inchaço">
+        <div class="preview-box" id="preview-box">
+          <img id="preview-img" src="" alt="Pré-visualização da fotografia enviada">
+        </div>
       </div>
 
-      <button type="button" class="btn btn-primary btn-elderly" style="width: 100%;" onclick="salvarLocalDor()">
-        Salvar Localizacao no Prontuario
+      <button type="button" class="btn btn-primary btn-elderly" style="width: 100%; min-height: 56px;" onclick="salvarLocalDor()">
+        ✓ Salvar Registro no Mapa Corporal
       </button>
     </main>
 
@@ -123,9 +199,51 @@
 
   <script src="../scripts/acessibilidade.js"></script>
   <script src="../scripts/zelo-store.js"></script>
+  <script src="../scripts/auditoria-zelo.js"></script>
   <script>
     let tipoSelecionado = 'Dor';
+    let visaoAtual = 'frente';
     let regiaoSelecionada = '';
+
+    const regioesFrente = [
+      'Cabeça / Rosto', 'Pescoço / Garganta',
+      'Tórax / Peito', 'Abdômen / Barriga',
+      'Braço / Mão Direita', 'Braço / Mão Esquerda',
+      'Quadril / Pélvis', 'Coxa / Perna Direita',
+      'Coxa / Perna Esquerda', 'Pé / Tornozelo'
+    ];
+
+    const regioesCostas = [
+      'Nuca / Pescoço Posterior', 'Costas Superior (Escápulas)',
+      'Coluna Dorsal', 'Coluna Lombar',
+      'Glúteos / Quadril Posterior', 'Costas do Braço',
+      'Panturrilha / Perna Posterior', 'Calcanhar / Pé'
+    ];
+
+    function renderizarRegioes() {
+      const grid = document.getElementById('grid-regioes');
+      const lista = visaoAtual === 'frente' ? regioesFrente : regioesCostas;
+      grid.innerHTML = lista.map(reg => `
+        <button type="button" class="anat-btn ${regiaoSelecionada === reg ? 'selected' : ''}" onclick="selecionarRegiao('${reg}')">
+          ${reg}
+        </button>
+      `).join('');
+      document.getElementById('legenda-visao').innerHTML = `Visualizando a <strong>${visaoAtual === 'frente' ? 'Frente do Corpo' : 'Costas'}</strong>. Toque na região abaixo:`;
+    }
+
+    function alternarVisao(novaVisao) {
+      visaoAtual = novaVisao;
+      document.getElementById('btn-visao-frente').classList.toggle('active', novaVisao === 'frente');
+      document.getElementById('btn-visao-costas').classList.toggle('active', novaVisao === 'costas');
+      renderizarRegioes();
+    }
+
+    function selecionarRegiao(reg) {
+      regiaoSelecionada = reg;
+      renderizarRegioes();
+      const fb = document.getElementById('feedback-regiao');
+      fb.innerHTML = `Selecionado: <strong>${tipoSelecionado}</strong> na região <strong>${regiaoSelecionada} (${visaoAtual === 'frente' ? 'Frente' : 'Costas'})</strong>.`;
+    }
 
     document.querySelectorAll('.queixa-tipo-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -135,44 +253,44 @@
         });
         btn.classList.add('btn-primary', 'active');
         btn.classList.remove('btn-secondary');
-        tipoSelecionado = btn.innerText.trim();
-        atualizarFeedback();
+        tipoSelecionado = btn.dataset.tipo;
+        if (regiaoSelecionada) selecionarRegiao(regiaoSelecionada);
       });
     });
 
-    document.querySelectorAll('.regiao-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.regiao-btn').forEach(b => {
-          b.classList.remove('btn-primary');
-          b.classList.add('btn-secondary');
-        });
-        btn.classList.add('btn-primary');
-        btn.classList.remove('btn-secondary');
-        regiaoSelecionada = btn.dataset.regiao;
-        atualizarFeedback();
-      });
-    });
-
-    function atualizarFeedback() {
-      const fb = document.getElementById('feedback-regiao');
-      if (regiaoSelecionada) {
-        fb.innerHTML = `Selecionado: <strong>${tipoSelecionado}</strong> na região <strong>${regiaoSelecionada}</strong>.`;
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const pBox = document.getElementById('preview-box');
+          const pImg = document.getElementById('preview-img');
+          pImg.src = e.target.result;
+          pBox.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
       }
     }
 
     function salvarLocalDor() {
       if (!regiaoSelecionada) {
-        alert('Por favor, toque em uma regiao do corpo antes de salvar.');
+        alert('Por favor, toque em uma região do corpo antes de salvar.');
         return;
       }
       const patId = Number(localStorage.getItem('zelo_selected_patient_id') || 1);
+      const regiaoCompleta = `${regiaoSelecionada} (${visaoAtual === 'frente' ? 'Frente' : 'Costas'})`;
+      
       ZeloStore.savePainMapEntry(patId, {
         tipo: tipoSelecionado,
-        regiao: regiaoSelecionada
+        regiao: regiaoCompleta
       });
-      alert('Local de ' + tipoSelecionado + ' (' + regiaoSelecionada + ') registrado com sucesso! A equipe de saude recebeu a atualizacao.');
+      alert(`Local de ${tipoSelecionado} [${regiaoCompleta}] registrado com sucesso! O prontuário da equipe foi atualizado.`);
       location.href = 'index.html';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderizarRegioes();
+    });
   </script>
 </body>
 </html>

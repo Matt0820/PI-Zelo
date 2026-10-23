@@ -5,28 +5,28 @@
  */
 
 :root {
-  /* Cores Principais (Conforme especificações de redesign Zelo) */
-  --zelo-primary: #09635D;
-  --zelo-primary-hover: #074D48;
-  --zelo-primary-active: #053733;
-  --zelo-primary-light: #EBF4F3;
+  /* Cores Principais (Conforme especificações Zelo Care Design System) */
+  --zelo-primary: #1B5E4A;
+  --zelo-primary-hover: #124032;
+  --zelo-primary-active: #0d2f24;
+  --zelo-primary-light: #EAF5EC;
   --zelo-primary-subtle: #D5E7E5;
 
-  /* Superfícies e Fundos Quentes */
-  --zelo-bg: #F6F5F0;
+  /* Superfícies e Fundos Quentes (Anti-glare para idosos) */
+  --zelo-bg: #FAF6F0;
   --zelo-surface: #FFFFFF;
-  --zelo-surface-soft: #F0EFEA;
-  --zelo-surface-hover: #E8E7E0;
+  --zelo-surface-soft: #F3EFE9;
+  --zelo-surface-hover: #EAE5DE;
 
-  /* Tipografia e Textos */
-  --zelo-text: #243D3A;
-  --zelo-text-muted: #536C67;
-  --zelo-text-light: #7E938E;
+  /* Tipografia e Textos (WCAG AAA - Contraste > 16:1 e > 8:1) */
+  --zelo-text: #1E1B18;
+  --zelo-text-muted: #4A433C;
+  --zelo-text-light: #6E655C;
   --zelo-text-inverse: #FFFFFF;
 
-  /* Bordas e Divisores */
-  --zelo-border: #D9DFD8;
-  --zelo-border-strong: #BDC8BC;
+  /* Bordas Físicas Definidas (Anti-Flat Design) */
+  --zelo-border: #D6CEC2;
+  --zelo-border-strong: #A69E92;
 
   /* Alertas Clínicos com Contexto (Não baseados apenas em cor) */
   --zelo-danger: #873D35;

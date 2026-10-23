@@ -338,34 +338,57 @@
 
 .patient-tabs-nav {
   display: flex;
-  gap: 8px;
-  border-bottom: 2px solid var(--zelo-border);
+  flex-wrap: wrap;
+  gap: 10px;
+  background: var(--zelo-surface, #FFFFFF);
+  border: 1.5px solid var(--zelo-border, #E2D9CC);
+  border-radius: var(--radius-lg, 12px);
+  padding: 10px;
   margin-bottom: 24px;
-  overflow-x: auto;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+  overflow-x: visible;
 }
 
 .tab-btn {
-  background: transparent;
-  border: none;
-  padding: 12px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #FAF6F0;
+  border: 1.5px solid var(--zelo-border, #D6CEC2);
+  border-radius: 8px;
+  padding: 11px 18px;
   font-family: var(--font-family);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: var(--zelo-text-muted);
+  color: var(--zelo-text, #1E1B18);
   cursor: pointer;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: all var(--transition-fast, 0.2s ease);
+  min-height: 48px;
+  white-space: normal;
+  text-align: center;
 }
 
 .tab-btn:hover {
-  color: var(--zelo-primary);
+  background: #FFFFFF;
+  border-color: var(--zelo-primary, #1B5E4A);
+  color: var(--zelo-primary, #1B5E4A);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
 .tab-btn.active {
-  color: var(--zelo-primary);
-  border-bottom-color: var(--zelo-primary);
+  background: var(--zelo-primary, #1B5E4A) !important;
+  border-color: var(--zelo-primary, #1B5E4A) !important;
+  color: #FFFFFF !important;
+  font-weight: 800;
+  box-shadow: 0 3px 8px rgba(27, 94, 74, 0.3) !important;
+}
+
+.tab-btn:focus-visible {
+  outline: 3px solid var(--zelo-primary, #1B5E4A);
+  outline-offset: 2px;
 }
 
 .tab-content {
