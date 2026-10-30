@@ -28,11 +28,37 @@ const ZeloA11y = {
   },
 
   init() {
+    this.ensureHighContrastStyles();
+    this.ensureA11yContainer();
     this.loadPreferences();
     this.applyPreferences();
     this.renderA11yBar();
     this.bindKeyboardShortcuts();
     this.updateUI();
+  },
+
+  ensureHighContrastStyles() {
+    if (document.querySelector('[data-zelo-high-contrast-styles]')) return;
+
+    const accessibilityScript = document.querySelector('script[src$="/scripts/acessibilidade.js"]');
+    if (!accessibilityScript) {
+      console.error('Não foi possível localizar acessibilidade.js para carregar os estilos de alto contraste.');
+      return;
+    }
+
+    const stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = new URL('../styles/high-contrast.css?v=7', accessibilityScript.src).href;
+    stylesheet.dataset.zeloHighContrastStyles = '';
+    document.head.appendChild(stylesheet);
+  },
+
+  ensureA11yContainer() {
+    if (document.getElementById('a11y-container')) return;
+
+    const container = document.createElement('div');
+    container.id = 'a11y-container';
+    document.body.insertBefore(container, document.body.firstChild);
   },
 
   loadPreferences() {
@@ -228,7 +254,16 @@ const ZeloA11y = {
     const barContrast = document.getElementById('btn-a11y-contrast');
     if (barContrast) {
       barContrast.textContent = this.state.highContrast ? 'Contraste: ON' : 'Contraste';
+      barContrast.setAttribute('aria-pressed', String(this.state.highContrast));
     }
+
+    const patientContrast = document.getElementById('btn-patient-a11y-contrast');
+    if (patientContrast) {
+      patientContrast.textContent = this.state.highContrast ? 'Desativar alto contraste' : 'Ativar alto contraste';
+      patientContrast.setAttribute('aria-pressed', String(this.state.highContrast));
+    }
+
+    if (contrastBtn) contrastBtn.setAttribute('aria-pressed', String(this.state.highContrast));
   },
 
   announceToScreenReader(message) {
@@ -263,9 +298,20 @@ const ZeloA11y = {
 
   renderA11yBar() {
     const container = document.getElementById('a11y-container');
-    // Não renderiza barra de acessibilidade no fluxo mobile do paciente (configurações no perfil é suficiente)
-    if (!container || window.location.pathname.includes('/paciente/')) {
-      if (container) container.innerHTML = '';
+    if (!container) return;
+
+    if (window.location.pathname.includes('/paciente/')) {
+      container.innerHTML = `
+        <aside class="patient-a11y-bar" aria-label="Ferramentas de acessibilidade">
+          <button type="button" class="patient-a11y-toggle" id="btn-patient-a11y-contrast"
+            onclick="AcessibilidadeController.toggleContrast()"
+            title="Alternar alto contraste (Alt+C)"
+            aria-label="Alternar alto contraste"
+            aria-pressed="${this.state.highContrast}">
+            ${this.state.highContrast ? 'Desativar alto contraste' : 'Ativar alto contraste'}
+          </button>
+        </aside>
+      `;
       return;
     }
 
@@ -283,7 +329,7 @@ const ZeloA11y = {
           <button type="button" class="a11y-btn" id="btn-a11y-font" onclick="AcessibilidadeController.toggleFontSize()" title="Alterar tamanho do texto (Alt+A)" aria-label="Alterar tamanho da fonte">
             [${fontTag}] Texto
           </button>
-          <button type="button" class="a11y-btn" id="btn-a11y-contrast" onclick="AcessibilidadeController.toggleContrast()" title="Alternar alto contraste (Alt+C)" aria-label="Alternar alto contraste">
+          <button type="button" class="a11y-btn" id="btn-a11y-contrast" onclick="AcessibilidadeController.toggleContrast()" title="Alternar alto contraste (Alt+C)" aria-label="Alternar alto contraste" aria-pressed="${this.state.highContrast}">
             ${contrastTag}
           </button>
           <button type="button" class="a11y-btn" id="btn-a11y-dark" onclick="AcessibilidadeController.toggleDarkMode()" title="Alternar tema claro e escuro" aria-label="Alternar tema claro e escuro">

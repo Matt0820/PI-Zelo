@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/zelo-design-system.css">
   <link rel="stylesheet" href="../styles/paciente.css">
+  <link rel="stylesheet" href="../styles/high-contrast.css?v=7" data-zelo-high-contrast-styles>
 </head>
 <body style="background-color: var(--zelo-bg);">
 
@@ -148,17 +149,6 @@
         if (tratEl) tratEl.textContent = p.tratamento || 'Cuidados Paliativos Domiciliares';
       }
 
-      // Atualiza badge de contraste
-      const isHighContrast = localStorage.getItem('zelo_high_contrast') === 'true';
-      const badge = document.getElementById('contrast-status-badge');
-      const btn = document.getElementById('btn-contrast-toggle');
-      if (badge) {
-        badge.textContent = isHighContrast ? 'Ativado' : 'Desativado';
-        badge.className = isHighContrast ? 'badge badge-tratado' : 'badge badge-neutral';
-      }
-      if (btn) {
-        btn.textContent = isHighContrast ? 'Desativar Alto Contraste' : 'Ativar Alto Contraste';
-      }
     });
   </script>
 </body>
