@@ -18,7 +18,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import desc, select, text
+from sqlalchemy import desc, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -475,14 +475,17 @@ def login(payload: UserLogin, db: Annotated[Session, Depends(get_db)]) -> User:
     cpf_digits = ''.join(c for c in identificador if c.isdigit())
     cpf_formatado = f"{cpf_digits[:3]}.{cpf_digits[3:6]}.{cpf_digits[6:9]}-{cpf_digits[9:]}" if len(cpf_digits) == 11 else None
 
-    user = db.scalar(
-        select(User).where(
-            (User.email.ilike(identificador)) | 
-            (User.cpf == identificador) | 
-            (User.cpf == cpf_formatado) |
-            (User.prontuario.ilike(identificador)) |
-            ((identificador == "cuidador@zelo.saude.gov.br") & (User.id == 1))
+    identificador_conditions = [
+        User.email.ilike(identificador),
+        User.prontuario.ilike(identificador),
+    ]
+    if cpf_formatado:
+        identificador_conditions.extend(
+            (User.cpf == identificador, User.cpf == cpf_formatado)
         )
+
+    user = db.scalar(
+        select(User).where(or_(*identificador_conditions))
     )
     senha_hash = hashlib.sha256(payload.senha.encode('utf-8')).hexdigest()
     if not user or not user.ativo or not hmac.compare_digest(user.senha_hash, senha_hash):

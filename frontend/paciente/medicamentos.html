@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/zelo-design-system.css">
   <link rel="stylesheet" href="../styles/paciente.css">
+  <link rel="stylesheet" href="../styles/high-contrast.css?v=7" data-zelo-high-contrast-styles>
   <style>
     .sub-tabs-nav {
       display: flex;
@@ -58,7 +59,7 @@
     <main class="paciente-body">
       <!-- Botão de Destaque Superior: Dose de Resgate para Dor Forte -->
       <section class="card" style="border: 2px solid var(--zelo-danger); background-color: var(--zelo-danger-bg); margin-bottom: 20px;">
-        <h3 style="color: var(--zelo-danger); margin-bottom: 6px; font-size: 1.15rem;">🚨 Dor Forte ou Crise Inesperada?</h3>
+        <h3 style="color: var(--zelo-danger); margin-bottom: 6px; font-size: 1.15rem;">Dor Forte ou Crise Inesperada?</h3>
         <p class="text-small" style="color: var(--zelo-text); margin-bottom: 12px; font-size: 0.95rem;">
           Se a dor estiver muito forte antes do horário do próximo remédio, utilize a <strong>Dose de Resgate</strong> prescrita pelo seu médico:
         </p>
@@ -184,9 +185,17 @@
       document.getElementById('aba-remedios').style.display = (aba === 'remedios') ? 'block' : 'none';
       document.getElementById('aba-receitas').style.display = (aba === 'receitas') ? 'block' : 'none';
 
-      document.getElementById('tab-btn-hoje').classList.toggle('active', aba === 'hoje');
-      document.getElementById('tab-btn-remedios').classList.toggle('active', aba === 'remedios');
-      document.getElementById('tab-btn-receitas').classList.toggle('active', aba === 'receitas');
+      const abas = {
+        hoje: 'tab-btn-hoje',
+        remedios: 'tab-btn-remedios',
+        receitas: 'tab-btn-receitas',
+      };
+      Object.entries(abas).forEach(([nome, id]) => {
+        const botao = document.getElementById(id);
+        const selecionada = aba === nome;
+        botao.classList.toggle('active', selecionada);
+        botao.setAttribute('aria-selected', String(selecionada));
+      });
     }
 
     function renderMedicamentosPaciente() {

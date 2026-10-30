@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/zelo-design-system.css">
   <link rel="stylesheet" href="../styles/paciente.css">
+  <link rel="stylesheet" href="../styles/high-contrast.css?v=7" data-zelo-high-contrast-styles>
 </head>
 <body style="background-color: var(--zelo-bg);">
 
@@ -24,8 +25,8 @@
           </div>
         </div>
         <div style="display: flex; gap: 6px; align-items: center;">
-          <button type="button" class="btn btn-secondary" onclick="ZeloA11y.cycleFontSize()" style="min-height: 40px; min-width: 44px; padding: 4px 10px; font-size: 0.9rem; color: #FFFFFF; background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4);" aria-label="Aumentar tamanho do texto">A+</button>
-          <button type="button" class="btn btn-secondary" onclick="falarBoasVindas()" style="min-height: 40px; min-width: 44px; padding: 4px 10px; font-size: 1.1rem; color: #FFFFFF; background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4);" aria-label="Ouvir instruções da tela">🔊</button>
+          <button type="button" class="btn btn-secondary" onclick="AcessibilidadeController.toggleFontSize()" style="min-height: 40px; min-width: 44px; padding: 4px 10px; font-size: 0.9rem; color: #FFFFFF; background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4);" aria-label="Aumentar tamanho do texto">A+</button>
+          <button type="button" class="btn btn-secondary" onclick="falarBoasVindas()" style="min-height: 40px; min-width: 44px; padding: 4px 10px; font-size: 1.1rem; color: #FFFFFF; background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4);" aria-label="Ouvir instruções da tela">Ouvir</button>
           <button type="button" class="btn btn-secondary" onclick="AuthService.logout()" style="min-height: 40px; padding: 4px 12px; font-size: 0.85rem; color: #FFFFFF; background: transparent; border-color: rgba(255,255,255,0.4);">Sair</button>
         </div>
       </div>
@@ -33,10 +34,10 @@
       <!-- Seletor de Contexto: Paciente vs. Cuidador -->
       <div style="display: flex; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 4px; gap: 4px;">
         <button type="button" id="btn-perfil-paciente" onclick="alternarContexto('paciente')" style="flex: 1; min-height: 38px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.85rem; background: #FFFFFF; color: var(--zelo-primary);">
-          👤 Sou o Paciente
+          Sou o Paciente
         </button>
         <button type="button" id="btn-perfil-cuidador" onclick="alternarContexto('cuidador')" style="flex: 1; min-height: 38px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.85rem; background: transparent; color: #FFFFFF;">
-          🤝 Sou Familiar / Cuidador (Carlos)
+          Sou Familiar / Cuidador (Carlos)
         </button>
       </div>
     </header>
@@ -96,7 +97,7 @@
           Nossa equipe do Hospice Erasto Gaertner está disponível para apoiar você e sua família.
         </p>
         <a href="tel:4130000000" class="btn btn-primary btn-elderly" style="width: 100%; text-align: center; min-height: 52px; display: flex; align-items: center; justify-content: center;">
-          📞 Ligar para a Central do Hospice: (41) 3000-0000
+          Ligar para a Central do Hospice: (41) 3000-0000
         </a>
       </section>
 

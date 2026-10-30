@@ -140,6 +140,15 @@ Entre as decisões de design estão:
 
 A interface do paciente utiliza uma abordagem mais acolhedora e simples, enquanto o painel profissional prioriza a organização de informações e visualização de dados.
 
+### Alto contraste
+
+As páginas HTML da aplicação carregam `styles/high-contrast.css` diretamente e
+`scripts/acessibilidade.js` aplica as preferências salvas. O controle de alto
+contraste está disponível na barra de acessibilidade dos portais e em um botão
+no fluxo do paciente; `Alt+C` também alterna o modo. A preferência é mantida
+entre páginas no mesmo navegador. Ao criar uma nova página, inclua a folha de
+estilo e o script de acessibilidade para habilitar o controle e os estilos.
+
 ---
 
 ## 🛠️ Tecnologias
