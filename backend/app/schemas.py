@@ -39,7 +39,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     """Estrutura aceita no cadastro de um novo usuário."""
-    senha: str
+    senha: str = Field(min_length=8)
 
 
 class UserUpdate(BaseModel):
@@ -74,6 +74,13 @@ class UserResponse(UserBase):
     id: int
     ativo: bool
     criado_em: datetime
+
+
+class AuthResponse(BaseModel):
+    """Usuário autenticado e token de acesso temporário."""
+    user: UserResponse
+    access_token: str
+    token_type: str = 'bearer'
 
 
 # ============================================================================
@@ -112,20 +119,20 @@ class ESASResponse(ESASCreate):
 
 class PainTriageCreate(BaseModel):
     """Registro de sessão de triagem conduzida pelo Chatbot Zelo."""
-    intensidade_dor: int = Field(default=8, ge=7, le=10, description="Gatilho de dor severa na ESAS")
-    caracteristica_dor: str = Field(default="somatica", description="visceral, neuropatica, somatica ou nenhuma")
-    mais_de_duas_semanas: bool = Field(default=False, description="True se dor dura mais de 2 semanas (cronica); False se aguda")
-    tipo_dor: str = Field(default="aguda", description="aguda ou cronica")
-    fez_dose_resgate: bool = Field(default=False, description="Se fez uso da dose extra/resgate")
-    medicamentos_efetivos: bool = Field(default=True, description="Se medicamentos estão sendo efetivos")
-    em_acompanhamento: bool = Field(default=True, description="Se já está em acompanhamento com a equipe")
-    tem_sintoma_acompanhante: bool = Field(default=False)
-    sintoma_acompanhante_desc: str | None = None
-    tem_fator_piora: bool = Field(default=False)
-    fator_piora_desc: str | None = None
-    alerta_sinais_alarme_exibido: bool = Field(default=True)
-    medidas_nao_farmacologicas_exibidas: bool = Field(default=True)
-    solicitou_agendamento: bool = Field(default=False)
+    intensidade_dor: int = Field(ge=7, le=10, description="Gatilho de dor severa na ESAS")
+    caracteristica_dor: str = Field(description="visceral, neuropatica, somatica ou nenhuma")
+    mais_de_duas_semanas: bool = Field(description="True se dor dura mais de 2 semanas (cronica); False se aguda")
+    tipo_dor: str = Field(description="aguda ou cronica")
+    fez_dose_resgate: bool = Field(description="Se fez uso da dose extra/resgate")
+    medicamentos_efetivos: bool = Field(description="Se medicamentos estão sendo efetivos")
+    em_acompanhamento: bool = Field(description="Se já está em acompanhamento com a equipe")
+    tem_sintoma_acompanhante: bool
+    sintoma_acompanhante_desc: str | None
+    tem_fator_piora: bool
+    fator_piora_desc: str | None
+    alerta_sinais_alarme_exibido: bool
+    medidas_nao_farmacologicas_exibidas: bool
+    solicitou_agendamento: bool
 
 
 class PainTriageResponse(PainTriageCreate):
@@ -254,6 +261,13 @@ class MedicationBase(BaseModel):
 
 class MedicationCreate(MedicationBase):
     pass
+
+
+class RescueDoseCreate(BaseModel):
+    """Registro autodeclarado pelo paciente de uma dose de resgate já tomada."""
+    nome: str = Field(min_length=1, max_length=160)
+    horario: str = Field(min_length=1, max_length=20)
+    observacao: str | None = Field(default=None, max_length=2000)
 
 
 class MedicationUpdate(BaseModel):

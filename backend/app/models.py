@@ -14,6 +14,7 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+from app.time_utils import utc_now
 
 
 class User(Base):
@@ -27,9 +28,9 @@ class User(Base):
     senha_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     perfil: Mapped[str] = mapped_column(String(30), default='paciente', nullable=False)  # paciente, cuidador, assistencial
     ativo: Mapped[bool] = mapped_column(Boolean, default=True)
-    criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
 
-    # Dados clínicos e sociodemográficos (baseados na pesquisa com 128 prontuários no HEG)
+    # Dados clínicos e sociodemográficos (baseados na pesquisa com 128 prontuários no Equipe Médica)
     prontuario: Mapped[str | None] = mapped_column(String(50), nullable=True)
     idade: Mapped[int | None] = mapped_column(Integer, nullable=True)
     sexo: Mapped[str | None] = mapped_column(String(10), nullable=True)
@@ -66,7 +67,7 @@ class Symptom(Base):
     gravidade: Mapped[str] = mapped_column(String(20), nullable=False)
     momento: Mapped[str] = mapped_column(String(100), nullable=False)
     observacao: Mapped[str | None] = mapped_column(Text, nullable=True)
-    atualizado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    atualizado_em: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
 
     usuario: Mapped['User'] = relationship(back_populates='sintomas')
@@ -83,7 +84,7 @@ class ESASAssessment(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    data_registro: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    data_registro: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
 
     # 9 sintomas oficiais da ESAS (0 = Ausência do sintoma; 10 = Pior intensidade possível)
     dor: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
@@ -120,7 +121,7 @@ class PainTriageSession(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    data_triagem: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    data_triagem: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
 
     # Intensidade inicial (Gatilho)
     intensidade_dor: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -169,8 +170,8 @@ class ClinicalAlert(Base):
     estado: Mapped[str] = mapped_column(String(30), default='Novo')     # Novo, Em revisão, Tratado
     revisado_por: Mapped[str | None] = mapped_column(String(150), nullable=True)
     observacao_conduta: Mapped[str | None] = mapped_column(Text, nullable=True)
-    criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    atualizado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
+    atualizado_em: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now, nullable=False)
 
     usuario: Mapped['User'] = relationship(back_populates='alertas')
 
@@ -208,7 +209,7 @@ class ClinicalNote(Base):
     tipo_evolucao: Mapped[str] = mapped_column(String(50), default='Acompanhamento Domiciliar')
     conteudo: Mapped[str] = mapped_column(Text, nullable=False)
     conduta_plano: Mapped[str | None] = mapped_column(Text, nullable=True)
-    criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
 
     usuario: Mapped['User'] = relationship(back_populates='evolucoes')
 
@@ -226,7 +227,7 @@ class PainMapEntry(Base):
     foto_anexada_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
     observacao: Mapped[str | None] = mapped_column(Text, nullable=True)
     medicamento_associado: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
 
     usuario: Mapped['User'] = relationship(back_populates='locais_dor')
 

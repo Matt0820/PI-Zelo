@@ -78,7 +78,7 @@ class ChatbotZeloController {
     `;
     this.stream.appendChild(bubble);
     this.currentBotElements.push(bubble);
-    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    bubble.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     return bubble;
   }
 
@@ -89,7 +89,7 @@ class ChatbotZeloController {
       <div style="font-size: 1.05rem; line-height: 1.45;">${text}</div>
     `;
     this.stream.appendChild(bubble);
-    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    bubble.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     return bubble;
   }
 
@@ -117,6 +117,10 @@ class ChatbotZeloController {
       if (el && el.parentNode) el.parentNode.removeChild(el);
     });
     this.currentBotElements = [];
+
+    last.botBubbles.forEach(el => {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+    });
 
     // Restore answers
     this.answers = last.answersSnapshot;
@@ -157,6 +161,7 @@ class ChatbotZeloController {
 
   // PASSO 1: TRIAGEM DE SINAIS DE EMERGÊNCIA (IVC = 1,00)
   stepEmergencyTriage() {
+    this.currentBotElements = [];
     this.addZeloMessage(
       '⚠️ Antes de prosseguir, confira se está acontecendo alguma destas <strong>3 situações urgentes</strong> agora:',
       `
@@ -183,7 +188,7 @@ class ChatbotZeloController {
     `;
 
     setTimeout(() => {
-      this.controls.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      this.controls.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     }, 100);
 
     document.getElementById('btn-emerg-no').addEventListener('click', () => {
@@ -222,6 +227,7 @@ class ChatbotZeloController {
 
   // PASSO 2: CARACTERÍSTICA DA DOR (IVC 0,91 A 1,00)
   stepCharacteristics() {
+    this.currentBotElements = [];
     this.addZeloMessage('Dentre as opções abaixo, qual descreve melhor a sensação da sua dor?');
 
     this.controls.innerHTML = `
@@ -248,7 +254,7 @@ class ChatbotZeloController {
     this.attachUndoListener();
 
     setTimeout(() => {
-      this.controls.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      this.controls.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     }, 100);
 
     this.controls.querySelectorAll('.chat-option-btn').forEach(btn => {
@@ -270,6 +276,7 @@ class ChatbotZeloController {
 
   // PASSO 3: DURAÇÃO DA DOR (IVC = 0,91)
   stepDuration() {
+    this.currentBotElements = [];
     this.addZeloMessage(
       'Sua dor começou há mais de 02 semanas?',
       `<span style="font-size: 0.8rem; color: var(--zelo-text-muted); display: block; margin-top: 4px;">(Pergunta validada por juízes: IVC = 0,91)</span>`
@@ -290,6 +297,7 @@ class ChatbotZeloController {
 
   // PASSO 4: DOSE DE RESGATE (IVC = 0,90)
   stepRescueDose() {
+    this.currentBotElements = [];
     this.addZeloMessage(
       'O senhor (a) já fez uso da <strong>dose de resgate</strong> (dose extra prescrita pelo médico para dor forte) hoje?',
       `<span style="font-size: 0.8rem; color: var(--zelo-text-muted); display: block; margin-top: 4px;">(Validação por juízes especialistas: IVC = 0,90)</span>`
@@ -310,6 +318,7 @@ class ChatbotZeloController {
 
   // PASSO 5: EFICÁCIA MEDICAMENTOSA (IVC = 0,95)
   stepMedsEffective() {
+    this.currentBotElements = [];
     this.addZeloMessage(
       'Os medicamentos que o senhor (a) faz uso estão sendo efetivos na maior parte do seu dia?',
       `<span style="font-size: 0.8rem; color: var(--zelo-text-muted); display: block; margin-top: 4px;">(Validação por juízes especialistas: IVC = 0,95)</span>`
@@ -330,6 +339,7 @@ class ChatbotZeloController {
 
   // PASSO 6: MEDIDAS NÃO FARMACOLÓGICAS DE ENFERMAGEM
   stepCareDirectives() {
+    this.currentBotElements = [];
     this.addZeloMessage(
       'Enquanto a equipe médica e de enfermagem acompanha o seu caso, confira as <strong>medidas não farmacológicas</strong> recomendadas:',
       `
@@ -370,6 +380,7 @@ class ChatbotZeloController {
 
   // PASSO 8: CONCLUSÃO E INTEGRAÇÃO REATIVA COM O PRONTUÁRIO
   stepConclusion(solicitouAgendamento) {
+    this.currentBotElements = [];
     if (window.ZeloStore) {
       ZeloStore.savePainTriageSession(this.patientId, {
         intensidadeDor: this.intensidadeDor,
@@ -475,7 +486,7 @@ class ChatbotZeloController {
     this.attachUndoListener();
 
     setTimeout(() => {
-      this.controls.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      this.controls.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     }, 100);
 
     document.getElementById('btn-chat-yes').addEventListener('click', () => {

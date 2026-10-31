@@ -102,7 +102,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -523,4 +523,19 @@ body.font-xlarge .esas-num-btn {
   min-height: 54px !important;
   font-size: 1.35rem !important;
   padding: 4px !important;
+}
+
+.contrast-setting-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+#contrast-status-badge {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
