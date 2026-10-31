@@ -462,6 +462,9 @@ html.reduce-motion * {
   fill: rgba(255, 193, 7, .6) !important;
   stroke: transparent !important;
   stroke-width: 24 !important;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.06);
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
 .rating-row.rating-row-three { grid-template-columns: repeat(3, minmax(56px, 1fr)); }
