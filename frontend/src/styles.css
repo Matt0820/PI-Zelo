@@ -420,7 +420,16 @@ html.reduce-motion * {
 .body-map-heading > div:first-child { min-width: 0; }
 .body-map-heading h2 { line-height: 1.3; }
 .body-map-tabs { flex: 0 0 auto; gap: 8px; }
-.body-map-tabs .sub-nav-btn { min-height: 46px; white-space: nowrap; }
+.body-map-tabs .sub-nav-btn {
+  min-height: 46px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.2;
+}
+.body-map-tabs .sub-nav-btn .ui-icon { display: block; flex: 0 0 18px; }
 .svg-silhouette-wrapper {
   background: var(--canvas);
   border: 1.5px solid var(--border);
