@@ -1483,24 +1483,25 @@ html.theme-high-contrast [tabindex="0"]:focus-visible {
 :root[data-visual="alto-contraste"] .review-score { background: #000; color: #fff; border: 2px solid #ffff00; }
 @media(max-width:390px) { .rating-row { grid-template-columns: repeat(2, minmax(56px, 1fr)); gap: 12px; } }
 
-/* Paleta noturna: superfícies azul ardósia e acentos clínicos distintos. */
+/* Paleta noturna verde: floresta, musgo, oliva e menta em camadas. */
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) {
-  --green: #71d9b2;
-  --green-dark: #8be7c4;
-  --green-soft: #203b3b;
-  --paper: #192536;
-  --canvas: #0e1622;
-  --ink: #f3f6fb;
-  --muted: #b5c1d0;
-  --border: #38495f;
+  --green: #70d6a2;
+  --green-dark: #91e3b5;
+  --green-soft: #254333;
+  --paper: #1b2a21;
+  --canvas: #101812;
+  --ink: #f2f6f0;
+  --muted: #b4c4b6;
+  --border: #405749;
   --danger: #ff9b91;
   --danger-soft: #402831;
-  --blue: #8fc8ff;
-  --accent-blue: #8fc8ff;
-  --accent-violet: #c0a8ff;
+  --blue: #8bd6b4;
+  --accent-mint: #79ddb0;
+  --accent-sage: #a9d18c;
+  --accent-lime: #c5db82;
   --accent-amber: #f3c56b;
-  --surface-raised: #202f43;
-  --surface-sunken: #111c2b;
+  --surface-raised: #23372a;
+  --surface-sunken: #131e17;
   --shadow: 0 12px 32px rgba(0, 0, 0, .32);
   color-scheme: dark;
 }
@@ -1512,26 +1513,26 @@ html.theme-high-contrast [tabindex="0"]:focus-visible {
 
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .topbar,
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar {
-  background: #141f2e !important;
-  border-color: #34445a !important;
+  background: #15241a !important;
+  border-color: #354b3b !important;
 }
 
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item:hover,
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item:focus-visible,
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item.active {
-  background: #203a3b !important;
+  background: #244132 !important;
   color: var(--green) !important;
 }
 
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item .nav-icon {
-  background: #223247 !important;
-  color: var(--accent-blue) !important;
-  border-color: #40536c !important;
+  background: #263a2b !important;
+  color: var(--accent-sage) !important;
+  border-color: #49604a !important;
 }
 
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item.active .nav-icon {
   background: var(--green) !important;
-  color: #10211f !important;
+  color: #102017 !important;
   border-color: var(--green) !important;
 }
 
@@ -1541,46 +1542,46 @@ html.theme-high-contrast [tabindex="0"]:focus-visible {
   box-shadow: 0 5px 18px rgba(0, 0, 0, .16);
 }
 
-:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) :is(.score, .empty, .sidebar-note, .rating-group, .chat-bubble-zelo) {
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) :is(.score, .empty, .sidebar-note, .rating-group) {
   background: var(--surface-raised) !important;
-  border-color: #40536c !important;
+  border-color: #49604d !important;
 }
 
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) :is(input, select, textarea, .role-switch, .remedy-info p, .record-note, .chat-option-btn, .svg-silhouette-wrapper) {
   background-color: var(--surface-sunken) !important;
-  border-color: #40536c !important;
+  border-color: #49604d !important;
 }
 
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric {
   border-top: 2px solid var(--metric-accent, var(--green)) !important;
 }
-:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 1) { --metric-accent: var(--accent-blue); }
-:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 2) { --metric-accent: var(--accent-violet); }
-:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 3) { --metric-accent: var(--accent-amber); }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 1) { --metric-accent: var(--accent-mint); }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 2) { --metric-accent: var(--accent-sage); }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 3) { --metric-accent: var(--accent-lime); }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n) { --metric-accent: var(--green); }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric strong,
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric-icon { color: var(--metric-accent, var(--green)) !important; }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric.danger { --metric-accent: var(--danger); }
 
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .patient-avatar {
-  background: #203a3b !important;
-  color: var(--green) !important;
+  background: #294534 !important;
+  color: var(--accent-mint) !important;
 }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .patient-card:hover {
-  border-color: var(--accent-blue) !important;
-  box-shadow: 0 0 0 1px rgba(143, 200, 255, .28), var(--shadow);
+  border-color: var(--accent-sage) !important;
+  box-shadow: 0 0 0 1px rgba(169, 209, 140, .28), var(--shadow);
 }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .button-secondary:hover,
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .chat-option-btn:hover {
-  background: #203a3b !important;
+  background: #254333 !important;
 }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .rating-row button,
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .review-score {
-  background: #172335 !important;
-  border-color: #40536c !important;
+  background: #18261d !important;
+  border-color: #49604d !important;
 }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .wizard-progress-track {
-  background: #29384b !important;
+  background: #2c4031 !important;
 }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .alert-card {
   border-left-color: var(--accent-amber) !important;
@@ -1592,11 +1593,11 @@ html.theme-high-contrast [tabindex="0"]:focus-visible {
   border-color: #80662d !important;
 }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .notice-info {
-  background: #1c3550 !important;
-  color: var(--accent-blue) !important;
-  border-color: #385e86 !important;
+  background: #1c3b32 !important;
+  color: #9ee2c0 !important;
+  border-color: #3d7458 !important;
 }
 :is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .chat-bubble-zelo {
-  background: #242a45 !important;
-  border-color: #454a70 !important;
+  background: #2a3b30 !important;
+  border-color: #53674f !important;
 }
