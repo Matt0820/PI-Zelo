@@ -438,19 +438,17 @@ html.reduce-motion * {
   max-height: 560px;
   display: block;
 }
-.body-contour { fill: none; stroke: var(--muted); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
-.anatomy-details { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: .62; }
 .svg-body-part {
-  fill: #e8e3dc;
-  stroke: #736b63;
-  stroke-width: 1.6;
+  fill: rgba(0, 0, 0, 0);
+  stroke: transparent;
+  stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
   cursor: pointer;
   transition: all .15s ease;
 }
 .svg-body-part:hover {
-  fill: #d5eee2;
+  fill: rgba(104, 196, 153, .2);
   stroke: var(--green);
   stroke-width: 2.5;
 }
@@ -460,9 +458,9 @@ html.reduce-motion * {
   stroke: var(--green);
 }
 .svg-body-part.selected {
-  fill: #ffd54f !important;
-  stroke: #b45309 !important;
-  stroke-width: 3 !important;
+  fill: rgba(255, 213, 79, .4) !important;
+  stroke: #d89e12 !important;
+  stroke-width: 2.5 !important;
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
 .rating-row.rating-row-three { grid-template-columns: repeat(3, minmax(56px, 1fr)); }
@@ -480,18 +478,17 @@ html.theme-high-contrast .svg-silhouette-wrapper {
   border-color: #ffffff;
 }
 html.theme-high-contrast .svg-body-part {
-  fill: #181818;
-  stroke: #ffffff;
-  stroke-width: 2;
+  fill: rgba(0, 0, 0, 0);
+  stroke: transparent;
 }
 html.theme-high-contrast .svg-body-part:hover {
-  fill: #333300;
+  fill: rgba(255, 255, 0, .25);
   stroke: #ffff00;
 }
 html.theme-high-contrast .svg-body-part.selected {
-  fill: #ffff00 !important;
-  stroke: #ffffff !important;
-  stroke-width: 3.5 !important;
+  fill: rgba(255, 255, 0, .58) !important;
+  stroke: #ffff00 !important;
+  stroke-width: 2.5 !important;
 }
 
 .occurrence-pills-row {
@@ -831,25 +828,18 @@ html.theme-dark .svg-silhouette-wrapper {
   background: #15201a !important;
   border-color: var(--border) !important;
 }
-html.theme-escuro .svg-body-part,
-:root[data-visual="escuro"] .svg-body-part,
-html.theme-dark .svg-body-part {
-  fill: #24352c;
-  stroke: #68c499;
-  stroke-width: 1.6;
-}
 html.theme-escuro .svg-body-part:hover,
 :root[data-visual="escuro"] .svg-body-part:hover,
 html.theme-dark .svg-body-part:hover {
-  fill: #325243;
+  fill: rgba(104, 196, 153, .24);
   stroke: #89d4b0;
   stroke-width: 2.5;
 }
 html.theme-escuro .svg-body-part.selected,
 :root[data-visual="escuro"] .svg-body-part.selected,
 html.theme-dark .svg-body-part.selected {
-  fill: #e6b800 !important;
-  stroke: #ffffff !important;
+  fill: rgba(230, 184, 0, .4) !important;
+  stroke: #f2c94c !important;
   stroke-width: 3 !important;
 }
 
