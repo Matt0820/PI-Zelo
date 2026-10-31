@@ -445,23 +445,22 @@ html.reduce-motion * {
   stroke-linejoin: round;
   stroke-linecap: round;
   cursor: pointer;
-  transition: all .15s ease;
+  pointer-events: all;
+  transition: fill .15s ease, stroke .15s ease;
 }
-.svg-body-part:hover {
-  fill: rgba(104, 196, 153, .2);
-  stroke: var(--green);
-  stroke-width: 7;
+.svg-body-part:hover:not(.selected) {
+  fill: rgba(104, 196, 153, .1);
 }
 .svg-body-part:focus-visible {
-  outline: 3px solid var(--green);
-  outline-offset: 2px;
+  outline: none;
+  fill: rgba(104, 196, 153, .24);
   stroke: var(--green);
-  stroke-width: 7;
+  stroke-width: 3;
 }
 .svg-body-part.selected {
   fill: rgba(255, 213, 79, .4) !important;
   stroke: #d89e12 !important;
-  stroke-width: 7.5 !important;
+  stroke-width: 4 !important;
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
 .rating-row.rating-row-three { grid-template-columns: repeat(3, minmax(56px, 1fr)); }
@@ -484,12 +483,17 @@ html.theme-high-contrast .svg-body-part {
 }
 html.theme-high-contrast .svg-body-part:hover {
   fill: rgba(255, 255, 0, .25);
-  stroke: #ffff00;
+  stroke: transparent;
 }
 html.theme-high-contrast .svg-body-part.selected {
   fill: rgba(255, 255, 0, .58) !important;
   stroke: #ffff00 !important;
   stroke-width: 2.5 !important;
+}
+html.theme-high-contrast .svg-body-part:focus-visible {
+  fill: rgba(255, 255, 0, .25);
+  stroke: #ffff00;
+  stroke-width: 3;
 }
 
 .occurrence-pills-row {
@@ -832,16 +836,21 @@ html.theme-dark .svg-silhouette-wrapper {
 html.theme-escuro .svg-body-part:hover,
 :root[data-visual="escuro"] .svg-body-part:hover,
 html.theme-dark .svg-body-part:hover {
-  fill: rgba(104, 196, 153, .24);
-  stroke: #89d4b0;
-  stroke-width: 7;
+  fill: rgba(104, 196, 153, .12);
+  stroke: transparent;
 }
 html.theme-escuro .svg-body-part.selected,
 :root[data-visual="escuro"] .svg-body-part.selected,
 html.theme-dark .svg-body-part.selected {
   fill: rgba(230, 184, 0, .4) !important;
   stroke: #f2c94c !important;
-  stroke-width: 7.5 !important;
+  stroke-width: 4 !important;
+}
+html.theme-escuro .svg-body-part:focus-visible,
+:root[data-visual="escuro"] .svg-body-part:focus-visible,
+html.theme-dark .svg-body-part:focus-visible {
+  stroke: #89d4b0;
+  stroke-width: 3;
 }
 
 /* Opções de Emergência no Chatbot no Modo Escuro */
