@@ -3,6 +3,7 @@ import { Usuario, LocalDor, api } from '../../api';
 import { Button } from '../../components/Button';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
+import { Icon } from '../../components/ui';
 import {
   ANATOMICAL_REGIONS,
   OCCURRENCE_TYPES,
@@ -109,7 +110,7 @@ export function PainBodyMap({
                 onClick={() => setView('frente')}
                 aria-pressed={view === 'frente'}
               >
-                🧍 Frente
+              <Icon name="accessibility"/> Frente
               </button>
               <button
                 type="button"
@@ -431,7 +432,7 @@ export function PainBodyMap({
               Região Marcada no Mapa:
             </span>
             <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--green)', marginTop: '2px' }}>
-              📍 {selectedRegion.name} ({selectedRegion.view === 'frente' ? 'Frente' : 'Costas'})
+              <Icon name="map-pin"/> {selectedRegion.name} ({selectedRegion.view === 'frente' ? 'Frente' : 'Costas'})
             </div>
             <small className="muted">{selectedRegion.description}</small>
           </div>
@@ -608,7 +609,7 @@ export function PainBodyMap({
 
                 {item.observacao && (
                   <p style={{ margin: '10px 0 0', fontSize: '14.5px', color: 'var(--ink)', lineHeight: 1.5, background: 'var(--canvas)', padding: '8px 12px', borderRadius: '8px' }}>
-                    📋 <b>Observação clínica:</b> {item.observacao}
+                    <><Icon name="clipboard"/> <b>Observação clínica:</b> {item.observacao}</>
                   </p>
                 )}
               </article>

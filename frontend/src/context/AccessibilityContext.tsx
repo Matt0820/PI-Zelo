@@ -158,6 +158,23 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     salvarArmazenamento(STORAGE_KEYS.REDUCE_MOTION, reduzirMovimento);
   }, [reduzirMovimento]);
 
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      const target = event.target;
+      if (target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select, [contenteditable="true"]'))) return;
+      if (event.key.toLowerCase() === 'a') {
+        event.preventDefault();
+        setFontStepState(current => ((current + 1) % 3) as FontStep);
+      } else if (event.key.toLowerCase() === 'c') {
+        event.preventDefault();
+        setModoVisualState(current => current === 'alto-contraste' ? 'padrao' : 'alto-contraste');
+      }
+    };
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, []);
+
   const setModoVisual = (modo: ModoVisual) => setModoVisualState(modo);
   const setFontStep = (step: FontStep) => setFontStepState(step);
   const setReduzirMovimento = (reduzir: boolean) => setReduzirMovimentoState(reduzir);

@@ -4,6 +4,7 @@ import { Button } from '../../components/Button';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
 import { DataCell } from '../../components/DataCell';
+import { Icon } from '../../components/ui';
 import { TeamModalType } from './TeamModal';
 
 export interface PatientRecordProps {
@@ -121,7 +122,7 @@ export function PatientRecord({
           {last ? (
             <>
               <p className="muted" style={{ margin: '4px 0 12px' }}>
-                📅 {dateFmt(last.data_registro)}
+                <Icon name="clock"/> {dateFmt(last.data_registro)}
               </p>
               <div className="score-grid">
                 {symptomNames.map(s => (
@@ -157,7 +158,7 @@ export function PatientRecord({
           {details.dor.length ? (
             details.dor.map(d => (
               <div className="history-item" key={d.id}>
-                <b>📍 {d.regiao_anatomica} · {d.tipo_ocorrencia}</b>
+                <b><Icon name="map-pin"/> {d.regiao_anatomica} · {d.tipo_ocorrencia}</b>
                 <span>Intensidade {d.intensidade}/10 · {dateFmt(d.criado_em)}</span>
                 {d.observacao && <p>{d.observacao}</p>}
                 {d.medicamento_associado && <small>Medicação associada: {d.medicamento_associado}</small>}
@@ -179,7 +180,7 @@ export function PatientRecord({
                 <p>
                   Resgate tomado: {t.fez_dose_resgate ? 'Sim' : 'Não'} · Remédios efetivos:{' '}
                   {t.medicamentos_efetivos ? 'Sim' : 'Não'}
-                  {t.solicitou_agendamento ? ' · ⚠️ Solicitou contato prioritário' : ''}
+                  {t.solicitou_agendamento ? ' · Solicitou contato prioritário' : ''}
                 </p>
               </div>
             ))
@@ -194,7 +195,7 @@ export function PatientRecord({
           {details.orientacoes.length ? (
             details.orientacoes.slice(0, 5).map(o => (
               <div className="history-item" key={o.id}>
-                <b>🩺 {o.titulo}</b>
+                <b><Icon name="stethoscope"/> {o.titulo}</b>
                 <span>{o.categoria} · Prioridade {o.prioridade} · {dateFmt(o.atualizada_em)}</span>
                 <p>{o.descricao}</p>
               </div>
@@ -220,13 +221,13 @@ export function PatientRecord({
             details.medicacoes.map(m => (
               <div className="history-item" key={m.id} style={{ padding: '10px 0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <b>💊 {m.nome} · {m.dose}</b>
+                  <b><Icon name="pill"/> {m.nome} · {m.dose}</b>
                   <span className="pill">{m.horario} ({m.frequencia})</span>
                 </div>
-                {m.observacao && <p style={{ margin: '4px 0 0', fontSize: '13px' }}>📋 Orientações: {m.observacao}</p>}
+                {m.observacao && <p style={{ margin: '4px 0 0', fontSize: '13px' }}><Icon name="clipboard"/> Orientações: {m.observacao}</p>}
                 {m.eh_dose_resgate && (
                   <small style={{ color: 'var(--danger)', fontWeight: 700 }}>
-                    ⚡ Dose de resgate autorizada
+                    <><Icon name="bolt"/> Dose de resgate autorizada</>
                   </small>
                 )}
               </div>
@@ -259,7 +260,7 @@ export function PatientRecord({
           variant="quiet"
           onClick={() => refresh().then(() => notice('success', 'Prontuário atualizado com o servidor.'))}
         >
-          🔄 Atualizar dados do prontuário
+          <><Icon name="clock"/> Atualizar dados do prontuário</>
         </Button>
       </div>
     </section>

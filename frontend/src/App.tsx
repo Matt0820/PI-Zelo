@@ -12,6 +12,7 @@ import {
   Usuario
 } from './api';
 import { NoticeFeedback } from './components/NoticeFeedback';
+import { Icon, type IconName } from './components/ui';
 import { useAccessibility, ModoVisual } from './context/AccessibilityContext';
 import { Login, NoticeState } from './features/auth';
 import { PatientArea, PatientPage } from './features/patient';
@@ -28,6 +29,16 @@ export default function App(): React.JSX.Element {
       return null;
     }
   });
+
+  useEffect(() => {
+    const handleExpiredSession = () => {
+      try { localStorage.removeItem(sessionKey); } catch { /* Sessão já expirou. */ }
+      setUsuario(null);
+      setSelecionado(null);
+    };
+    window.addEventListener('zelo:auth-expired', handleExpiredSession);
+    return () => window.removeEventListener('zelo:auth-expired', handleExpiredSession);
+  }, []);
 
   const [notice, setNotice] = useState<NoticeState | null>(null);
   const [busy, setBusy] = useState(false);
@@ -215,7 +226,7 @@ export default function App(): React.JSX.Element {
                 {
                   id: 'painel',
                   name: 'Visão geral',
-                  icon: '⌂',
+                  icon: 'home' as IconName,
                   action: () => {
                     setSelecionado(null);
                     setEquipePagina('painel');
@@ -224,7 +235,7 @@ export default function App(): React.JSX.Element {
                 {
                   id: 'pacientes',
                   name: 'Pacientes',
-                  icon: '◉',
+                  icon: 'users' as IconName,
                   action: () => {
                     setSelecionado(null);
                     setEquipePagina('pacientes');
@@ -233,7 +244,7 @@ export default function App(): React.JSX.Element {
                 {
                   id: 'alertas',
                   name: 'Alertas clínicos',
-                  icon: '!',
+                  icon: 'bell' as IconName,
                   action: () => {
                     setSelecionado(null);
                     setEquipePagina('alertas');
@@ -242,7 +253,7 @@ export default function App(): React.JSX.Element {
                 {
                   id: 'acessibilidade',
                   name: 'Acessibilidade',
-                  icon: '♿',
+                  icon: 'accessibility' as IconName,
                   action: () => {
                     setSelecionado(null);
                     setEquipePagina('acessibilidade');
@@ -250,13 +261,13 @@ export default function App(): React.JSX.Element {
                 }
               ]
             : [
-                { id: 'inicio', name: 'Início', icon: '⌂', action: () => setPaginaPaciente('inicio') },
-                { id: 'esas', name: 'Avaliação ESAS', icon: '◷', action: () => setPaginaPaciente('esas') },
-                { id: 'chatbot', name: 'Chatbot Zelo (Apoio)', icon: 'Z', action: () => setPaginaPaciente('chatbot') },
-                { id: 'medicacoes', name: 'Medicações & Receitas', icon: 'Rx', action: () => setPaginaPaciente('medicacoes') },
-                { id: 'mapa', name: 'Mapa da dor', icon: '◎', action: () => setPaginaPaciente('mapa') },
-                { id: 'orientacoes', name: 'Avisos da equipe', icon: 'i', action: () => setPaginaPaciente('orientacoes') },
-                { id: 'acessibilidade', name: 'Acessibilidade', icon: '♿', action: () => setPaginaPaciente('acessibilidade') }
+                { id: 'inicio', name: 'Início', icon: 'home' as IconName, action: () => setPaginaPaciente('inicio') },
+                { id: 'esas', name: 'Avaliação ESAS', icon: 'clipboard' as IconName, action: () => setPaginaPaciente('esas') },
+                { id: 'chatbot', name: 'Chatbot Zelo (Apoio)', icon: 'chat' as IconName, action: () => setPaginaPaciente('chatbot') },
+                { id: 'medicacoes', name: 'Medicações & Receitas', icon: 'pill' as IconName, action: () => setPaginaPaciente('medicacoes') },
+                { id: 'mapa', name: 'Mapa da dor', icon: 'map-pin' as IconName, action: () => setPaginaPaciente('mapa') },
+                { id: 'orientacoes', name: 'Avisos da equipe', icon: 'bell' as IconName, action: () => setPaginaPaciente('orientacoes') },
+                { id: 'acessibilidade', name: 'Acessibilidade', icon: 'accessibility' as IconName, action: () => setPaginaPaciente('acessibilidade') }
               ]
           ).map(item => {
             const isActive = isTeam ? equipePagina === item.id : paginaPaciente === item.id;
@@ -270,7 +281,7 @@ export default function App(): React.JSX.Element {
                   setMenuAberto(false);
                 }}
               >
-                <span className="nav-icon" aria-hidden="true">{item.icon}</span>
+                <span className="nav-icon" aria-hidden="true"><Icon name={item.icon} size={18}/></span>
                 {item.name}
               </button>
             );
@@ -298,7 +309,7 @@ export default function App(): React.JSX.Element {
           </label>
 
           <button className="nav-item nav-logout" onClick={sair}>
-            <span className="nav-icon" aria-hidden="true">↪</span>
+            <span className="nav-icon" aria-hidden="true"><Icon name="logout" size={18}/></span>
             Sair da conta
           </button>
         </aside>

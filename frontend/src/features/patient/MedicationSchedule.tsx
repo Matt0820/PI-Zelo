@@ -5,6 +5,7 @@ import { ModalDialog } from '../../components/ModalDialog';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
 import { DataCell } from '../../components/DataCell';
+import { Icon } from '../../components/ui';
 
 export interface MedicationScheduleProps {
   usuario: Usuario;
@@ -119,7 +120,7 @@ export function MedicationSchedule({
           className={`sub-nav-btn ${medAba === 'hoje' ? 'active' : ''}`}
           onClick={() => setMedAba('hoje')}
         >
-          ⏰ Horários de Hoje & Lembretes ({medicacoes.length})
+          <Icon name="clock"/> Horários de Hoje & Lembretes ({medicacoes.length})
         </button>
         <button
           type="button"
@@ -128,7 +129,7 @@ export function MedicationSchedule({
           className={`sub-nav-btn ${medAba === 'receitas' ? 'active' : ''}`}
           onClick={() => setMedAba('receitas')}
         >
-          📋 Receitas Prescritas & Orientações de Uso
+          <Icon name="clipboard"/> Receitas Prescritas & Orientações de Uso
         </button>
       </div>
 
@@ -149,7 +150,7 @@ export function MedicationSchedule({
               Toque em <b>Confirmar que já tomei</b> para registrar a ingestão no prontuário diário.
             </p>
             <Button variant="secondary" onClick={() => setModalResgate(true)}>
-              ⚡ Tomou remédio de resgate fora da hora?
+              <Icon name="bolt"/> Tomou remédio de resgate fora da hora?
             </Button>
           </div>
 
@@ -164,12 +165,12 @@ export function MedicationSchedule({
                 <div className="remedy-info">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                     <span className="remedy-time-badge" style={{ fontSize: '16px', padding: '4px 10px' }}>
-                      ⏰ {m.horario || 'Horário flexível'}
+                      <Icon name="clock"/> {m.horario || 'Horário flexível'}
                     </span>
                     <b>{m.nome}</b> · <span style={{ fontWeight: 700 }}>{m.dose}</span>
                     {m.eh_dose_resgate && (
                       <span className="pill" style={{ background: 'var(--danger-soft)', color: 'var(--danger)' }}>
-                        ⚡ Resgate
+                        <><Icon name="bolt"/> Resgate</>
                       </span>
                     )}
                     {m.status === 'tomada' ? (
@@ -178,7 +179,7 @@ export function MedicationSchedule({
                       </span>
                     ) : (
                       <span className="pill pill-warning">
-                        ⏳ Pendente
+                        Pendente
                       </span>
                     )}
                   </div>
@@ -190,7 +191,7 @@ export function MedicationSchedule({
 
                   {m.observacao && (
                     <p>
-                      📋 <b>Orientações de uso:</b> {m.observacao}
+                      <><Icon name="clipboard"/> <b>Orientações de uso:</b> {m.observacao}</>
                     </p>
                   )}
                 </div>
@@ -240,7 +241,7 @@ export function MedicationSchedule({
               <article className="record-card" key={m.id} style={{ marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
                   <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--green)' }}>
-                    💊 {m.nome} · {m.dose}
+                    <><Icon name="pill"/> {m.nome} · {m.dose}</>
                   </h3>
                   <span className="pill">{m.vigencia || 'Receita ativa'}</span>
                 </div>

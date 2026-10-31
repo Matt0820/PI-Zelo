@@ -3,6 +3,7 @@ import { Usuario, api } from '../../api';
 import { Button } from '../../components/Button';
 import { ModalDialog } from '../../components/ModalDialog';
 import { NoticeFeedback } from '../../components/NoticeFeedback';
+import { Icon } from '../../components/ui';
 
 export type TeamModalType = 'paciente' | 'orientacao' | 'diagnostico' | 'agendamento' | 'medicacao';
 
@@ -472,7 +473,7 @@ export function TeamModal({
                   style={{ width: '20px', height: '20px' }}
                 />
                 <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>
-                  ⚡ É Dose de Resgate (Crise de Dor)
+                  <><Icon name="bolt"/> É Dose de Resgate (Crise de Dor)</>
                 </span>
               </label>
             </div>

@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { Icon } from './ui';
 
 export interface EmptyStateProps {
   title: string;
@@ -10,7 +11,7 @@ export interface EmptyStateProps {
 export function EmptyState({
   title,
   text,
-  icon = '📋',
+  icon = <Icon name="clipboard" size={24} />,
   action
 }: EmptyStateProps): React.JSX.Element {
   return (

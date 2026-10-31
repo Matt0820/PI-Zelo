@@ -429,6 +429,18 @@ export function AccessibilityPage(): React.JSX.Element {
               Fecha qualquer modal aberto (prescrição, dose de resgate ou orientações).
             </p>
           </div>
+          <div style={{ padding: '14px 16px', background: 'var(--canvas)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+            <strong style={{ color: 'var(--green)', fontSize: '15px' }}>Alt + A</strong>
+            <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'var(--ink)' }}>
+              Alterna entre os três tamanhos de texto disponíveis.
+            </p>
+          </div>
+          <div style={{ padding: '14px 16px', background: 'var(--canvas)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+            <strong style={{ color: 'var(--green)', fontSize: '15px' }}>Alt + C</strong>
+            <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'var(--ink)' }}>
+              Alterna o modo de alto contraste preto e amarelo.
+            </p>
+          </div>
         </div>
       </article>
     </section>

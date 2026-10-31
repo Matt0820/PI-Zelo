@@ -1448,3 +1448,14 @@ html.theme-high-contrast [tabindex="0"]:focus-visible {
   outline: 3px solid #ffff00 !important;
   outline-offset: 3px !important;
 }
+
+/* Integração do wizard acessível e dos alvos táteis do projeto A. */
+.quick-link { min-height: 80px; }
+.rating-row { display: grid; grid-template-columns: repeat(4, minmax(56px, 1fr)); gap: 12px; }
+.rating-row button { width: 100%; min-height: 56px; }
+.review-score { min-height: 76px; padding: 12px; text-align: left; border: 1px solid var(--border); cursor: pointer; color: var(--ink); font: inherit; }
+.review-score:hover, .review-score:focus-visible { border-color: var(--green); outline: 2px solid var(--green); outline-offset: 2px; }
+.review-score small { color: var(--green); font-weight: 700; }
+:root[data-visual="escuro"] .review-score { background: #26332d; color: var(--ink); border-color: var(--border); }
+:root[data-visual="alto-contraste"] .review-score { background: #000; color: #fff; border: 2px solid #ffff00; }
+@media(max-width:390px) { .rating-row { grid-template-columns: repeat(2, minmax(56px, 1fr)); gap: 12px; } }

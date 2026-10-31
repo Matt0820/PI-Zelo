@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon, type IconName } from './ui';
 
 export interface NoticeFeedbackProps {
   kind: 'success' | 'error' | 'warning' | 'info';
@@ -11,12 +12,13 @@ export function NoticeFeedback({
   message,
   onDismiss
 }: NoticeFeedbackProps): React.JSX.Element {
-  const icon = {
-    success: '✓',
-    error: '⚠️',
-    warning: '⚡',
-    info: 'ℹ'
-  }[kind];
+  const icons: Record<NoticeFeedbackProps['kind'], IconName> = {
+    success: 'check',
+    error: 'alert-triangle',
+    warning: 'bolt',
+    info: 'info'
+  };
+  const icon = icons[kind];
 
   const role = kind === 'error' ? 'alert' : 'status';
 
@@ -27,7 +29,7 @@ export function NoticeFeedback({
       aria-live="polite"
     >
       <div className="notice-content">
-        <span className="notice-icon" aria-hidden="true">{icon}</span>
+        <span className="notice-icon" aria-hidden="true"><Icon name={icon} size={18}/></span>
         <span className="notice-text">{message}</span>
       </div>
       {onDismiss && (

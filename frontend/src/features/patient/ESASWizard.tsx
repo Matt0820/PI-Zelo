@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Usuario, ESAS, api } from '../../api';
 import { Button } from '../../components/Button';
 import { PageHeading } from '../../components/PageHeading';
@@ -24,7 +24,6 @@ export const ESAS_SYMPTOMS: Array<{
     | 'apetite'
     | 'mal_estar'
     | 'falta_de_ar'
-    | 'constipacao'
   >;
   label: string;
   question: string;
@@ -83,12 +82,6 @@ export const ESAS_SYMPTOMS: Array<{
     label: 'Falta de Ar / Respiração',
     question: 'Está sentindo canseira no peito ou dificuldade para respirar?',
     hint: '0 significa respiração confortável e 10 falta de ar severa.'
-  },
-  {
-    key: 'constipacao',
-    label: 'Constipação / Intestino Preso',
-    question: 'Qual a dificuldade para evacuar ou sensação de intestino preso?',
-    hint: '0 significa intestino funcionando normalmente e 10 prisão de ventre severa.'
   }
 ];
 
@@ -100,18 +93,61 @@ export function ESASWizard({
   onConcluirComGrave,
   onConcluirLeve
 }: ESASWizardProps): React.JSX.Element {
-  const [step, setStep] = useState(0);
-  const [scores, setScores] = useState<Record<string, number | null>>(() =>
-    Object.fromEntries(ESAS_SYMPTOMS.map(s => [s.key, null]))
-  );
+  const draftKey = `@zelo/web/esas-draft/${usuario.id}`;
+  const readDraft = () => {
+    const empty: Record<string, number | null> = Object.fromEntries(ESAS_SYMPTOMS.map(s => [s.key, null]));
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (!raw) return { step: 0, scores: empty };
+      const draft = JSON.parse(raw) as { step?: unknown; scores?: Record<string, unknown> };
+      const restored = { ...empty };
+      for (const symptom of ESAS_SYMPTOMS) {
+        const value = draft.scores?.[symptom.key];
+        if (value === null || (typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 10)) {
+          restored[symptom.key] = value as number | null;
+        }
+      }
+      const step = typeof draft.step === 'number' && Number.isInteger(draft.step)
+        ? Math.max(0, Math.min(ESAS_SYMPTOMS.length, draft.step))
+        : 0;
+      return { step, scores: restored };
+    } catch {
+      return { step: 0, scores: empty };
+    }
+  };
+  const [initialDraft] = useState(readDraft);
+  const [step, setStep] = useState(initialDraft.step);
+  const [scores, setScores] = useState<Record<string, number | null>>(initialDraft.scores);
   const [loading, setLoading] = useState(false);
 
-  const currentSymptom = ESAS_SYMPTOMS[step];
+  const isReview = step === ESAS_SYMPTOMS.length;
+  const currentSymptom = ESAS_SYMPTOMS[Math.min(step, ESAS_SYMPTOMS.length - 1)];
   const currentScore = scores[currentSymptom.key];
+
+  useEffect(() => {
+    const hasAnswers = Object.values(scores).some(value => value !== null);
+    try {
+      if (hasAnswers) localStorage.setItem(draftKey, JSON.stringify({ step, scores }));
+      else localStorage.removeItem(draftKey);
+    } catch {
+      // Mantém o formulário utilizável se o navegador bloquear o armazenamento.
+    }
+  }, [draftKey, step, scores]);
+
+  useEffect(() => {
+    const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
+      if (Object.values(scores).some(value => value !== null)) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', warnBeforeLeaving);
+    return () => window.removeEventListener('beforeunload', warnBeforeLeaving);
+  }, [scores]);
 
   async function enviarESAS() {
     if (ESAS_SYMPTOMS.some(s => scores[s.key] === null)) {
-      notice('error', 'Por favor, responda a todos os 10 sintomas antes de enviar.');
+      notice('error', 'Por favor, responda a todos os 9 sintomas antes de enviar.');
       return;
     }
 
@@ -120,27 +156,28 @@ export function ESASWizard({
       const scoresNumericos = Object.fromEntries(
         Object.entries(scores).map(([k, v]) => [k, Number(v) || 0])
       );
-      const maxScore = Math.max(...Object.values(scoresNumericos));
-      const temGrave = maxScore >= 7;
-      const dorScore = Number(scores.dor) || maxScore;
+      const dorScore = Number(scores.dor) || 0;
+      const temGrave = dorScore >= 7;
 
       await api.registrarESAS(usuario.id, {
         ...scoresNumericos,
         observacao: temGrave ? 'Gatilho de intensidade severa acionado no domicílio' : ''
       });
 
-      await refresh();
+      try { localStorage.removeItem(draftKey); } catch { /* Avaliação já enviada. */ }
       setScores(Object.fromEntries(ESAS_SYMPTOMS.map(s => [s.key, null])));
       setStep(0);
+      let refreshFailed = false;
+      try { await refresh(); } catch { refreshFailed = true; }
 
       if (temGrave) {
         notice(
           'success',
-          `Avaliação enviada. Como você indicou nota alta (${dorScore}/10), abrimos o Chatbot Zelo para direcionar seu alívio imediato.`
+          `Avaliação enviada. Como você indicou dor intensa (${dorScore}/10), abrimos o Chatbot Zelo para orientar o próximo passo.${refreshFailed ? ' A lista exibida pode demorar para atualizar.' : ''}`
         );
         onConcluirComGrave(dorScore);
       } else {
-        notice('success', 'Avaliação ESAS enviada com sucesso para a equipe médica.');
+        notice('success', `Avaliação ESAS enviada com sucesso para a equipe médica.${refreshFailed ? ' A lista exibida pode demorar para atualizar.' : ''}`);
         onConcluirLeve();
       }
     } catch (e) {
@@ -155,7 +192,7 @@ export function ESASWizard({
       <PageHeading
         kicker="ESCALA EDMONTON DE SINTOMAS (ESAS)"
         title="Avaliação Diária de Sintomas"
-        description="Escolha uma nota de 0 a 10 para cada um dos 10 sintomas. Notas 7 ou mais acionam o direcionamento imediato do Chatbot Zelo para alívio no domicílio."
+        description="Escolha uma nota de 0 a 10 para cada um dos 9 sintomas. Nota 7 ou mais em Dor inicia a triagem do Chatbot Zelo."
       />
 
       <div className="wizard-card">
@@ -163,40 +200,43 @@ export function ESASWizard({
         <div className="wizard-progress">
           <div className="wizard-progress-header">
             <span>
-              Sintoma {step + 1} de {ESAS_SYMPTOMS.length} · <b>{currentSymptom.label}</b>
+              {isReview
+                ? `Revisão final · ${ESAS_SYMPTOMS.length} sintomas`
+                : <>Sintoma {step + 1} de {ESAS_SYMPTOMS.length} · <b>{currentSymptom.label}</b></>}
             </span>
             <span style={{ fontSize: '13px' }}>
-              {Math.round(((step + 1) / ESAS_SYMPTOMS.length) * 100)}% concluído
+              {Math.round((Math.min(step + 1, ESAS_SYMPTOMS.length) / ESAS_SYMPTOMS.length) * 100)}% concluído
             </span>
           </div>
           <div
             className="wizard-progress-track"
             role="progressbar"
-            aria-valuenow={step + 1}
-            aria-valuemin={1}
+            aria-valuenow={Math.min(step + 1, ESAS_SYMPTOMS.length)}
+            aria-valuemin={0}
             aria-valuemax={ESAS_SYMPTOMS.length}
-            aria-label={`Progresso da avaliação: sintoma ${step + 1} de ${ESAS_SYMPTOMS.length}`}
+            aria-label={isReview ? 'Revisão final da avaliação' : `Progresso da avaliação: sintoma ${step + 1} de ${ESAS_SYMPTOMS.length}`}
           >
-            <i style={{ width: `${((step + 1) / ESAS_SYMPTOMS.length) * 100}%` }} />
+            <i style={{ width: `${(Math.min(step + 1, ESAS_SYMPTOMS.length) / ESAS_SYMPTOMS.length) * 100}%` }} />
           </div>
         </div>
 
-        <h2 style={{ fontSize: '26px', margin: '20px 0 6px', color: 'var(--ink)' }}>
-          {currentSymptom.label}
-        </h2>
-        <p style={{ fontSize: '16.5px', color: 'var(--ink)', margin: '0 0 8px' }}>
-          {currentSymptom.question}
-        </p>
-        <small className="muted" style={{ display: 'block', marginBottom: '22px' }}>
-          <b>Orientações da escala:</b> {currentSymptom.hint}
-        </small>
+        {!isReview ? <>
+          <h2 style={{ fontSize: '26px', margin: '20px 0 6px', color: 'var(--ink)' }}>
+            {currentSymptom.label}
+          </h2>
+          <p style={{ fontSize: '16.5px', color: 'var(--ink)', margin: '0 0 8px' }}>
+            {currentSymptom.question}
+          </p>
+          <small className="muted" style={{ display: 'block', marginBottom: '22px' }}>
+            <b>Orientações da escala:</b> {currentSymptom.hint}
+          </small>
 
-        {/* Seleção Ergonômica de Notas (Botões Táteis ≥ 48px) */}
-        <div
-          className="rating-groups"
-          role="radiogroup"
-          aria-label={`Nota de 0 a 10 para ${currentSymptom.label}`}
-        >
+          {/* Seleção ergonômica com alvos táteis de 56 × 56 px */}
+          <div
+            className="rating-groups"
+            role="radiogroup"
+            aria-label={`Nota de 0 a 10 para ${currentSymptom.label}`}
+          >
           {[
             { label: 'Sem sintoma a Leve (0 a 3)', values: [0, 1, 2, 3] },
             { label: 'Moderado (4 a 6)', values: [4, 5, 6] },
@@ -213,7 +253,7 @@ export function ESASWizard({
                     aria-checked={currentScore === n}
                     className={`${currentScore === n ? 'selected' : ''} ${n >= 7 ? 'score-btn-high' : ''}`}
                     onClick={() => setScores(old => ({ ...old, [currentSymptom.key]: n }))}
-                    style={{ minHeight: '50px' }}
+                    style={{ minHeight: '56px' }}
                   >
                     {n}
                   </button>
@@ -221,15 +261,36 @@ export function ESASWizard({
               </div>
             </div>
           ))}
-        </div>
+          </div>
 
-        <div className="range-captions">
-          <span>0 · Ausência do sintoma</span>
-          <span style={{ fontWeight: 700, color: 'var(--green)' }}>
-            {currentScore !== null ? `Nota Selecionada: ${currentScore}/10` : 'Selecione uma nota'}
-          </span>
-          <span>10 · Pior intensidade possível</span>
-        </div>
+          <div className="range-captions">
+            <span>0 · Ausência do sintoma</span>
+            <span style={{ fontWeight: 700, color: 'var(--green)' }}>
+              {currentScore !== null ? `Nota selecionada: ${currentScore}/10` : 'Selecione uma nota'}
+            </span>
+            <span>10 · Pior intensidade possível</span>
+          </div>
+        </> : <>
+          <h2 style={{ fontSize: '26px', margin: '20px 0 6px', color: 'var(--ink)' }}>Confira suas respostas</h2>
+          <p className="muted" style={{ marginBottom: '18px' }}>
+            Selecione um sintoma para corrigir a nota antes de enviar à equipe.
+          </p>
+          <div className="score-grid" aria-label="Resumo das notas ESAS">
+            {ESAS_SYMPTOMS.map((symptom, index) => (
+              <button
+                key={symptom.key}
+                type="button"
+                className="score review-score"
+                onClick={() => setStep(index)}
+                aria-label={`Corrigir ${symptom.label}, nota ${scores[symptom.key]} de 10`}
+              >
+                <span>{symptom.label}</span>
+                <b>{scores[symptom.key]}/10</b>
+                <small>Corrigir resposta</small>
+              </button>
+            ))}
+          </div>
+        </>}
 
         {/* Ações de Navegação do Wizard */}
         <div className="button-row wizard-actions">
@@ -237,9 +298,9 @@ export function ESASWizard({
             type="button"
             variant="secondary"
             disabled={step === 0}
-            onClick={() => setStep(v => Math.max(0, v - 1))}
+            onClick={() => setStep(v => Math.max(0, v === ESAS_SYMPTOMS.length ? ESAS_SYMPTOMS.length - 1 : v - 1))}
           >
-            ← Voltar
+            {isReview ? 'Voltar às perguntas' : '← Voltar'}
           </Button>
 
           {step < ESAS_SYMPTOMS.length - 1 ? (
@@ -251,17 +312,26 @@ export function ESASWizard({
             >
               Próximo sintoma ›
             </Button>
+          ) : step === ESAS_SYMPTOMS.length - 1 ? (
+            <Button
+              type="button"
+              variant="primary"
+              disabled={currentScore === null}
+              onClick={() => setStep(ESAS_SYMPTOMS.length)}
+            >
+              Revisar respostas
+            </Button>
           ) : (
             <Button
               type="button"
               variant="primary"
               size="large"
-              disabled={currentScore === null || loading}
+              disabled={loading}
               loading={loading}
               loadingText="Gravando e validando…"
               onClick={enviarESAS}
             >
-              Finalizar e Enviar Avaliação
+              Confirmar e Enviar Avaliação
             </Button>
           )}
         </div>

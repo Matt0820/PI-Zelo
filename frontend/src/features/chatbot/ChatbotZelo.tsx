@@ -37,6 +37,7 @@ export function ChatbotZelo({
   const [history, setHistory] = useState<ChatHistoryEntry[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [triagemSalva, setTriagemSalva] = useState(false);
 
   const streamEndRef = useRef<HTMLDivElement>(null);
   const activePromptRef = useRef<HTMLDivElement>(null);
@@ -56,6 +57,7 @@ export function ChatbotZelo({
 
   // Transmite a triagem para o backend quando o nó conclusivo for atingido
   async function sincronizarTriagem(finalAnswers: ChatbotAnswers) {
+    let saved = false;
     setSaving(true);
     setSaveError(null);
     try {
@@ -76,7 +78,9 @@ export function ChatbotZelo({
         solicitou_agendamento: finalAnswers.solicitarContato
       });
 
-      if (refresh) await refresh();
+      saved = true;
+      setTriagemSalva(true);
+      setSaveError(null);
       notice(
         'success',
         finalAnswers.solicitarContato
@@ -91,6 +95,13 @@ export function ChatbotZelo({
       );
     } finally {
       setSaving(false);
+    }
+    if (saved && refresh) {
+      try {
+        await refresh();
+      } catch {
+        notice('error', 'Triagem gravada, mas não foi possível atualizar os dados exibidos.');
+      }
     }
   }
 
@@ -140,10 +151,7 @@ export function ChatbotZelo({
     const nextId = option.nextNodeId;
     setCurrentNodeId(nextId);
 
-    // Se o próximo nó for o nó de conclusão, executa a sincronização
-    if (nextId === 'conclusao') {
-      sincronizarTriagem(updatedAnswers);
-    }
+    // A confirmação fica explícita antes de persistir a triagem clínica.
   }
 
   // Desfaz a última interação voltando um nó no grafo
@@ -171,11 +179,13 @@ export function ChatbotZelo({
     });
     setCurrentNodeId('acolhimento');
     setSaveError(null);
+    setTriagemSalva(false);
   }
 
   // Renderiza a mensagem do nó ativo
-  const currentPromptMessage =
-    typeof currentNode.message === 'function'
+  const currentPromptMessage = currentNode.isFinish && !triagemSalva
+    ? 'Confira o resumo da triagem. Suas respostas só serão registradas no prontuário depois da confirmação.'
+    : typeof currentNode.message === 'function'
       ? currentNode.message(answers, usuario.nome)
       : currentNode.message;
 
@@ -265,7 +275,7 @@ export function ChatbotZelo({
           }
         >
           <strong style={currentNode.isEmergencyBlock ? { color: 'var(--danger)' } : undefined}>
-            {currentNode.title || 'Enfermeira Virtual Zelo'}
+            {currentNode.isFinish && !triagemSalva ? 'Confirmação de Registro' : currentNode.title || 'Enfermeira Virtual Zelo'}
           </strong>
           <div style={{ fontSize: '16px', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
             {currentPromptMessage}
@@ -384,7 +394,25 @@ export function ChatbotZelo({
         )}
 
         {/* Ações Finais após Conclusão da Triagem */}
-        {currentNode.isFinish && (
+        {currentNode.isFinish && !triagemSalva && (
+          <div className="button-row" style={{ marginTop: '8px' }}>
+            <Button
+              variant="primary"
+              size="large"
+              onClick={() => sincronizarTriagem(answers)}
+              loading={saving}
+              loadingText="Registrando triagem…"
+              style={{ minHeight: '56px', fontSize: '16px' }}
+            >
+              Confirmar e registrar triagem
+            </Button>
+            <Button variant="secondary" onClick={handleVoltar} disabled={saving}>
+              Rever resposta anterior
+            </Button>
+          </div>
+        )}
+
+        {currentNode.isFinish && triagemSalva && (
           <div className="button-row" style={{ marginTop: '8px' }}>
             <Button
               variant="primary"

@@ -2,6 +2,7 @@ import React from 'react';
 import { Orientacao } from '../../api';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
+import { Icon } from '../../components/ui';
 
 export interface PatientOrientationsProps {
   orientacoes: Orientacao[];
@@ -40,7 +41,7 @@ export function PatientOrientations({ orientacoes }: PatientOrientationsProps): 
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
                   <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--ink)' }}>
-                    🩺 {o.titulo}
+                    <Icon name="stethoscope"/> {o.titulo}
                   </h3>
                   <span className={`pill ${o.prioridade === 'alta' ? 'severity-high' : ''}`}>
                     Prioridade {o.prioridade} · {dataFmt}
