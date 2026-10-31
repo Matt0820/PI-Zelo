@@ -22,3 +22,6 @@ Thumbs.db
 *.db
 
 *.tsbuildinfo
+
+# Scratch folder
+scratch/

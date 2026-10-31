@@ -324,8 +324,8 @@ export function ChatbotZelo({
           <div
             style={{
               padding: '14px 18px',
-              background: '#fef2f2',
-              border: '1.5px solid #f87171',
+              background: 'var(--danger-soft)',
+              border: '1.5px solid var(--danger)',
               borderRadius: '10px',
               display: 'flex',
               justifyContent: 'space-between',
@@ -335,8 +335,8 @@ export function ChatbotZelo({
             }}
           >
             <div>
-              <strong style={{ color: '#991b1b' }}>Linha Direta da Equipe Médica:</strong>
-              <p style={{ margin: '3px 0 0', fontSize: '14px', color: '#7f1d1d' }}>
+              <strong style={{ color: 'var(--danger)' }}>Linha Direta da Equipe Médica:</strong>
+              <p style={{ margin: '3px 0 0', fontSize: '14px', color: 'var(--ink)' }}>
                 Em caso de sintomas graves ou sem conexão, ligue diretamente para o plantão.
               </p>
             </div>

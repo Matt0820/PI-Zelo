@@ -102,7 +102,7 @@ export function PatientHome({
       <PageHeading
         kicker="ÁREA DO PACIENTE & CUIDADOR"
         title={`Olá, ${usuario.nome.split(' ')[0]}.`}
-        description="Acompanhe seus horários de remédios, avisos da equipe médica e envie seus sintomas diários para o Equipe Médica."
+        description="Acompanhe seus horários de remédios, avisos da equipe médica e envie seus sintomas diários para a equipe médica."
         action={
           <div className="button-row">
             <Button variant="primary" onClick={() => onNavigate('esas')}>
@@ -185,7 +185,7 @@ export function PatientHome({
 
             <div className="button-row" style={{ marginTop: '4px' }}>
               {proximoRemedio.status === 'tomada' ? (
-                <span className="pill" style={{ background: '#eaf5ec', color: '#1e6b47', fontSize: '14px', padding: '8px 14px' }}>
+                <span className="pill pill-success" style={{ fontSize: '14px', padding: '8px 14px' }}>
                   ✓ Esta dose já foi confirmada hoje
                 </span>
               ) : (

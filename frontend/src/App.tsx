@@ -258,19 +258,23 @@ export default function App(): React.JSX.Element {
                 { id: 'orientacoes', name: 'Avisos da equipe', icon: 'i', action: () => setPaginaPaciente('orientacoes') },
                 { id: 'acessibilidade', name: 'Acessibilidade', icon: '♿', action: () => setPaginaPaciente('acessibilidade') }
               ]
-          ).map(item => (
-            <button
-              className="nav-item"
-              key={item.id}
-              onClick={() => {
-                item.action();
-                setMenuAberto(false);
-              }}
-            >
-              <span className="nav-icon" aria-hidden="true">{item.icon}</span>
-              {item.name}
-            </button>
-          ))}
+          ).map(item => {
+            const isActive = isTeam ? equipePagina === item.id : paginaPaciente === item.id;
+            return (
+              <button
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                key={item.id}
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => {
+                  item.action();
+                  setMenuAberto(false);
+                }}
+              >
+                <span className="nav-icon" aria-hidden="true">{item.icon}</span>
+                {item.name}
+              </button>
+            );
+          })}
 
           {isTeam && (
             <div className="sidebar-note">
