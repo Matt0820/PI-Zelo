@@ -45,6 +45,7 @@ from app.schemas import (
     HealthResponse,
     MedicationCreate,
     MedicationResponse,
+    MedicationUpdate,
     OrientationCreate,
     OrientationResponse,
     PainMapCreate,
@@ -796,6 +797,39 @@ def list_medications(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[Medication]:
     return db.scalars(select(Medication).where(Medication.user_id == user_id)).all()
+
+
+@app.patch('/api/users/{user_id}/medications/{med_id}', response_model=MedicationResponse)
+def update_medication(
+    user_id: int,
+    med_id: int,
+    payload: MedicationUpdate,
+    db: Annotated[Session, Depends(get_db)],
+) -> Medication:
+    med = db.scalar(select(Medication).where(Medication.id == med_id, Medication.user_id == user_id))
+    if not med:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Medicação não encontrada.')
+    if payload.nome is not None:
+        med.nome = payload.nome
+    if payload.dose is not None:
+        med.dose = payload.dose
+    if payload.horario is not None:
+        med.horario = payload.horario
+    if payload.frequencia is not None:
+        med.frequencia = payload.frequencia
+    if payload.observacao is not None:
+        med.observacao = payload.observacao
+    if payload.status is not None:
+        med.status = payload.status
+    if payload.eh_dose_resgate is not None:
+        med.eh_dose_resgate = payload.eh_dose_resgate
+    if payload.medico_prescritor is not None:
+        med.medico_prescritor = payload.medico_prescritor
+    if payload.vigencia is not None:
+        med.vigencia = payload.vigencia
+    db.commit()
+    db.refresh(med)
+    return med
 
 
 @app.post('/api/users/{user_id}/orientations', response_model=OrientationResponse, status_code=status.HTTP_201_CREATED)

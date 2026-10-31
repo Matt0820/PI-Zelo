@@ -44,4 +44,6 @@ export const api={
   registrarEvolucao:(id:number,data:unknown)=>post<Evolucao>(`/api/users/${id}/evolucoes`,data),
   atualizarAlerta:(id:number,data:unknown)=>request<Alerta>(`/api/alertas/${id}`,{method:'PATCH',body:JSON.stringify(data)}),
   criarMedicacao:(id:number,data:unknown)=>post<Medicacao>(`/api/users/${id}/medications`,data),
+  atualizarMedicacao:(id:number,medId:number,data:unknown)=>request<Medicacao>(`/api/users/${id}/medications/${medId}`,{method:'PATCH',body:JSON.stringify(data)}),
+  registrarTriagem:(id:number,data:unknown)=>post<Triagem>(`/api/users/${id}/triagem-dor`,data),
 };

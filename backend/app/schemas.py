@@ -256,6 +256,18 @@ class MedicationCreate(MedicationBase):
     pass
 
 
+class MedicationUpdate(BaseModel):
+    nome: str | None = None
+    dose: str | None = None
+    horario: str | None = None
+    frequencia: str | None = None
+    observacao: str | None = None
+    status: str | None = None
+    eh_dose_resgate: bool | None = None
+    medico_prescritor: str | None = None
+    vigencia: str | None = None
+
+
 class MedicationResponse(MedicationBase):
     model_config = ConfigDict(from_attributes=True)
     id: int

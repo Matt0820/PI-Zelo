@@ -22,3 +22,39 @@
 @media(max-width:760px){.sidebar-appearance{margin-top:20px}}
 .login-mode-switch{display:flex;gap:8px;margin-top:16px}.login-mode-switch button{flex:1;min-height:40px;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--muted);font-weight:800}.login-mode-switch button.active{border-color:var(--green);color:var(--green);background:var(--green-soft)}.self-check{display:flex;flex-direction:row;align-items:center;gap:10px;padding:10px 0}.self-check input{width:20px;min-height:20px;accent-color:var(--green)}
 .menu-icon{display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center}.menu-icon i{display:block;width:21px;height:2px;border-radius:2px;background:var(--green)}
+
+
+/* Chatbot Zelo */
+.chatbot-shell{width:min(100%,780px);margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.chat-stream{display:flex;flex-direction:column;gap:14px;min-height:280px}
+.chat-bubble{max-width:85%;padding:18px 20px;border-radius:16px;line-height:1.55;font-size:16px}
+.chat-bubble-zelo{align-self:flex-start;background:var(--paper);border:1.5px solid var(--border);color:var(--ink);box-shadow:0 3px 10px rgba(0,0,0,.04)}
+.chat-bubble-zelo strong{color:var(--green);display:block;margin-bottom:6px;font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+.chat-bubble-user{align-self:flex-end;background:var(--green);color:#ffffff;font-weight:700}
+.chat-bubble-user small{display:block;margin-top:4px;font-size:12px;opacity:.9;text-align:right}
+.chat-controls{background:var(--paper);border:1.5px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.chat-options-grid{display:grid;gap:10px}
+.chat-option-btn{min-height:54px;padding:12px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--paper);color:var(--ink);font-size:16px;font-weight:700;text-align:left;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s ease}
+.chat-option-btn:hover{background:var(--green-soft);border-color:var(--green);color:var(--green);transform:translateY(-1px)}
+.chat-actions-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:6px}
+
+/* Alertas de Remédios e Receitas */
+.remedy-alert-card{background:linear-gradient(135deg,#f4faf6 0%,#eaf5ec 100%);border:2px solid #b9d8c4;border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 4px 14px rgba(27,94,74,.06)}
+.remedy-alert-card.urgent{background:linear-gradient(135deg,#fff8f7 0%,#fdf2f0 100%);border-color:#f5c2bc}
+.remedy-alert-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.remedy-time-badge{font-size:20px;font-weight:800;color:var(--green);background:var(--paper);padding:6px 14px;border-radius:8px;border:1px solid #b9d8c4}
+.remedy-alert-card.urgent .remedy-time-badge{color:var(--danger);border-color:#f5c2bc}
+.remedy-schedule-list{display:flex;flex-direction:column;gap:12px}
+.remedy-schedule-item{background:var(--paper);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;transition:all .15s ease}
+.remedy-schedule-item:hover{border-color:var(--green);box-shadow:0 3px 10px rgba(0,0,0,.04)}
+.remedy-info{display:flex;flex-direction:column;gap:4px;flex:1;min-width:240px}
+.remedy-info b{font-size:17px;color:var(--ink)}
+.remedy-info span{font-size:14px;color:var(--muted)}
+.remedy-info p{margin:4px 0 0;font-size:13.5px;color:var(--ink);line-height:1.45;background:#fbfaf7;padding:6px 10px;border-radius:6px;border-left:3px solid var(--green)}
+.sub-nav-tabs{display:flex;gap:8px;margin-bottom:22px;overflow-x:auto;padding-bottom:4px}
+.sub-nav-btn{min-height:46px;padding:10px 18px;border-radius:9px;border:1.5px solid var(--border);background:var(--paper);color:var(--muted);font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;transition:all .15s ease}
+.sub-nav-btn:hover{color:var(--green);border-color:var(--green)}
+.sub-nav-btn.active{background:var(--green);color:#ffffff;border-color:var(--green);box-shadow:0 3px 8px rgba(27,94,74,.25)}
+.quick-pills{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.quick-pill{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--paper);color:var(--ink);font-size:13px;font-weight:700;cursor:pointer}
+.quick-pill:hover{background:var(--green-soft);border-color:var(--green);color:var(--green)}
