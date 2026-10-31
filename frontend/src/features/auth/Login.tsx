@@ -384,7 +384,7 @@ export function Login({
           <small style={{ display: 'block', marginTop: '18px', color: 'var(--muted)', lineHeight: 1.5 }}>
             {cadastrar
               ? 'O responsável é identificado na segunda etapa; o prontuário permanece sendo do paciente.'
-              : 'Seus dados são integrados diretamente ao acompanhamento ambulatorial e domiciliar do Equipe Médica.'}
+              : 'Seus dados são integrados diretamente ao acompanhamento ambulatorial e domiciliar da equipe médica.'}
           </small>
         </div>
       </section>

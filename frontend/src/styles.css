@@ -53,6 +53,8 @@
 .chat-options-grid{display:grid;gap:10px}
 .chat-option-btn{min-height:54px;padding:12px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--paper);color:var(--ink);font-size:16px;font-weight:700;text-align:left;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s ease}
 .chat-option-btn:hover{background:var(--green-soft);border-color:var(--green);color:var(--green);transform:translateY(-1px)}
+.chat-option-btn.emergency-btn{background:#fff5f5;border-color:#fca5a5;color:#7f1d1d}
+.chat-option-btn.emergency-btn:hover{background:#fee2e2;border-color:#ef4444;color:#991b1b}
 .chat-actions-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:6px}
 
 /* Alertas de Remédios e Receitas */
@@ -600,6 +602,162 @@ html.theme-escuro, :root[data-visual="escuro"], html.theme-dark {
   color: var(--ink) !important;
 }
 
+/* Botões primários e secundários no Modo Escuro (Alto Contraste WCAG AAA > 8.5:1) */
+html.theme-escuro .button-primary,
+:root[data-visual="escuro"] .button-primary,
+html.theme-dark .button-primary {
+  background: var(--green) !important;
+  color: #121a16 !important;
+  border-color: var(--green) !important;
+  font-weight: 800 !important;
+}
+html.theme-escuro .button-primary:hover,
+:root[data-visual="escuro"] .button-primary:hover,
+html.theme-dark .button-primary:hover {
+  background: var(--green-dark) !important;
+  color: #121a16 !important;
+}
+
+html.theme-escuro .button-secondary,
+:root[data-visual="escuro"] .button-secondary,
+html.theme-dark .button-secondary {
+  background: var(--paper) !important;
+  color: var(--green) !important;
+  border: 1.5px solid var(--green) !important;
+}
+html.theme-escuro .button-secondary:hover,
+:root[data-visual="escuro"] .button-secondary:hover,
+html.theme-dark .button-secondary:hover {
+  background: var(--green-soft) !important;
+  color: var(--green) !important;
+}
+
+html.theme-escuro .button-quiet,
+:root[data-visual="escuro"] .button-quiet,
+html.theme-dark .button-quiet {
+  background: transparent !important;
+  color: var(--muted) !important;
+  border: 1px solid var(--border) !important;
+}
+html.theme-escuro .button-quiet:hover,
+:root[data-visual="escuro"] .button-quiet:hover,
+html.theme-dark .button-quiet:hover {
+  background: var(--green-soft) !important;
+  color: var(--green) !important;
+}
+
+/* Alternadores de Perfil / Login no Modo Escuro */
+html.theme-escuro .role-switch,
+:root[data-visual="escuro"] .role-switch,
+html.theme-dark .role-switch {
+  background: #15201a !important;
+  border: 1px solid var(--border) !important;
+}
+html.theme-escuro .role-switch button,
+:root[data-visual="escuro"] .role-switch button,
+html.theme-dark .role-switch button {
+  color: var(--muted) !important;
+}
+html.theme-escuro .role-switch button.active,
+:root[data-visual="escuro"] .role-switch button.active,
+html.theme-dark .role-switch button.active {
+  background: var(--paper) !important;
+  color: var(--green) !important;
+}
+
+html.theme-escuro .login-mode-switch button,
+:root[data-visual="escuro"] .login-mode-switch button,
+html.theme-dark .login-mode-switch button {
+  background: var(--paper) !important;
+  color: var(--muted) !important;
+  border-color: var(--border) !important;
+}
+html.theme-escuro .login-mode-switch button.active,
+:root[data-visual="escuro"] .login-mode-switch button.active,
+html.theme-dark .login-mode-switch button.active {
+  background: var(--green-soft) !important;
+  color: var(--green) !important;
+  border-color: var(--green) !important;
+}
+
+/* Abas de Navegação de Medicamentos */
+html.theme-escuro .sub-nav-btn,
+:root[data-visual="escuro"] .sub-nav-btn,
+html.theme-dark .sub-nav-btn {
+  background: var(--paper) !important;
+  color: var(--muted) !important;
+  border-color: var(--border) !important;
+}
+html.theme-escuro .sub-nav-btn:hover,
+:root[data-visual="escuro"] .sub-nav-btn:hover,
+html.theme-dark .sub-nav-btn:hover {
+  color: var(--green) !important;
+  border-color: var(--green) !important;
+}
+html.theme-escuro .sub-nav-btn.active,
+:root[data-visual="escuro"] .sub-nav-btn.active,
+html.theme-dark .sub-nav-btn.active {
+  background: var(--green) !important;
+  color: #121a16 !important;
+  border-color: var(--green) !important;
+  font-weight: 800 !important;
+}
+
+/* Observação do Medicamento */
+html.theme-escuro .remedy-info p,
+:root[data-visual="escuro"] .remedy-info p,
+html.theme-dark .remedy-info p {
+  background: #15201a !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--border) !important;
+  border-left: 3px solid var(--green) !important;
+}
+
+/* Silhueta Anatômica Vetorial no Modo Escuro */
+html.theme-escuro .svg-silhouette-wrapper,
+:root[data-visual="escuro"] .svg-silhouette-wrapper,
+html.theme-dark .svg-silhouette-wrapper {
+  background: #15201a !important;
+  border-color: var(--border) !important;
+}
+html.theme-escuro .svg-body-part,
+:root[data-visual="escuro"] .svg-body-part,
+html.theme-dark .svg-body-part {
+  fill: #24352c;
+  stroke: #68c499;
+  stroke-width: 1.6;
+}
+html.theme-escuro .svg-body-part:hover,
+:root[data-visual="escuro"] .svg-body-part:hover,
+html.theme-dark .svg-body-part:hover {
+  fill: #325243;
+  stroke: #89d4b0;
+  stroke-width: 2.5;
+}
+html.theme-escuro .svg-body-part.selected,
+:root[data-visual="escuro"] .svg-body-part.selected,
+html.theme-dark .svg-body-part.selected {
+  fill: #e6b800 !important;
+  stroke: #ffffff !important;
+  stroke-width: 3 !important;
+}
+
+/* Opções de Emergência no Chatbot no Modo Escuro */
+html.theme-escuro .chat-option-btn.emergency-btn,
+:root[data-visual="escuro"] .chat-option-btn.emergency-btn,
+html.theme-dark .chat-option-btn.emergency-btn {
+  background: #2e1d1b !important;
+  border-color: #61312d !important;
+  color: #ff9d91 !important;
+}
+html.theme-escuro .chat-option-btn.emergency-btn:hover,
+:root[data-visual="escuro"] .chat-option-btn.emergency-btn:hover,
+html.theme-dark .chat-option-btn.emergency-btn:hover {
+  background: #422522 !important;
+  border-color: #ff9d91 !important;
+  color: #ff9d91 !important;
+}
+
 html.theme-escuro .topbar, :root[data-visual="escuro"] .topbar, html.theme-dark .topbar,
 html.theme-escuro .sidebar, :root[data-visual="escuro"] .sidebar, html.theme-dark .sidebar {
   background: var(--paper) !important;
@@ -835,6 +993,78 @@ html.theme-high-contrast, :root[data-visual="alto-contraste"] {
 html.theme-high-contrast, :root[data-visual="alto-contraste"] body {
   background: #000000 !important;
   color: #ffffff !important;
+}
+
+/* Botões no Alto Contraste */
+html.theme-high-contrast .button-primary,
+:root[data-visual="alto-contraste"] .button-primary {
+  background: #ffff00 !important;
+  color: #000000 !important;
+  border: 2px solid #ffff00 !important;
+  font-weight: 900 !important;
+}
+
+html.theme-high-contrast .button-secondary,
+:root[data-visual="alto-contraste"] .button-secondary {
+  background: #000000 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00 !important;
+  font-weight: 800 !important;
+}
+html.theme-high-contrast .button-secondary:hover,
+:root[data-visual="alto-contraste"] .button-secondary:hover {
+  background: #ffff00 !important;
+  color: #000000 !important;
+}
+
+html.theme-high-contrast .role-switch,
+:root[data-visual="alto-contraste"] .role-switch {
+  background: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+html.theme-high-contrast .role-switch button,
+:root[data-visual="alto-contraste"] .role-switch button {
+  color: #ffffff !important;
+}
+html.theme-high-contrast .role-switch button.active,
+:root[data-visual="alto-contraste"] .role-switch button.active {
+  background: #ffff00 !important;
+  color: #000000 !important;
+  font-weight: 900 !important;
+}
+
+html.theme-high-contrast .sub-nav-btn,
+:root[data-visual="alto-contraste"] .sub-nav-btn {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+html.theme-high-contrast .sub-nav-btn.active,
+:root[data-visual="alto-contraste"] .sub-nav-btn.active {
+  background: #ffff00 !important;
+  color: #000000 !important;
+  border-color: #ffff00 !important;
+  font-weight: 900 !important;
+}
+
+html.theme-high-contrast .remedy-info p,
+:root[data-visual="alto-contraste"] .remedy-info p {
+  background: #111111 !important;
+  color: #ffffff !important;
+  border: 1px solid #ffffff !important;
+  border-left: 4px solid #ffff00 !important;
+}
+
+html.theme-high-contrast .chat-option-btn.emergency-btn,
+:root[data-visual="alto-contraste"] .chat-option-btn.emergency-btn {
+  background: #000000 !important;
+  border: 2px solid #ff5555 !important;
+  color: #ff5555 !important;
+}
+html.theme-high-contrast .chat-option-btn.emergency-btn:hover,
+:root[data-visual="alto-contraste"] .chat-option-btn.emergency-btn:hover {
+  background: #ff5555 !important;
+  color: #000000 !important;
 }
 
 html.theme-high-contrast .topbar, :root[data-visual="alto-contraste"] .topbar,

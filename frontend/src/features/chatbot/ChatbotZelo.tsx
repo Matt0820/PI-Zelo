@@ -300,7 +300,7 @@ export function ChatbotZelo({
           {currentNode.isEmergencyBlock && (
             <div style={{ marginTop: '16px' }} className="button-row">
               <a
-                href="tel:4130000000"
+                href="tel:4133330000"
                 className="button button-danger"
                 style={{ minHeight: '52px', fontSize: '16px', textDecoration: 'none' }}
               >
@@ -349,7 +349,7 @@ export function ChatbotZelo({
               >
                 Tentar Salvar Novamente
               </Button>
-              <a href="tel:4130000000" className="button button-secondary" style={{ textDecoration: 'none' }}>
+              <a href="tel:4133330000" className="button button-secondary" style={{ textDecoration: 'none' }}>
                 Ligar: (41) 3333-0000
               </a>
             </div>
@@ -367,11 +367,6 @@ export function ChatbotZelo({
                 ref={idx === 0 ? firstOptionRef : undefined}
                 type="button"
                 className={`chat-option-btn ${option.isEmergencyAlert ? 'emergency-btn' : ''}`}
-                style={
-                  option.isEmergencyAlert
-                    ? { borderColor: '#fca5a5', background: '#fff5f5' }
-                    : undefined
-                }
                 onClick={() => handleSelectOption(option)}
                 disabled={saving}
               >
@@ -400,7 +395,7 @@ export function ChatbotZelo({
               Concluir e Voltar ao Início
             </Button>
             <a
-              href="tel:4130000000"
+              href="tel:4133330000"
               className="button button-secondary"
               style={{ minHeight: '52px', textDecoration: 'none' }}
             >
