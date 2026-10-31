@@ -485,19 +485,19 @@ html.theme-high-contrast .svg-body-part {
   fill: rgba(0, 0, 0, 0);
   stroke: transparent;
 }
-html.theme-high-contrast .svg-body-part:hover {
-  fill: rgba(255, 255, 0, .25);
+html.theme-high-contrast .svg-body-part:hover:not(.selected) {
+  fill: rgba(0, 0, 0, .42);
   stroke: transparent;
 }
 html.theme-high-contrast .svg-body-part.selected {
-  fill: rgba(255, 255, 0, .58) !important;
+  fill: #000000 !important;
   stroke: transparent !important;
   stroke-width: 24 !important;
 }
 html.theme-high-contrast .svg-body-part:focus-visible {
-  fill: rgba(255, 255, 0, .25);
+  fill: rgba(0, 0, 0, .5);
   stroke: #ffff00;
-  stroke-width: 3;
+  stroke-width: 4;
 }
 
 .occurrence-pills-row {
