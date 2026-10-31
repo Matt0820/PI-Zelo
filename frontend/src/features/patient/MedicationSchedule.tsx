@@ -173,11 +173,11 @@ export function MedicationSchedule({
                       </span>
                     )}
                     {m.status === 'tomada' ? (
-                      <span className="pill" style={{ background: '#eaf5ec', color: '#1e6b47' }}>
+                      <span className="pill pill-success">
                         ✓ Dose tomada hoje
                       </span>
                     ) : (
-                      <span className="pill" style={{ background: '#fef3c7', color: '#92400e' }}>
+                      <span className="pill pill-warning">
                         ⏳ Pendente
                       </span>
                     )}

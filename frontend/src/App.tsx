@@ -11,7 +11,6 @@ import {
   Triagem,
   Usuario
 } from './api';
-import { AccessibilityBar } from './components/AccessibilityBar';
 import { NoticeFeedback } from './components/NoticeFeedback';
 import { useAccessibility, ModoVisual } from './context/AccessibilityContext';
 import { Login, NoticeState } from './features/auth';
@@ -176,7 +175,6 @@ export default function App(): React.JSX.Element {
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <AccessibilityBar />
           <div className="topbar-user">
             <span>{usuario.nome}</span>
             <button className="button button-quiet" onClick={sair}>
@@ -240,6 +238,15 @@ export default function App(): React.JSX.Element {
                     setSelecionado(null);
                     setEquipePagina('alertas');
                   }
+                },
+                {
+                  id: 'acessibilidade',
+                  name: 'Acessibilidade',
+                  icon: '♿',
+                  action: () => {
+                    setSelecionado(null);
+                    setEquipePagina('acessibilidade');
+                  }
                 }
               ]
             : [
@@ -248,7 +255,8 @@ export default function App(): React.JSX.Element {
                 { id: 'chatbot', name: 'Chatbot Zelo (Apoio)', icon: 'Z', action: () => setPaginaPaciente('chatbot') },
                 { id: 'medicacoes', name: 'Medicações & Receitas', icon: 'Rx', action: () => setPaginaPaciente('medicacoes') },
                 { id: 'mapa', name: 'Mapa da dor', icon: '◎', action: () => setPaginaPaciente('mapa') },
-                { id: 'orientacoes', name: 'Avisos da equipe', icon: 'i', action: () => setPaginaPaciente('orientacoes') }
+                { id: 'orientacoes', name: 'Avisos da equipe', icon: 'i', action: () => setPaginaPaciente('orientacoes') },
+                { id: 'acessibilidade', name: 'Acessibilidade', icon: '♿', action: () => setPaginaPaciente('acessibilidade') }
               ]
           ).map(item => (
             <button

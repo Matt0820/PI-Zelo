@@ -98,20 +98,33 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     root.lang = 'pt-BR';
 
+    // Sincroniza atributo data-visual e classes tematicas
+    root.setAttribute('data-visual', modoVisual);
+
     // Limpa temas anteriores
     root.classList.remove(
+      'theme-padrao',
       'theme-high-contrast',
       'theme-dark',
+      'theme-escuro',
       'theme-protanopia',
       'theme-deuteranopia',
       'theme-tritanopia'
     );
 
-    if (modoVisual === 'alto-contraste') root.classList.add('theme-high-contrast');
-    else if (modoVisual === 'escuro') root.classList.add('theme-dark');
-    else if (modoVisual === 'protanopia') root.classList.add('theme-protanopia');
-    else if (modoVisual === 'deuteranopia') root.classList.add('theme-deuteranopia');
-    else if (modoVisual === 'tritanopia') root.classList.add('theme-tritanopia');
+    if (modoVisual === 'alto-contraste') {
+      root.classList.add('theme-high-contrast');
+    } else if (modoVisual === 'escuro') {
+      root.classList.add('theme-dark', 'theme-escuro');
+    } else if (modoVisual === 'protanopia') {
+      root.classList.add('theme-protanopia');
+    } else if (modoVisual === 'deuteranopia') {
+      root.classList.add('theme-deuteranopia');
+    } else if (modoVisual === 'tritanopia') {
+      root.classList.add('theme-tritanopia');
+    } else {
+      root.classList.add('theme-padrao');
+    }
 
     salvarArmazenamento(STORAGE_KEYS.MODO_VISUAL, modoVisual);
   }, [modoVisual]);

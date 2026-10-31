@@ -137,8 +137,8 @@ export function PatientHome({
             {orientacoes.slice(0, 3).map(o => (
               <div
                 key={o.id}
-                className="history-item"
-                style={{ background: '#fcfbf8', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--border)' }}
+                className="history-item notice-item-card"
+                style={{ padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--border)' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <b style={{ color: 'var(--green)', fontSize: '16px' }}>{o.titulo}</b>

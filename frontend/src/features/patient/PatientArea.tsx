@@ -6,8 +6,9 @@ import { MedicationSchedule } from './MedicationSchedule';
 import { PatientOrientations } from './PatientOrientations';
 import { PainBodyMap } from './PainBodyMap';
 import { ChatbotZelo } from '../chatbot/ChatbotZelo';
+import { AccessibilityPage } from '../accessibility';
 
-export type PatientPage = 'inicio' | 'esas' | 'chatbot' | 'mapa' | 'medicacoes' | 'orientacoes';
+export type PatientPage = 'inicio' | 'esas' | 'chatbot' | 'mapa' | 'medicacoes' | 'orientacoes' | 'acessibilidade';
 
 export interface PatientAreaProps {
   usuario: Usuario;
@@ -97,6 +98,10 @@ export function PatientArea({
 
       {page === 'orientacoes' && (
         <PatientOrientations orientacoes={data.orientacoes} />
+      )}
+
+      {page === 'acessibilidade' && (
+        <AccessibilityPage />
       )}
     </section>
   );

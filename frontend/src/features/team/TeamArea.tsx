@@ -8,8 +8,9 @@ import { PatientCard } from './PatientCard';
 import { AlertCard } from './AlertCard';
 import { PatientRecord } from './PatientRecord';
 import { TeamModalType } from './TeamModal';
+import { AccessibilityPage } from '../accessibility';
 
-export type TeamPage = 'painel' | 'pacientes' | 'alertas';
+export type TeamPage = 'painel' | 'pacientes' | 'alertas' | 'acessibilidade';
 
 export interface TeamAreaProps {
   page: TeamPage;
@@ -122,6 +123,10 @@ export function TeamArea({
         )}
       </section>
     );
+  }
+
+  if (page === 'acessibilidade') {
+    return <AccessibilityPage />;
   }
 
   // TELA: LISTA DE PACIENTES MONITORADOS
