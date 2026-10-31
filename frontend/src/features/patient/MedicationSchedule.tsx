@@ -1,7 +1,3 @@
-/**
- * Lista medicamentos e permite registrar ou confirmar ações previstas para o paciente.
- */
-
 import React, { useState } from 'react';
 import { Usuario, Medicacao, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -9,11 +5,7 @@ import { ModalDialog } from '../../components/ModalDialog';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
 import { DataCell } from '../../components/DataCell';
-import { Icon } from '../../components/ui';
 
-/**
- * Medicações do usuário e callbacks de atualização/feedback.
- */
 export interface MedicationScheduleProps {
   usuario: Usuario;
   medicacoes: Medicacao[];
@@ -21,9 +13,6 @@ export interface MedicationScheduleProps {
   notice: (kind: 'success' | 'error', text: string) => void;
 }
 
-/**
- * Lista as doses e registra confirmações ou dose de resgate pela API.
- */
 export function MedicationSchedule({
   usuario,
   medicacoes,
@@ -43,7 +32,14 @@ export function MedicationSchedule({
         hour: '2-digit',
         minute: '2-digit'
       });
-      await api.confirmarMedicacao(usuario.id, m.id);
+      const obsAtual = m.observacao
+        ? `${m.observacao} · Confirmado às ${nowHora}`
+        : `Confirmado às ${nowHora}`;
+
+      await api.atualizarMedicacao(usuario.id, m.id, {
+        status: 'tomada',
+        observacao: obsAtual
+      });
       await refresh();
       notice('success', `Dose de ${m.nome} confirmada com sucesso às ${nowHora}!`);
     } catch (err) {
@@ -56,7 +52,7 @@ export function MedicationSchedule({
   async function reabrirRemedio(m: Medicacao) {
     setLoading(true);
     try {
-      await api.desfazerConfirmacaoMedicacao(usuario.id, m.id);
+      await api.atualizarMedicacao(usuario.id, m.id, { status: 'ativo' });
       await refresh();
       notice('success', `Lembrete de ${m.nome} reaberto como pendente.`);
     } catch (err) {
@@ -74,10 +70,17 @@ export function MedicationSchedule({
         hour: '2-digit',
         minute: '2-digit'
       });
-      await api.registrarDoseResgate(usuario.id, {
+      await api.criarMedicacao(usuario.id, {
         nome: resgateNome,
+        dose: '1 dose de resgate SOS',
         horario: nowHora,
-        observacao: resgateObs.trim() || null
+        frequencia: 'Uso pontual para crise aguda de dor',
+        observacao: resgateObs
+          ? `Dose de resgate tomada às ${nowHora}. Obs: ${resgateObs}`
+          : `Dose de resgate tomada às ${nowHora}`,
+        status: 'tomada',
+        eh_dose_resgate: true,
+        medico_prescritor: 'Prescrição de resgate domiciliar'
       });
 
       await refresh();
@@ -116,7 +119,7 @@ export function MedicationSchedule({
           className={`sub-nav-btn ${medAba === 'hoje' ? 'active' : ''}`}
           onClick={() => setMedAba('hoje')}
         >
-          <Icon name="clock"/> Horários de Hoje & Lembretes ({medicacoes.length})
+          Horários de Hoje & Lembretes ({medicacoes.length})
         </button>
         <button
           type="button"
@@ -125,13 +128,49 @@ export function MedicationSchedule({
           className={`sub-nav-btn ${medAba === 'receitas' ? 'active' : ''}`}
           onClick={() => setMedAba('receitas')}
         >
-          <Icon name="clipboard"/> Receitas Prescritas & Orientações de Uso
+          Receitas Prescritas & Orientações de Uso
         </button>
       </div>
 
       {/* ABA 1: HORÁRIOS DE HOJE */}
       {medAba === 'hoje' && (
         <div className="remedy-schedule-list">
+          {medicacoes.length > 0 && (
+            <div className="remedy-progress-card" role="region" aria-label="Progresso das doses de hoje">
+              <div className="remedy-progress-top">
+                <div className="remedy-progress-title">
+                  
+                  <div>
+                    <b>Acompanhamento de Doses de Hoje</b>
+                    <p>
+                      {medicacoes.filter(m => m.status === 'tomada').length === medicacoes.length
+                        ? 'Excelente! Todas as doses prescritas para hoje já foram confirmadas.'
+                        : `${medicacoes.filter(m => m.status === 'tomada').length} de ${medicacoes.length} doses confirmadas hoje · ${medicacoes.length - medicacoes.filter(m => m.status === 'tomada').length} pendente(s).`}
+                    </p>
+                  </div>
+                </div>
+                <span className="remedy-progress-badge">
+                  {Math.round((medicacoes.filter(m => m.status === 'tomada').length / medicacoes.length) * 100)}% concluído
+                </span>
+              </div>
+              <div
+                className="remedy-progress-bar"
+                role="progressbar"
+                aria-valuenow={medicacoes.filter(m => m.status === 'tomada').length}
+                aria-valuemin={0}
+                aria-valuemax={medicacoes.length}
+                aria-label={`Progresso das medicações: ${medicacoes.filter(m => m.status === 'tomada').length} de ${medicacoes.length} doses`}
+              >
+                <div
+                  className="remedy-progress-fill"
+                  style={{
+                    width: `${(medicacoes.filter(m => m.status === 'tomada').length / medicacoes.length) * 100}%`
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
           <div
             style={{
               display: 'flex',
@@ -146,7 +185,7 @@ export function MedicationSchedule({
               Toque em <b>Confirmar que já tomei</b> para registrar a ingestão no prontuário diário.
             </p>
             <Button variant="secondary" onClick={() => setModalResgate(true)}>
-              <Icon name="bolt"/> Tomou remédio de resgate fora da hora?
+              Tomou remédio de resgate fora da hora?
             </Button>
           </div>
 
@@ -161,12 +200,12 @@ export function MedicationSchedule({
                 <div className="remedy-info">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                     <span className="remedy-time-badge" style={{ fontSize: '16px', padding: '4px 10px' }}>
-                      <Icon name="clock"/> {m.horario || 'Horário flexível'}
+                      {m.horario || 'Horário flexível'}
                     </span>
                     <b>{m.nome}</b> · <span style={{ fontWeight: 700 }}>{m.dose}</span>
                     {m.eh_dose_resgate && (
                       <span className="pill" style={{ background: 'var(--danger-soft)', color: 'var(--danger)' }}>
-                        <><Icon name="bolt"/> Resgate</>
+                        Resgate
                       </span>
                     )}
                     {m.status === 'tomada' ? (
@@ -187,7 +226,7 @@ export function MedicationSchedule({
 
                   {m.observacao && (
                     <p>
-                      <><Icon name="clipboard"/> <b>Orientações de uso:</b> {m.observacao}</>
+                      <b>Orientações de uso:</b> {m.observacao}
                     </p>
                   )}
                 </div>
@@ -237,7 +276,7 @@ export function MedicationSchedule({
               <article className="record-card" key={m.id} style={{ marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
                   <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--green)' }}>
-                    <><Icon name="pill"/> {m.nome} · {m.dose}</>
+                    {m.nome} · {m.dose}
                   </h3>
                   <span className="pill">{m.vigencia || 'Receita ativa'}</span>
                 </div>

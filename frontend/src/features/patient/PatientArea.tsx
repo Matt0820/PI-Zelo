@@ -1,7 +1,3 @@
-/**
- * Seleciona a tela do paciente e conecta cada jornada aos dados e callbacks compartilhados.
- */
-
 import React, { useState } from 'react';
 import { Usuario, ESAS, Medicacao, Orientacao, LocalDor } from '../../api';
 import { PatientHome } from './PatientHome';
@@ -12,14 +8,8 @@ import { PainBodyMap } from './PainBodyMap';
 import { ChatbotZelo } from '../chatbot/ChatbotZelo';
 import { AccessibilityPage } from '../accessibility';
 
-/**
- * Identificadores internos das telas disponíveis ao paciente.
- */
 export type PatientPage = 'inicio' | 'esas' | 'chatbot' | 'mapa' | 'medicacoes' | 'orientacoes' | 'acessibilidade';
 
-/**
- * Página selecionada, dados da API e operações fornecidas pelo componente raiz.
- */
 export interface PatientAreaProps {
   usuario: Usuario;
   page: PatientPage;
@@ -34,9 +24,6 @@ export interface PatientAreaProps {
   notice: (kind: 'success' | 'error', text: string) => void;
 }
 
-/**
- * Renderiza a jornada escolhida e repassa dados e callbacks às telas.
- */
 export function PatientArea({
   usuario,
   page,

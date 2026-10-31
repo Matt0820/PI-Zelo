@@ -1,19 +1,11 @@
-/**
- * Organiza as informações clínicas e os registros associados ao paciente selecionado.
- */
-
 import React from 'react';
 import { Usuario, ESAS, Triagem, LocalDor, Medicacao, Orientacao, Evolucao } from '../../api';
 import { Button } from '../../components/Button';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
 import { DataCell } from '../../components/DataCell';
-import { Icon } from '../../components/ui';
 import { TeamModalType } from './TeamModal';
 
-/**
- * Paciente, registros relacionados e operações de prontuário.
- */
 export interface PatientRecordProps {
   patient: Usuario;
   details: {
@@ -44,9 +36,6 @@ const symptomNames: Array<{ key: keyof Pick<ESAS, 'dor' | 'cansaco' | 'nausea' |
   { key: 'constipacao', label: 'Constipação' }
 ];
 
-/**
- * Agrupa o histórico longitudinal e ações assistenciais do paciente selecionado.
- */
 export function PatientRecord({
   patient,
   details,
@@ -132,7 +121,7 @@ export function PatientRecord({
           {last ? (
             <>
               <p className="muted" style={{ margin: '4px 0 12px' }}>
-                <Icon name="clock"/> {dateFmt(last.data_registro)}
+                {dateFmt(last.data_registro)}
               </p>
               <div className="score-grid">
                 {symptomNames.map(s => (
@@ -168,7 +157,7 @@ export function PatientRecord({
           {details.dor.length ? (
             details.dor.map(d => (
               <div className="history-item" key={d.id}>
-                <b><Icon name="map-pin"/> {d.regiao_anatomica} · {d.tipo_ocorrencia}</b>
+                <b>{d.regiao_anatomica} · {d.tipo_ocorrencia}</b>
                 <span>Intensidade {d.intensidade}/10 · {dateFmt(d.criado_em)}</span>
                 {d.observacao && <p>{d.observacao}</p>}
                 {d.medicamento_associado && <small>Medicação associada: {d.medicamento_associado}</small>}
@@ -205,7 +194,7 @@ export function PatientRecord({
           {details.orientacoes.length ? (
             details.orientacoes.slice(0, 5).map(o => (
               <div className="history-item" key={o.id}>
-                <b><Icon name="stethoscope"/> {o.titulo}</b>
+                <b>{o.titulo}</b>
                 <span>{o.categoria} · Prioridade {o.prioridade} · {dateFmt(o.atualizada_em)}</span>
                 <p>{o.descricao}</p>
               </div>
@@ -231,13 +220,13 @@ export function PatientRecord({
             details.medicacoes.map(m => (
               <div className="history-item" key={m.id} style={{ padding: '10px 0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <b><Icon name="pill"/> {m.nome} · {m.dose}</b>
+                  <b>{m.nome} · {m.dose}</b>
                   <span className="pill">{m.horario} ({m.frequencia})</span>
                 </div>
-                {m.observacao && <p style={{ margin: '4px 0 0', fontSize: '13px' }}><Icon name="clipboard"/> Orientações: {m.observacao}</p>}
+                {m.observacao && <p style={{ margin: '4px 0 0', fontSize: '13px' }}>Orientações: {m.observacao}</p>}
                 {m.eh_dose_resgate && (
                   <small style={{ color: 'var(--danger)', fontWeight: 700 }}>
-                    <><Icon name="bolt"/> Dose de resgate autorizada</>
+                    Dose de resgate autorizada
                   </small>
                 )}
               </div>
@@ -270,7 +259,7 @@ export function PatientRecord({
           variant="quiet"
           onClick={() => refresh().then(() => notice('success', 'Prontuário atualizado com o servidor.'))}
         >
-          <><Icon name="clock"/> Atualizar dados do prontuário</>
+          Atualizar dados do prontuário
         </Button>
       </div>
     </section>

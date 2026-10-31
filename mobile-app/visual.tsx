@@ -1,22 +1,9 @@
-/**
- * Fornece paletas de acessibilidade e persiste o modo selecionado com AsyncStorage.
- */
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { cores as tokensClaros } from './theme';
 
-/**
- * Modos visuais disponíveis no aplicativo Expo.
- */
 export type VisualMode = 'claro' | 'escuro' | 'alto-contraste' | 'protanopia' | 'deuteranopia' | 'tritanopia';
-/**
- * Tokens necessários para colorir as telas mobile.
- */
 export type Palette = { fundo: string; superficie: string; superficieSuave: string; texto: string; textoSecundario: string; borda: string; primaria: string; primariaHover: string; primariaClara: string; perigo: string; perigoFundo: string; sucesso: string; informacao: string; textoInverse: string; textoLeve: string; bordaForte: string; escalaBaixa: string; escalaLeve: string; escalaModerada: string; escalaAlta: string; escalaGrave: string; sucessoFundo: string; informacaoFundo: string; primariaSuave: string };
-/**
- * Cores completas para cada modo visual declarado.
- */
 export const PALETAS: Record<VisualMode, Palette> = {
   claro: { fundo:tokensClaros.fundo, superficie:tokensClaros.superficie, superficieSuave:tokensClaros.superficieSuave, texto:tokensClaros.texto, textoSecundario:tokensClaros.textoSecundario, borda:tokensClaros.borda, primaria:tokensClaros.primaria, primariaHover:tokensClaros.primariaHover, primariaClara:tokensClaros.primariaClara, perigo:tokensClaros.perigo, perigoFundo:tokensClaros.perigoFundo, sucesso:tokensClaros.sucesso, informacao:tokensClaros.informacao, textoInverse:tokensClaros.textoInverse, textoLeve:tokensClaros.textoLeve, bordaForte:tokensClaros.bordaForte, escalaBaixa:tokensClaros.escalaBaixa, escalaLeve:tokensClaros.escalaLeve, escalaModerada:tokensClaros.escalaModerada, escalaAlta:tokensClaros.escalaAlta, escalaGrave:tokensClaros.escalaGrave, sucessoFundo:tokensClaros.sucessoFundo, informacaoFundo:tokensClaros.informacaoFundo, primariaSuave:tokensClaros.primariaSuave },
   escuro: { fundo:'#121916', superficie:'#1D2823', superficieSuave:'#26332D', texto:'#F5F4EF', textoSecundario:'#D2D8D3', borda:'#45564C', primaria:'#79C6A4', primariaHover:'#A0D9BD', primariaClara:'#263F34', perigo:'#FF9D91', perigoFundo:'#482A28', sucesso:'#85D6A5', informacao:'#91C8F2', textoInverse:'#102019', textoLeve:'#B6C1BA', bordaForte:'#718078', escalaBaixa:'#8BC8E4', escalaLeve:'#A2D58E', escalaModerada:'#F2D36B', escalaAlta:'#FFB36D', escalaGrave:'#FF9088', sucessoFundo:'#203C2B', informacaoFundo:'#203746', primariaSuave:'#304C40' },
@@ -28,9 +15,6 @@ export const PALETAS: Record<VisualMode, Palette> = {
 const KEY='@zelo/visual';
 type Ctx={modo:VisualMode; cores:Palette; setModo:(m:VisualMode)=>void};
 const Context=createContext<Ctx>({modo:'claro',cores:PALETAS.claro,setModo:()=>{}});
-/**
- * Aplica a paleta escolhida e persiste a preferência no dispositivo.
- */
 export function VisualProvider({children}:{children:React.ReactNode}) {
  const [modo,setModoState]=useState<VisualMode>('claro');
  useEffect(()=>{AsyncStorage.getItem(KEY).then(v=>{if(v&&v in PALETAS)setModoState(v as VisualMode)}).catch(()=>{});},[]);
@@ -38,7 +22,4 @@ export function VisualProvider({children}:{children:React.ReactNode}) {
  const value=useMemo(()=>({modo,cores:PALETAS[modo],setModo}),[modo]);
  return <Context.Provider value={value}>{children}</Context.Provider>;
 }
-/**
- * Lê modo e paleta dentro do VisualProvider.
- */
 export const useVisual=()=>useContext(Context);

@@ -1,14 +1,7 @@
-/**
- * Exibe um alerta clínico e as ações de revisão permitidas na interface.
- */
-
 import React from 'react';
 import { Alerta, Usuario } from '../../api';
 import { Button } from '../../components/Button';
 
-/**
- * Alerta, paciente associado e ações de navegação/atualização.
- */
 export interface AlertCardProps {
   alert: Alerta;
   patient?: Usuario;
@@ -16,9 +9,6 @@ export interface AlertCardProps {
   update: (a: Alerta, state: string) => void;
 }
 
-/**
- * Mostra severidade, estado e ações disponíveis para a equipe.
- */
 export function AlertCard({
   alert,
   patient,
@@ -30,13 +20,22 @@ export function AlertCard({
     timeStyle: 'short'
   });
 
+  const isGrave = alert.severidade === 'grave';
+  const isNovo = alert.estado === 'Novo';
+
   return (
-    <article className="alert-card">
+    <article className={`alert-card ${isGrave ? 'alert-critical' : ''} ${isNovo ? 'alert-new' : ''}`}>
       <div className="alert-top">
+        {isGrave && isNovo && (
+          <span className="beacon-indicator" title="Alerta crítico recente que requer triagem imediata">
+            <span className="beacon-dot" aria-hidden="true" />
+            Ação Imediata
+          </span>
+        )}
         <span
-          className={`severity severity-${alert.severidade === 'grave' ? 'high' : 'medium'}`}
+          className={`severity severity-${isGrave ? 'high' : 'medium'}`}
         >
-          {alert.severidade === 'grave' ? 'Prioridade alta' : alert.severidade}
+          {isGrave ? 'Prioridade alta' : alert.severidade}
         </span>
         <span className="state">
           {alert.estado === 'Em revisao' ? 'Em revisão' : alert.estado}

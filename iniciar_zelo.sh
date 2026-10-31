@@ -52,7 +52,7 @@ fi
 
 if [ ! -d "$FRONTEND_DIR/node_modules" ]; then
     printf '%s\n' 'Instalando dependências do website React/Vite...'
-    if ! (cd "$FRONTEND_DIR" && npm ci); then
+    if ! (cd "$FRONTEND_DIR" && (npm ci || npm install)); then
         printf '%s\n' 'Erro ao instalar as dependências do website.' >&2
         exit 1
     fi
@@ -60,7 +60,7 @@ fi
 
 if [ ! -d "$MOBILE_DIR/node_modules" ]; then
     printf '%s\n' 'Instalando dependências do aplicativo Expo...'
-    if ! (cd "$MOBILE_DIR" && npm ci); then
+    if ! (cd "$MOBILE_DIR" && (npm ci || npm install)); then
         printf '%s\n' 'Erro ao instalar as dependências do aplicativo mobile.' >&2
         exit 1
     fi

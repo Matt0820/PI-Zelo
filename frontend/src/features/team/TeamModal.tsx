@@ -1,22 +1,11 @@
-/**
- * Define formulários modais usados pela equipe para atualizar dados e condutas.
- */
-
 import React, { FormEvent, useState } from 'react';
 import { Usuario, api } from '../../api';
 import { Button } from '../../components/Button';
 import { ModalDialog } from '../../components/ModalDialog';
 import { NoticeFeedback } from '../../components/NoticeFeedback';
-import { Icon } from '../../components/ui';
 
-/**
- * Tipos de formulário modal que a equipe pode abrir.
- */
 export type TeamModalType = 'paciente' | 'orientacao' | 'diagnostico' | 'agendamento' | 'medicacao';
 
-/**
- * Tipo do modal, paciente associado e callbacks de gravação/fechamento.
- */
 export interface TeamModalProps {
   type: TeamModalType;
   patient: Usuario | null;
@@ -25,9 +14,6 @@ export interface TeamModalProps {
   done: (m: string) => void;
 }
 
-/**
- * Renderiza o formulário modal correspondente à ação assistencial.
- */
 export function TeamModal({
   type,
   patient,
@@ -398,15 +384,7 @@ export function TeamModal({
                   <button
                     key={a.nome}
                     type="button"
-                    className="button button-quiet"
-                    style={{
-                      fontSize: '12.5px',
-                      padding: '6px 10px',
-                      background: '#f0fdf4',
-                      border: '1px solid #bbf7d0',
-                      borderRadius: '6px',
-                      minHeight: '38px'
-                    }}
+                    className="button button-quiet med-shortcut-btn"
                     onClick={() => aplicarAtalho(a)}
                   >
                     + {a.nome}
@@ -486,7 +464,7 @@ export function TeamModal({
                   style={{ width: '20px', height: '20px' }}
                 />
                 <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>
-                  <><Icon name="bolt"/> É Dose de Resgate (Crise de Dor)</>
+                  É Dose de Resgate (Crise de Dor)
                 </span>
               </label>
             </div>

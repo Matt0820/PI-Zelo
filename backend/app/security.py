@@ -105,13 +105,10 @@ def get_current_user(
     user_path = re.match(r'^/api/users/(\d+)(?:/|$)', path)
     if user_path and not is_team and int(user_path.group(1)) != user.id:
         raise HTTPException(status_code=403, detail='Acesso permitido apenas aos próprios dados.')
-    if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|medications|orientations|rescue-doses)(?:/|$)', path):
-        patient_medication_action = request.method == 'POST' and (
-            re.fullmatch(rf'/api/users/{user.id}/rescue-doses', path)
-            or re.fullmatch(rf'/api/users/{user.id}/medications/\d+/(confirm|undo-confirmation)', path)
-        )
-        if not patient_medication_action:
-            raise HTTPException(status_code=403, detail='Esta ação é restrita à equipe assistencial.')
+    if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|orientations)(?:/|$)', path):
+        raise HTTPException(status_code=403, detail='Esta ação é restrita à equipe assistencial.')
+    if user_path and not is_team and request.method == 'DELETE' and re.search(r'/medications(?:/|$)', path):
+        raise HTTPException(status_code=403, detail='Apenas a equipe assistencial pode remover medicamentos.')
 
     request.state.current_user = user
     return user

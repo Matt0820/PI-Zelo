@@ -1,0 +1,315 @@
+html.high-contrast,
+body.high-contrast {
+  --zelo-bg: #000000 !important;
+  --zelo-surface: #000000 !important;
+  --zelo-surface-soft: #000000 !important;
+  --zelo-surface-hover: #000000 !important;
+  --zelo-text: #FFFF00 !important;
+  --zelo-text-muted: #FFFFFF !important;
+  --zelo-text-light: #FFFFFF !important;
+  --zelo-text-inverse: #000000 !important;
+  --zelo-border: #FFFF00 !important;
+  --zelo-border-strong: #FFFF00 !important;
+  --zelo-primary: #FFFF00 !important;
+  --zelo-primary-hover: #FFFFFF !important;
+  --zelo-primary-active: #FFFFFF !important;
+  --zelo-primary-light: #000000 !important;
+  --zelo-primary-subtle: #000000 !important;
+  --zelo-danger: #FFFF00 !important;
+  --zelo-danger-bg: #000000 !important;
+  --zelo-danger-border: #FFFF00 !important;
+  --zelo-warning: #FFFF00 !important;
+  --zelo-warning-bg: #000000 !important;
+  --zelo-warning-border: #FFFF00 !important;
+  --zelo-success: #FFFF00 !important;
+  --zelo-success-bg: #000000 !important;
+  --zelo-success-border: #FFFF00 !important;
+  --zelo-info: #FFFF00 !important;
+  --zelo-info-bg: #000000 !important;
+  --zelo-info-border: #FFFF00 !important;
+  color: #FFFF00 !important;
+  background-color: #000000 !important;
+  color-scheme: dark;
+}
+
+body.high-contrast,
+body.high-contrast * {
+  color: #FFFF00 !important;
+  border-color: #FFFF00 !important;
+  font-variant-emoji: text !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: none !important;
+}
+
+body.high-contrast::before,
+body.high-contrast::after,
+body.high-contrast *::before,
+body.high-contrast *::after {
+  border-color: #FFFF00 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body.high-contrast {
+  background: #000000 !important;
+}
+
+body.high-contrast a,
+body.high-contrast a:visited {
+  color: #FFFF00 !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+}
+
+body.high-contrast button,
+body.high-contrast input[type="button"],
+body.high-contrast input[type="submit"],
+body.high-contrast input[type="reset"],
+body.high-contrast [role="button"] {
+  color: #FFFF00 !important;
+  background: #000000 !important;
+  border: 2px solid #FFFF00 !important;
+  font-weight: 800 !important;
+}
+
+body.high-contrast button.btn-primary,
+body.high-contrast button[aria-pressed="true"],
+body.high-contrast button[aria-selected="true"],
+body.high-contrast button[aria-checked="true"],
+body.high-contrast button.active,
+body.high-contrast button.selected,
+body.high-contrast input[type="submit"],
+body.high-contrast #btn-patient-a11y-contrast {
+  color: #000000 !important;
+  background: #FFFF00 !important;
+}
+
+body.high-contrast button *,
+body.high-contrast input[type="button"] *,
+body.high-contrast input[type="submit"] *,
+body.high-contrast input[type="reset"] *,
+body.high-contrast [role="button"] *,
+body.high-contrast a.btn *,
+body.high-contrast a[class~="btn-primary"] *,
+body.high-contrast a[class~="btn-secondary"] * {
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
+body.high-contrast a.btn,
+body.high-contrast a[class~="btn-primary"],
+body.high-contrast a[class~="btn-secondary"],
+body.high-contrast a[role="button"] {
+  color: #FFFF00 !important;
+  background: #000000 !important;
+  border: 2px solid #FFFF00 !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+}
+
+body.high-contrast a.btn-primary,
+body.high-contrast a[class~="btn-primary"] {
+  color: #000000 !important;
+  background: #FFFF00 !important;
+}
+
+body.high-contrast button:hover,
+body.high-contrast button:focus-visible,
+body.high-contrast a.btn:hover,
+body.high-contrast a.btn:focus-visible,
+body.high-contrast a[class~="btn-primary"]:hover,
+body.high-contrast a[class~="btn-secondary"]:hover,
+body.high-contrast input[type="button"]:hover,
+body.high-contrast input[type="submit"]:hover,
+body.high-contrast [role="button"]:hover {
+  color: #000000 !important;
+  background: #FFFFFF !important;
+  border-color: #FFFFFF !important;
+}
+
+body.high-contrast button:disabled,
+body.high-contrast input:disabled,
+body.high-contrast select:disabled,
+body.high-contrast textarea:disabled {
+  color: #FFFFFF !important;
+  background: #000000 !important;
+  border: 2px solid #FFFFFF !important;
+  opacity: 1 !important;
+}
+
+body.high-contrast input:not([type="button"]):not([type="submit"]):not([type="reset"]),
+body.high-contrast select,
+body.high-contrast textarea {
+  color: #FFFF00 !important;
+  background: #000000 !important;
+  border: 2px solid #FFFF00 !important;
+  caret-color: #FFFF00 !important;
+}
+
+body.high-contrast input::placeholder,
+body.high-contrast textarea::placeholder {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}
+
+body.high-contrast option {
+  color: #FFFF00 !important;
+  background: #000000 !important;
+}
+
+body.high-contrast :focus-visible {
+  outline: 3px solid #FFFFFF !important;
+  outline-offset: 3px !important;
+}
+
+body.high-contrast [aria-current="page"],
+body.high-contrast [aria-pressed="true"],
+body.high-contrast [aria-selected="true"],
+body.high-contrast [aria-checked="true"],
+body.high-contrast [role="tab"][aria-selected="true"],
+body.high-contrast .selected,
+body.high-contrast button.active,
+body.high-contrast a.active,
+body.high-contrast .sidebar-item.active > a,
+body.high-contrast .nav-link-item.active,
+body.high-contrast .bottom-nav-item.active,
+body.high-contrast .esas-num-btn.selected,
+body.high-contrast .esas-score-btn.selected,
+body.high-contrast .anat-btn.selected,
+body.high-contrast .patient-item.selected {
+  color: #000000 !important;
+  background: #FFFF00 !important;
+}
+
+body.high-contrast [aria-current="page"] *,
+body.high-contrast [aria-pressed="true"] *,
+body.high-contrast [aria-selected="true"] *,
+body.high-contrast [aria-checked="true"] *,
+body.high-contrast [role="tab"][aria-selected="true"] *,
+body.high-contrast .selected *,
+body.high-contrast button.active *,
+body.high-contrast a.active *,
+body.high-contrast .sidebar-item.active > a *,
+body.high-contrast .nav-link-item.active *,
+body.high-contrast .bottom-nav-item.active *,
+body.high-contrast .esas-num-btn.selected *,
+body.high-contrast .esas-score-btn.selected *,
+body.high-contrast .anat-btn.selected *,
+body.high-contrast .patient-item.selected * {
+  color: #000000 !important;
+  background-color: transparent !important;
+}
+
+body.high-contrast svg,
+body.high-contrast svg * {
+  color: #FFFF00 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+body.high-contrast button svg,
+body.high-contrast button svg *,
+body.high-contrast a.btn svg,
+body.high-contrast a.btn svg * {
+  color: #000000 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+body.high-contrast .svg-body-container svg *,
+body.high-contrast #svg-silhueta svg * {
+  fill: #000000 !important;
+  stroke: #FFFF00 !important;
+}
+
+body.high-contrast img,
+body.high-contrast video,
+body.high-contrast canvas {
+  background-color: transparent !important;
+}
+
+body.high-contrast img[alt*="Zelo"],
+body.high-contrast img[alt*="Logotipo"],
+body.high-contrast img[alt*="Logo"] {
+  filter: brightness(0) invert(1) !important;
+  background-color: transparent !important;
+  border-radius: 4px;
+}
+
+body.high-contrast mark {
+  color: #000000 !important;
+  background: #FFFF00 !important;
+}
+
+.patient-a11y-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 12px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #D6CEC2;
+}
+
+.patient-a11y-toggle {
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 2px solid #1B5E4A;
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: #1B5E4A;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.patient-a11y-toggle:focus-visible {
+  outline: 3px solid #0063B4;
+  outline-offset: 2px;
+}
+
+body.high-contrast .patient-a11y-bar {
+  background: #000000 !important;
+  border-bottom: 2px solid #FFFF00 !important;
+}
+
+body.high-contrast .badge,
+body.high-contrast [class^="badge-"],
+body.high-contrast [class*=" badge-"],
+body.high-contrast .item-badge {
+  color: #FFFF00 !important;
+  background: #000000 !important;
+  border: 1px solid #FFFF00 !important;
+}
+
+body.high-contrast .kpi-card {
+  min-width: 0 !important;
+}
+
+body.high-contrast .kpi-card .kpi-hint,
+body.high-contrast .kpi-card .badge {
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+body.high-contrast .kpi-card .badge {
+  display: inline-block !important;
+  text-align: center !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

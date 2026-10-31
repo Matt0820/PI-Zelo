@@ -1,12 +1,5 @@
-/**
- * Guarda preferências visuais e tipográficas e sincroniza as escolhas com o DOM e o armazenamento local.
- */
-
 import { createContext, useContext, useEffect, useState, useMemo, ReactNode } from 'react';
 
-/**
- * Identifica os esquemas visuais que a interface pode aplicar.
- */
 export type ModoVisual =
   | 'padrao'
   | 'alto-contraste'
@@ -15,14 +8,8 @@ export type ModoVisual =
   | 'deuteranopia'
   | 'tritanopia';
 
-/**
- * Índice das três escalas tipográficas suportadas.
- */
 export type FontStep = 0 | 1 | 2;
 
-/**
- * Ações e valores disponibilizados aos componentes pelo contexto.
- */
 export interface AccessibilityContextType {
   modoVisual: ModoVisual;
   setModoVisual: (modo: ModoVisual) => void;
@@ -79,9 +66,6 @@ function salvarArmazenamento<T>(chave: string, valor: T): void {
   }
 }
 
-/**
- * Aplica preferências visuais, fonte e movimento à aplicação e sincroniza o armazenamento.
- */
 export function AccessibilityProvider({ children }: { children: ReactNode }) {
   const [modoVisual, setModoVisualState] = useState<ModoVisual>(() => {
     const salvo = lerArmazenamento<ModoVisual | null>(STORAGE_KEYS.MODO_VISUAL, null);
@@ -109,15 +93,13 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     return false;
   });
 
-  // Atualiza classes do DOM
+  // Atualiza classes do DOM e atributos semânticos
   useEffect(() => {
     const root = document.documentElement;
     root.lang = 'pt-BR';
 
-    // Sincroniza atributo data-visual e classes tematicas
     root.setAttribute('data-visual', modoVisual);
 
-    // Limpa temas anteriores
     root.classList.remove(
       'theme-padrao',
       'theme-high-contrast',
@@ -174,19 +156,72 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     salvarArmazenamento(STORAGE_KEYS.REDUCE_MOTION, reduzirMovimento);
   }, [reduzirMovimento]);
 
+  // Sincronização multi-abas em tempo real (StorageEvent)
   useEffect(() => {
-    const handleShortcut = (event: KeyboardEvent) => {
-      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-      const target = event.target;
-      if (target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select, [contenteditable="true"]'))) return;
-      if (event.key.toLowerCase() === 'a') {
-        event.preventDefault();
-        setFontStepState(current => ((current + 1) % 3) as FontStep);
-      } else if (event.key.toLowerCase() === 'c') {
-        event.preventDefault();
-        setModoVisualState(current => current === 'alto-contraste' ? 'padrao' : 'alto-contraste');
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEYS.MODO_VISUAL && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (['padrao', 'alto-contraste', 'escuro', 'protanopia', 'deuteranopia', 'tritanopia'].includes(parsed)) {
+            setModoVisualState(parsed);
+          }
+        } catch {
+          // valor não-json
+        }
+      } else if (e.key === STORAGE_KEYS.FONT_STEP && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if ([0, 1, 2].includes(parsed)) setFontStepState(parsed);
+        } catch {
+          // valor não-json
+        }
+      } else if (e.key === STORAGE_KEYS.REDUCE_MOTION && e.newValue) {
+        try {
+          setReduzirMovimentoState(Boolean(JSON.parse(e.newValue)));
+        } catch {
+          // valor não-json
+        }
       }
     };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  // Atalhos de teclado globais (Alt + Tecla) para acessibilidade motora e visual
+  useEffect(() => {
+    const handleShortcut = (e: KeyboardEvent) => {
+      if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      const target = e.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.closest('input, textarea, select, [contenteditable="true"]'))
+      ) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      if (key === 'a') {
+        e.preventDefault();
+        setFontStepState(prev => (prev < 2 ? ((prev + 1) as FontStep) : 0));
+      } else if (key === 'c') {
+        e.preventDefault();
+        setModoVisualState(prev => (prev === 'alto-contraste' ? 'padrao' : 'alto-contraste'));
+      } else if (key === 'e') {
+        e.preventDefault();
+        setModoVisualState(prev => (prev === 'escuro' ? 'padrao' : 'escuro'));
+      } else if (key === '1') {
+        e.preventDefault();
+        setFontStepState(0);
+      } else if (key === '2') {
+        e.preventDefault();
+        setFontStepState(1);
+      } else if (key === '3') {
+        e.preventDefault();
+        setFontStepState(2);
+      }
+    };
+
     window.addEventListener('keydown', handleShortcut);
     return () => window.removeEventListener('keydown', handleShortcut);
   }, []);
@@ -236,9 +271,6 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   );
 }
 
-/**
- * Lê as preferências de acessibilidade; exige um AccessibilityProvider acima na árvore.
- */
 export function useAccessibility(): AccessibilityContextType {
   const context = useContext(AccessibilityContext);
   if (!context) {
@@ -246,3 +278,6 @@ export function useAccessibility(): AccessibilityContextType {
   }
   return context;
 }
+
+// Exportação de compatibilidade regressiva
+export const useAccessibilityPreferences = useAccessibility;

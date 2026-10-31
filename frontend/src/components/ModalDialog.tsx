@@ -1,12 +1,5 @@
-/**
- * Fornece a estrutura comum de diálogo modal usada pelo portal.
- */
-
 import React, { useEffect, useRef, ReactNode } from 'react';
 
-/**
- * Título, conteúdo e callback de fechamento do diálogo.
- */
 export interface ModalDialogProps {
   title: string;
   kicker?: string;
@@ -16,9 +9,6 @@ export interface ModalDialogProps {
   size?: 'normal' | 'large';
 }
 
-/**
- * Apresenta um diálogo com semântica modal e controle de fechamento.
- */
 export function ModalDialog({
   title,
   kicker,
@@ -32,10 +22,20 @@ export function ModalDialog({
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
+  // Foco inicial executado estritamente UMA vez na montagem do modal (sem roubar foco ao digitar)
   useEffect(() => {
-    // Foco automático no botão de fechar ao abrir
-    closeBtnRef.current?.focus();
+    const firstInput = modalRef.current?.querySelector<HTMLElement>(
+      'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
+    );
+    if (firstInput) {
+      firstInput.focus();
+    } else {
+      closeBtnRef.current?.focus();
+    }
+  }, []);
 
+  // Atalho do teclado Escape estável
+  useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         onCloseRef.current();

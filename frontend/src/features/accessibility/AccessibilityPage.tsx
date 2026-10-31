@@ -1,16 +1,8 @@
-/**
- * Permite escolher modos visuais, escala tipográfica e redução de movimento.
- */
-
 import React from 'react';
 import { useAccessibility, ModoVisual } from '../../context/AccessibilityContext';
 import { PageHeading } from '../../components/PageHeading';
 import { Button } from '../../components/Button';
-import { Icon } from '../../components/ui';
 
-/**
- * Permite ajustar preferências visuais e tipográficas sem sair do portal.
- */
 export function AccessibilityPage(): React.JSX.Element {
   const {
     modoVisual,
@@ -163,23 +155,13 @@ export function AccessibilityPage(): React.JSX.Element {
                       <span
                         className="pill"
                         style={{
-                          display: 'inline-flex',
-                          flex: '0 0 auto',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '5px',
                           background: 'var(--green)',
                           color: modoVisual === 'alto-contraste' ? '#000000' : '#ffffff',
                           fontWeight: 800,
-                          fontSize: '11.5px',
-                          lineHeight: 1,
-                          whiteSpace: 'nowrap',
-                          minHeight: '28px',
-                          padding: '6px 10px'
+                          fontSize: '11.5px'
                         }}
                       >
-                        <Icon name="check" size={13} />
-                        Em uso
+                        ✓ Em uso
                       </span>
                     )}
                   </div>
@@ -445,18 +427,6 @@ export function AccessibilityPage(): React.JSX.Element {
             <strong style={{ color: 'var(--green)', fontSize: '15px' }}>Esc (Escape)</strong>
             <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'var(--ink)' }}>
               Fecha qualquer modal aberto (prescrição, dose de resgate ou orientações).
-            </p>
-          </div>
-          <div style={{ padding: '14px 16px', background: 'var(--canvas)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-            <strong style={{ color: 'var(--green)', fontSize: '15px' }}>Alt + A</strong>
-            <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'var(--ink)' }}>
-              Alterna entre os três tamanhos de texto disponíveis.
-            </p>
-          </div>
-          <div style={{ padding: '14px 16px', background: 'var(--canvas)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-            <strong style={{ color: 'var(--green)', fontSize: '15px' }}>Alt + C</strong>
-            <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'var(--ink)' }}>
-              Alterna o modo de alto contraste preto e amarelo.
             </p>
           </div>
         </div>

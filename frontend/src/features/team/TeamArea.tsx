@@ -1,7 +1,3 @@
-/**
- * Seleciona painel, pacientes, alertas ou prontuário para a área da equipe.
- */
-
 import React, { useMemo } from 'react';
 import { Usuario, Alerta, ESAS, Triagem, LocalDor, Medicacao, Orientacao, Evolucao } from '../../api';
 import { Button } from '../../components/Button';
@@ -14,14 +10,8 @@ import { PatientRecord } from './PatientRecord';
 import { TeamModalType } from './TeamModal';
 import { AccessibilityPage } from '../accessibility';
 
-/**
- * Identificadores internos das páginas da equipe.
- */
 export type TeamPage = 'painel' | 'pacientes' | 'alertas' | 'acessibilidade';
 
-/**
- * Dados carregados, página atual e callbacks disponíveis à equipe.
- */
 export interface TeamAreaProps {
   page: TeamPage;
   setPage: (p: TeamPage) => void;
@@ -48,9 +38,6 @@ export interface TeamAreaProps {
   updateAlert: (a: Alerta, state: string) => void;
 }
 
-/**
- * Renderiza painel, lista, alertas ou prontuário conforme seleção.
- */
 export function TeamArea({
   page,
   setPage,

@@ -1,7 +1,3 @@
-/**
- * Coordena a sessão web, os dados carregados da API e a escolha entre as áreas do paciente e da equipe.
- */
-
 import React, { useEffect, useState } from 'react';
 import logo from '../images/logo-zelo-verde.png';
 import {
@@ -16,7 +12,7 @@ import {
   Usuario
 } from './api';
 import { NoticeFeedback } from './components/NoticeFeedback';
-import { Icon, type IconName } from './components/ui';
+import { Icon, type IconName } from './components/Icon';
 import { useAccessibility, ModoVisual } from './context/AccessibilityContext';
 import { Login, NoticeState } from './features/auth';
 import { PatientArea, PatientPage } from './features/patient';
@@ -24,9 +20,13 @@ import { TeamArea, TeamPage, TeamModal, TeamModalType } from './features/team';
 
 const sessionKey = '@zelo/web/session';
 
-/**
- * Orquestra a sessão, carrega os dados de cada perfil e alterna entre as áreas de paciente e equipe.
- */
+interface NavEntry {
+  id: string;
+  name: string;
+  icon: IconName;
+  action: () => void;
+}
+
 export default function App(): React.JSX.Element {
   const [usuario, setUsuario] = useState<Usuario | null>(() => {
     try {
@@ -36,16 +36,6 @@ export default function App(): React.JSX.Element {
       return null;
     }
   });
-
-  useEffect(() => {
-    const handleExpiredSession = () => {
-      try { localStorage.removeItem(sessionKey); } catch { /* Sessão já expirou. */ }
-      setUsuario(null);
-      setSelecionado(null);
-    };
-    window.addEventListener('zelo:auth-expired', handleExpiredSession);
-    return () => window.removeEventListener('zelo:auth-expired', handleExpiredSession);
-  }, []);
 
   const [notice, setNotice] = useState<NoticeState | null>(null);
   const [busy, setBusy] = useState(false);
@@ -76,12 +66,37 @@ export default function App(): React.JSX.Element {
     dor: LocalDor[];
   }>({ esas: [], medicacoes: [], orientacoes: [], dor: [] });
 
-  const isTeam = usuario?.perfil === 'assistencial' || usuario?.perfil === 'admin' || usuario?.perfil === 'medico';
+  const isTeam =
+    usuario?.perfil === 'assistencial' ||
+    usuario?.perfil === 'admin' ||
+    usuario?.perfil === 'medico';
 
   const show = (kind: 'success' | 'error' | 'warning' | 'info', text: string) => {
     setNotice({ kind, text });
     window.setTimeout(() => setNotice(null), 5000);
   };
+
+  function sair() {
+    api.logout();
+    try {
+      localStorage.removeItem(sessionKey);
+    } catch {
+      // storage indisponível
+    }
+    setUsuario(null);
+    setSelecionado(null);
+    setMenuAberto(false);
+  }
+
+  // Intercepta evento de expiração de sessão disparado pelo api.ts
+  useEffect(() => {
+    const handleExpired = () => {
+      sair();
+      show('error', 'Sua sessão expirou. Por favor, entre novamente com suas credenciais.');
+    };
+    window.addEventListener('zelo:auth-expired', handleExpired);
+    return () => window.removeEventListener('zelo:auth-expired', handleExpired);
+  }, []);
 
   async function carregarEquipe() {
     const [ps, as] = await Promise.all([api.pacientes(), api.alertas()]);
@@ -144,13 +159,6 @@ export default function App(): React.JSX.Element {
     }
   }
 
-  function sair() {
-    localStorage.removeItem(sessionKey);
-    setUsuario(null);
-    setSelecionado(null);
-    setMenuAberto(false);
-  }
-
   if (!usuario) {
     return (
       <Login
@@ -171,6 +179,57 @@ export default function App(): React.JSX.Element {
       />
     );
   }
+
+  const teamNavItems: NavEntry[] = [
+    {
+      id: 'painel',
+      name: 'Visão geral',
+      icon: 'home',
+      action: () => {
+        setSelecionado(null);
+        setEquipePagina('painel');
+      }
+    },
+    {
+      id: 'pacientes',
+      name: 'Pacientes',
+      icon: 'users',
+      action: () => {
+        setSelecionado(null);
+        setEquipePagina('pacientes');
+      }
+    },
+    {
+      id: 'alertas',
+      name: 'Alertas clínicos',
+      icon: 'alert-triangle',
+      action: () => {
+        setSelecionado(null);
+        setEquipePagina('alertas');
+      }
+    },
+    {
+      id: 'acessibilidade',
+      name: 'Acessibilidade',
+      icon: 'bolt',
+      action: () => {
+        setSelecionado(null);
+        setEquipePagina('acessibilidade');
+      }
+    }
+  ];
+
+  const patientNavItems: NavEntry[] = [
+    { id: 'inicio', name: 'Início', icon: 'home', action: () => setPaginaPaciente('inicio') },
+    { id: 'esas', name: 'Avaliação ESAS', icon: 'clock', action: () => setPaginaPaciente('esas') },
+    { id: 'chatbot', name: 'Chatbot Zelo (Apoio)', icon: 'chat', action: () => setPaginaPaciente('chatbot') },
+    { id: 'medicacoes', name: 'Medicações & Receitas', icon: 'pill', action: () => setPaginaPaciente('medicacoes') },
+    { id: 'mapa', name: 'Mapa da dor', icon: 'map-pin', action: () => setPaginaPaciente('mapa') },
+    { id: 'orientacoes', name: 'Avisos da equipe', icon: 'info', action: () => setPaginaPaciente('orientacoes') },
+    { id: 'acessibilidade', name: 'Acessibilidade', icon: 'bolt', action: () => setPaginaPaciente('acessibilidade') }
+  ];
+
+  const navItems = isTeam ? teamNavItems : patientNavItems;
 
   return (
     <div className="app-shell">
@@ -195,7 +254,7 @@ export default function App(): React.JSX.Element {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className="topbar-user">
             <span>{usuario.nome}</span>
-            <button className="button button-quiet" onClick={sair}>
+            <button className="button button-quiet" onClick={sair} aria-label="Sair da conta">
               Sair
             </button>
           </div>
@@ -216,7 +275,10 @@ export default function App(): React.JSX.Element {
 
       {/* ÁREA DE TRABALHO: SIDEBAR + CONTEÚDO PRINCIPAL */}
       <div className="workspace">
-        <aside className={`sidebar ${menuAberto ? 'sidebar-open' : ''}`} aria-label="Menu principal">
+        <aside
+          className={`sidebar ${menuAberto ? 'sidebar-open' : ''}`}
+          aria-label="Menu principal"
+        >
           <div className="sidebar-head">
             <strong>{isTeam ? 'Acompanhamento Clínico' : 'Meu cuidado'}</strong>
             <button
@@ -228,82 +290,30 @@ export default function App(): React.JSX.Element {
             </button>
           </div>
 
-          {(isTeam
-            ? [
-                {
-                  id: 'painel',
-                  name: 'Visão geral',
-                  icon: 'home' as IconName,
-                  action: () => {
-                    setSelecionado(null);
-                    setEquipePagina('painel');
-                  }
-                },
-                {
-                  id: 'pacientes',
-                  name: 'Pacientes',
-                  icon: 'users' as IconName,
-                  action: () => {
-                    setSelecionado(null);
-                    setEquipePagina('pacientes');
-                  }
-                },
-                {
-                  id: 'alertas',
-                  name: 'Alertas clínicos',
-                  icon: 'bell' as IconName,
-                  action: () => {
-                    setSelecionado(null);
-                    setEquipePagina('alertas');
-                  }
-                },
-                {
-                  id: 'acessibilidade',
-                  name: 'Acessibilidade',
-                  icon: 'accessibility' as IconName,
-                  action: () => {
-                    setSelecionado(null);
-                    setEquipePagina('acessibilidade');
-                  }
-                }
-              ]
-            : [
-                { id: 'inicio', name: 'Início', icon: 'home' as IconName, action: () => setPaginaPaciente('inicio') },
-                { id: 'esas', name: 'Avaliação ESAS', icon: 'clipboard' as IconName, action: () => setPaginaPaciente('esas') },
-                { id: 'chatbot', name: 'Chatbot Zelo (Apoio)', icon: 'chat' as IconName, action: () => setPaginaPaciente('chatbot') },
-                { id: 'medicacoes', name: 'Medicações & Receitas', icon: 'pill' as IconName, action: () => setPaginaPaciente('medicacoes') },
-                { id: 'mapa', name: 'Mapa da dor', icon: 'map-pin' as IconName, action: () => setPaginaPaciente('mapa') },
-                { id: 'orientacoes', name: 'Avisos da equipe', icon: 'bell' as IconName, action: () => setPaginaPaciente('orientacoes') },
-                { id: 'acessibilidade', name: 'Acessibilidade', icon: 'accessibility' as IconName, action: () => setPaginaPaciente('acessibilidade') }
-              ]
-          ).map(item => {
+          {navItems.map(item => {
             const isActive = isTeam ? equipePagina === item.id : paginaPaciente === item.id;
-            const notificationCount = !isTeam && item.id === 'orientacoes'
-              ? patientData.orientacoes.length
-              : 0;
             return (
               <button
                 className={`nav-item ${isActive ? 'active' : ''}`}
                 key={item.id}
                 aria-current={isActive ? 'page' : undefined}
-                aria-label={notificationCount > 0 ? `${item.name}, ${notificationCount} notificações` : undefined}
                 onClick={() => {
                   item.action();
                   setMenuAberto(false);
                 }}
               >
-                <span className="nav-icon" aria-hidden="true"><Icon name={item.icon} size={18}/></span>
-                <span className="nav-label">{item.name}</span>
-                {notificationCount > 0 && (
-                  <span className="nav-notification-badge" aria-hidden="true">{notificationCount}</span>
-                )}
+                <span className="nav-icon" aria-hidden="true">
+                  <Icon name={item.icon} size={18} />
+                </span>
+                {item.name}
               </button>
             );
           })}
 
           {isTeam && (
             <div className="sidebar-note">
-              Use os comandos “+ Prescrever” ou “Enviar” para registrar ações com validade no prontuário.
+              Use os comandos “+ Prescrever” ou “Enviar” para registrar ações com validade no
+              prontuário.
             </div>
           )}
 
@@ -322,8 +332,10 @@ export default function App(): React.JSX.Element {
             </select>
           </label>
 
-          <button className="nav-item nav-logout" onClick={sair}>
-            <span className="nav-icon" aria-hidden="true"><Icon name="logout" size={18}/></span>
+          <button className="nav-item nav-logout" onClick={sair} aria-label="Sair da conta">
+            <span className="nav-icon" aria-hidden="true">
+              <Icon name="logout" size={18} />
+            </span>
             Sair da conta
           </button>
         </aside>
@@ -367,7 +379,9 @@ export default function App(): React.JSX.Element {
                     show('error', e.message);
                   });
               }}
-              refreshDetail={() => (selecionado ? carregarDetalhe(selecionado) : carregarEquipe())}
+              refreshDetail={() =>
+                selecionado ? carregarDetalhe(selecionado) : carregarEquipe()
+              }
               openModal={setModal}
               notice={(kind, text) => show(kind, text)}
               updateAlert={async (a, state) => {

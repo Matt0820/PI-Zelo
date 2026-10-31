@@ -150,6 +150,19 @@ def update_medication(
     return med
 
 
+@router.delete('/api/users/{user_id}/medications/{med_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_medication(
+    user_id: int,
+    med_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> None:
+    med = db.get(Medication, med_id)
+    if not med or med.user_id != user_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Medicamento nao encontrado.')
+    db.delete(med)
+    db.commit()
+
+
 @router.post('/api/users/{user_id}/orientations', response_model=OrientationResponse, status_code=status.HTTP_201_CREATED)
 def create_orientation(
     user_id: int,

@@ -1,12 +1,5 @@
-/**
- * Descreve as perguntas, respostas e transições da árvore do chatbot web ativo.
- */
-
 import { ChatNode, ChatbotAnswers } from './types';
 
-/**
- * Valores iniciais das respostas; a intensidade é substituída pelo contexto de entrada.
- */
 export const INITIAL_CHATBOT_ANSWERS: ChatbotAnswers = {
   intensidadeDor: 8,
   temSinaisEmergencia: false,
@@ -19,9 +12,6 @@ export const INITIAL_CHATBOT_ANSWERS: ChatbotAnswers = {
   observacoesAdicionais: ''
 };
 
-/**
- * Árvore de nós e transições consumida pelo chatbot web ativo.
- */
 export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
   // NÓ 1: ACOLHIMENTO E CONTEXTUALIZAÇÃO DO GATILHO ESAS
   'acolhimento': {
@@ -215,7 +205,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     speaker: 'zelo',
     title: 'Enfermeira Virtual Zelo · Desfecho Assistencial',
     message:
-      'Deseja solicitar que a equipe multiprofissional do Equipe Médica entre em contato prioritário com você por telefone ou mensagem neste turno?',
+      'Deseja solicitar que a equipe multiprofissional da Equipe Médica entre em contato prioritário com você por telefone ou mensagem neste turno?',
     options: [
       {
         id: 'opt_contato_sim',
@@ -240,12 +230,12 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     isFinish: true,
     message: (answers) =>
       answers.solicitarContato
-        ? 'Suas respostas foram salvas no prontuário do Equipe Médica. Foi gerado um alerta prioritário na Central da equipe de saúde para retorno ágil.'
-        : 'Suas respostas foram salvas com sucesso no seu prontuário diário para monitoramento contínuo da equipe do Equipe Médica.',
+        ? 'Suas respostas foram salvas no prontuário da Equipe Médica. Foi gerado um alerta prioritário na Central da equipe de saúde para retorno ágil.'
+        : 'Suas respostas foram salvas com sucesso no seu prontuário diário para monitoramento contínuo da Equipe Médica.',
     bullets: [
       'As medidas não farmacológicas permanecem salvas para consulta.',
       'Se a dor aumentar ou surgirem novos sintomas, você pode refazer a avaliação a qualquer momento.',
-      'Em caso de agravamento súbito, ligue para o Equipe Médica: (41) 3333-0000.'
+      'Em caso de agravamento súbito, ligue para a Equipe Médica: (41) 3333-0000.'
     ]
   }
 };

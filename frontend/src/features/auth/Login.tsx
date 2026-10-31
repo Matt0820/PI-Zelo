@@ -1,24 +1,14 @@
-/**
- * Renderiza login/cadastro e mostra retorno da API sem guardar a senha no estado global.
- */
-
 import React, { FormEvent, useState } from 'react';
 import logo from '../../../images/logo-zelo-verde.png';
 import { Button } from '../../components/Button';
 import { NoticeFeedback } from '../../components/NoticeFeedback';
 import { AccessibilityBar } from '../../components/AccessibilityBar';
 
-/**
- * Estrutura do feedback de autenticação exibido na tela.
- */
 export interface NoticeState {
   kind: 'success' | 'error' | 'warning' | 'info';
   text: string;
 }
 
-/**
- * Callbacks e estado que conectam o formulário à autenticação/cadastro.
- */
 export interface LoginProps {
   entrar: (email: string, senha: string, expected: 'equipe' | 'paciente') => void;
   criarConta: (dados: unknown) => Promise<void>;
@@ -26,9 +16,6 @@ export interface LoginProps {
   notice: NoticeState | null;
 }
 
-/**
- * Renderiza os formulários de entrada e cadastro com validação e feedback.
- */
 export function Login({
   entrar,
   criarConta,

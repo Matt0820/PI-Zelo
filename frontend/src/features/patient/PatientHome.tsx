@@ -1,7 +1,3 @@
-/**
- * Apresenta o resumo do cuidado e atalhos para os fluxos do paciente.
- */
-
 import React, { useState } from 'react';
 import { Usuario, ESAS, Medicacao, Orientacao, LocalDor, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -10,9 +6,6 @@ import { PageHeading } from '../../components/PageHeading';
 import { EmptyState } from '../../components/EmptyState';
 import { ModalDialog } from '../../components/ModalDialog';
 
-/**
- * Dados de resumo e operações de navegação/atualização.
- */
 export interface PatientHomeProps {
   usuario: Usuario;
   esas: ESAS[];
@@ -25,9 +18,6 @@ export interface PatientHomeProps {
   notice: (kind: 'success' | 'error', text: string) => void;
 }
 
-/**
- * Apresenta o resumo pessoal e os atalhos para cuidado.
- */
 export function PatientHome({
   usuario,
   esas,
@@ -70,7 +60,8 @@ export function PatientHome({
     setLoading(true);
     try {
       const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      await api.confirmarMedicacao(usuario.id, m.id);
+      const obsAtual = m.observacao ? `${m.observacao} · Confirmado às ${nowHora}` : `Confirmado às ${nowHora}`;
+      await api.atualizarMedicacao(usuario.id, m.id, { status: 'tomada', observacao: obsAtual });
       await refresh();
       notice('success', `Dose de ${m.nome} confirmada com sucesso às ${nowHora}!`);
     } catch (err) {
@@ -85,10 +76,15 @@ export function PatientHome({
     setLoading(true);
     try {
       const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      await api.registrarDoseResgate(usuario.id, {
+      await api.criarMedicacao(usuario.id, {
         nome: resgateNome,
+        dose: '1 dose de resgate SOS',
         horario: nowHora,
-        observacao: resgateObs.trim() || null
+        frequencia: 'Uso pontual para crise aguda de dor',
+        observacao: resgateObs ? `Dose de resgate tomada às ${nowHora}. Obs: ${resgateObs}` : `Dose de resgate tomada às ${nowHora}`,
+        status: 'tomada',
+        eh_dose_resgate: true,
+        medico_prescritor: 'Prescrição de resgate domiciliar'
       });
       await refresh();
       setModalResgate(false);

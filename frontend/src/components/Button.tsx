@@ -1,12 +1,5 @@
-/**
- * Define o botão reutilizável do portal e suas variantes visuais.
- */
-
 import React, { ButtonHTMLAttributes, ReactNode } from 'react';
 
-/**
- * Propriedades visuais e nativas aceitas pelo botão compartilhado.
- */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'quiet' | 'danger';
   size?: 'normal' | 'large';
@@ -17,9 +10,6 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-/**
- * Renderiza um botão com variante e largura opcionais sem substituir os atributos nativos.
- */
 export function Button({
   variant = 'primary',
   size = 'normal',

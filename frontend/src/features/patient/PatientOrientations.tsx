@@ -1,23 +1,12 @@
-/**
- * Lista orientações da equipe destinadas ao paciente.
- */
-
 import React from 'react';
 import { Orientacao } from '../../api';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
-import { Icon } from '../../components/ui';
 
-/**
- * Lista de orientações já carregada para o paciente.
- */
 export interface PatientOrientationsProps {
   orientacoes: Orientacao[];
 }
 
-/**
- * Apresenta as recomendações enviadas pela equipe.
- */
 export function PatientOrientations({ orientacoes }: PatientOrientationsProps): React.JSX.Element {
   return (
     <section aria-label="Avisos e Orientações Médicas">
@@ -51,7 +40,7 @@ export function PatientOrientations({ orientacoes }: PatientOrientationsProps): 
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
                   <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--ink)' }}>
-                    <Icon name="stethoscope"/> {o.titulo}
+                    {o.titulo}
                   </h3>
                   <span className={`pill ${o.prioridade === 'alta' ? 'severity-high' : ''}`}>
                     Prioridade {o.prioridade} · {dataFmt}

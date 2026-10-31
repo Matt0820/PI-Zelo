@@ -1,0 +1,541 @@
+/**
+ * ESTILOS DO FLUXO DO PACIENTE E CUIDADOR FAMILIAR
+ * IHC Centrada em Idosos e Pessoas Fragilizadas (WCAG 2.2 AA / AAA)
+ * Sistema Zelo - Cuidados Paliativos
+ */
+
+.paciente-container {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--zelo-surface);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Header do Paciente */
+.paciente-header {
+  background-color: var(--zelo-primary);
+  color: #FFFFFF;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.paciente-header-titles h1 {
+  font-size: 1.35rem;
+  color: #FFFFFF;
+}
+
+.paciente-header-titles p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 0;
+}
+
+.paciente-body {
+  padding: 24px 20px;
+  flex: 1;
+}
+
+/* Cartão de Boas-Vindas e Acolhimento */
+.welcome-card {
+  background-color: var(--zelo-primary-light);
+  border: 1px solid var(--zelo-primary-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.welcome-card h2 {
+  font-size: 1.4rem;
+  color: var(--zelo-primary);
+  margin-bottom: 8px;
+}
+
+.welcome-card p {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--zelo-text);
+  margin-bottom: 0;
+}
+
+/* Grid de Ações Principais (Botões Grandes) */
+.paciente-nav-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.nav-card-btn {
+  background-color: var(--zelo-surface);
+  border: 2px solid var(--zelo-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-decoration: none;
+  color: var(--zelo-text);
+  min-height: 80px;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.nav-card-btn:hover,
+.nav-card-btn:focus-visible {
+  border-color: var(--zelo-primary);
+  background-color: var(--zelo-primary-light);
+  transform: translateY(-2px);
+}
+
+.nav-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background-color: var(--zelo-primary-light);
+  color: var(--zelo-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.nav-card-text h3 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+  color: var(--zelo-text);
+}
+
+.nav-card-text p {
+  font-size: 0.95rem;
+  color: var(--zelo-text-muted);
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   FLUXO ESAS EM PASSOS SEQUENCIAIS (UM SINTOMA POR PASSO)
+   ========================================================================== */
+.step-header {
+  margin-bottom: 20px;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--zelo-primary);
+}
+
+.step-progress-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.step-tick {
+  flex: 1;
+  height: 6px;
+  background-color: var(--zelo-border);
+  border-radius: var(--radius-pill);
+}
+
+.step-tick.active {
+  background-color: var(--zelo-primary);
+}
+
+.step-tick.done {
+  background-color: var(--zelo-primary-active);
+}
+
+.symptom-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--zelo-text);
+  margin-bottom: 8px;
+}
+
+.symptom-question {
+  font-size: 1.15rem;
+  color: var(--zelo-text-muted);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+/* Grade de Botões de 0 a 10 (Alvos Mínimos Amplos) */
+.esas-number-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.esas-num-btn {
+  aspect-ratio: 1;
+  min-height: 60px;
+  border: 2px solid var(--zelo-border);
+  background-color: var(--zelo-surface);
+  border-radius: var(--radius-md);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: var(--font-family);
+  color: var(--zelo-text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.esas-num-btn:hover {
+  background-color: var(--zelo-surface-soft);
+  border-color: var(--zelo-primary);
+}
+
+.esas-num-btn.selected {
+  background-color: var(--zelo-primary);
+  border-color: var(--zelo-primary-active);
+  color: #FFFFFF;
+  transform: scale(1.04);
+  box-shadow: 0 4px 12px rgba(9, 99, 93, 0.3);
+}
+
+.esas-selection-feedback {
+  background-color: var(--zelo-primary-light);
+  border: 1px solid var(--zelo-primary-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--zelo-primary);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* ==========================================================================
+   CHATBOT ZELO - FLUXO CONVERSACIONAL VALIDADO POR JUÍZES
+   ========================================================================== */
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.chat-alert-banner {
+  background-color: var(--zelo-danger-bg);
+  border: 2px solid var(--zelo-danger-border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  color: var(--zelo-danger);
+}
+
+.chat-alert-banner h3 {
+  font-size: 1.15rem;
+  color: var(--zelo-danger);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-alert-banner p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.chat-bubble-zelo {
+  align-self: flex-start;
+  background-color: var(--zelo-surface-soft);
+  border: 1px solid var(--zelo-border);
+  border-radius: 18px 18px 18px 4px;
+  padding: 16px 20px;
+  max-width: 90%;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--zelo-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.chat-bubble-user {
+  align-self: flex-end;
+  background-color: var(--zelo-primary);
+  color: #FFFFFF;
+  border-radius: 18px 18px 4px 18px;
+  padding: 14px 20px;
+  max-width: 85%;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.chat-options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.chat-option-btn {
+  background-color: var(--zelo-surface);
+  border: 2px solid var(--zelo-primary);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  font-family: var(--font-family);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--zelo-primary);
+  text-align: left;
+  cursor: pointer;
+  min-height: var(--button-height-elderly);
+  transition: all var(--transition-fast);
+}
+
+.chat-option-btn:hover,
+.chat-option-btn:focus-visible {
+  background-color: var(--zelo-primary);
+  color: #FFFFFF;
+}
+
+.chat-binary-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin-top: 14px !important;
+  box-sizing: border-box !important;
+}
+
+.chat-binary-btn,
+.chat-binary-group .btn {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 56px !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  border-radius: var(--radius-lg) !important;
+  cursor: pointer !important;
+  padding: 14px 18px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  text-align: center !important;
+  line-height: 1.35 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.chat-binary-btn:hover,
+.chat-binary-btn:focus-visible {
+  background-color: var(--zelo-primary);
+  color: #FFFFFF;
+}
+
+.chat-controls-area {
+  padding-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.care-directives-box {
+  background-color: #F3EFF9;
+  border: 2px solid #845EC2;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  color: #2F1E4E;
+  margin-top: 12px;
+}
+
+.care-directives-box h4 {
+  color: #845EC2;
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+}
+
+.care-directives-box ul {
+  padding-left: 20px;
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.care-directives-box li {
+  margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   Barra de Navegação Inferior (Mobile-First Bottom Navigation Bar)
+   Ergonomia para Idosos e Cuidadores Familiares (WCAG 2.2 AA)
+   ========================================================================== */
+.paciente-bottom-nav {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--zelo-surface);
+  border-top: 2px solid var(--zelo-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 6px;
+  z-index: 100;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--zelo-text-muted);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 6px 8px;
+  min-width: 58px;
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item:focus-visible {
+  color: var(--zelo-primary);
+  background-color: var(--zelo-primary-light);
+}
+
+.bottom-nav-item.active {
+  color: var(--zelo-primary);
+  background-color: var(--zelo-primary-light);
+  border-bottom: 3px solid var(--zelo-primary);
+}
+
+.bottom-nav-tag {
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+
+/* Notificações no Mobile */
+.notif-card {
+  background-color: var(--zelo-surface);
+  border: 1px solid var(--zelo-border);
+  border-left: 4px solid var(--zelo-primary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.notif-card.urgent {
+  border-left-color: var(--zelo-danger);
+  background-color: var(--zelo-danger-bg);
+}
+
+.notif-card.success {
+  border-left-color: var(--zelo-success);
+}
+
+/* ==========================================================================
+   ACESSIBILIDADE: ESCALONAMENTO DE FONTES COM CONTROLE DE CONTENÇÃO (SEM ESTOURO)
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body.font-large,
+body.font-xlarge {
+  overflow-x: hidden !important;
+}
+
+body.font-large .paciente-container,
+body.font-xlarge .paciente-container {
+  overflow-x: hidden !important;
+  max-width: 600px !important;
+  width: 100% !important;
+}
+
+body.font-large .paciente-header,
+body.font-xlarge .paciente-header {
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+body.font-large .btn,
+body.font-xlarge .btn,
+body.font-large .btn-elderly,
+body.font-xlarge .btn-elderly,
+body.font-large .nav-card-btn,
+body.font-xlarge .nav-card-btn {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  height: auto !important;
+  min-height: 54px !important;
+}
+
+body.font-large .nav-card-btn {
+  padding: 16px 18px;
+}
+
+body.font-large .nav-card-text h3 {
+  font-size: 1.25rem !important;
+}
+
+body.font-large .nav-card-text p {
+  font-size: 1.05rem !important;
+}
+
+body.font-xlarge .nav-card-btn {
+  padding: 18px 20px;
+}
+
+body.font-xlarge .nav-card-text h3 {
+  font-size: 1.4rem !important;
+}
+
+body.font-xlarge .nav-card-text p {
+  font-size: 1.15rem !important;
+}
+
+body.font-large .esas-number-grid,
+body.font-xlarge .esas-number-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 8px !important;
+}
+
+body.font-large .esas-num-btn,
+body.font-xlarge .esas-num-btn {
+  min-height: 54px !important;
+  font-size: 1.35rem !important;
+  padding: 4px !important;
+}
+
+.contrast-setting-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+#contrast-status-badge {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}

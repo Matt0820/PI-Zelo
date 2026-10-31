@@ -49,12 +49,12 @@ def isolated_database():
 @pytest.fixture
 def client():
     """Cliente ASGI síncrono para testes, sem iniciar lifespan ou seed real."""
-    import httpx2
+    import httpx
 
     class SyncASGIClient:
         async def _request(self, method, path, **kwargs):
-            transport = httpx2.ASGITransport(app=app)
-            async with httpx2.AsyncClient(transport=transport, base_url="http://testserver") as session:
+            transport = httpx.ASGITransport(app=app)
+            async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as session:
                 return await session.request(method, path, **kwargs)
 
         def request(self, method, path, **kwargs):
@@ -65,5 +65,14 @@ def client():
 
         def post(self, path, **kwargs):
             return self.request("POST", path, **kwargs)
+
+        def patch(self, path, **kwargs):
+            return self.request("PATCH", path, **kwargs)
+
+        def put(self, path, **kwargs):
+            return self.request("PUT", path, **kwargs)
+
+        def delete(self, path, **kwargs):
+            return self.request("DELETE", path, **kwargs)
 
     return SyncASGIClient()

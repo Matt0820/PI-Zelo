@@ -1,13 +1,6 @@
-/**
- * Apresenta controles de fonte e visual e fecha o menu por clique externo ou Escape.
- */
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useAccessibility, ModoVisual } from '../context/AccessibilityContext';
 
-/**
- * Renderiza os controles rápidos de fonte e visual; os nomes e estados refletem o contexto global.
- */
 export function AccessibilityBar(): React.JSX.Element {
   const {
     modoVisual,
