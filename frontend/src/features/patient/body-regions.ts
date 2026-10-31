@@ -37,12 +37,14 @@ export const ANATOMICAL_REGIONS: AnatomicalRegion[] = [
   { id: 'panturrilha_pe_esq', name: 'Panturrilha / Calcanhar esquerdo', view: 'costas', category: 'membros_inferiores', description: 'Batata da perna e calcanhar esquerdo' }
 ];
 
+import type { IconName } from '../../components/ui';
+
 export type OccurrenceType = 'dor' | 'edema' | 'lesao';
 
 export interface OccurrenceConfig {
   type: OccurrenceType;
   label: string;
-  icon: string;
+  icon: IconName;
   color: string;
   softColor: string;
   description: string;
@@ -52,7 +54,7 @@ export const OCCURRENCE_TYPES: Record<OccurrenceType, OccurrenceConfig> = {
   dor: {
     type: 'dor',
     label: 'Dor',
-    icon: '⚡',
+    icon: 'bolt',
     color: 'var(--danger)',
     softColor: 'var(--danger-soft)',
     description: 'Sensação dolorosa, pontada, queimação ou aperto'
@@ -60,7 +62,7 @@ export const OCCURRENCE_TYPES: Record<OccurrenceType, OccurrenceConfig> = {
   edema: {
     type: 'edema',
     label: 'Inchaço (Edema)',
-    icon: '💧',
+    icon: 'droplet',
     color: '#2563eb',
     softColor: '#eff6ff',
     description: 'Retenção de líquido, inchaço em pernas, braços ou abdômen'
@@ -68,7 +70,7 @@ export const OCCURRENCE_TYPES: Record<OccurrenceType, OccurrenceConfig> = {
   lesao: {
     type: 'lesao',
     label: 'Ferida ou Lesão de pele',
-    icon: '🩹',
+    icon: 'bandage',
     color: '#7c3aed',
     softColor: '#f5f3ff',
     description: 'Lesão por pressão, vermelhidão, ferida tumoral ou bolhas'

@@ -1,16 +1,18 @@
 import type { ComponentProps, ElementType, ReactNode } from 'react';
 
-export type IconName = 'accessibility' | 'alert-triangle' | 'bell' | 'bolt' | 'chat' | 'check' | 'clipboard' | 'clock' | 'home' | 'info' | 'logout' | 'map-pin' | 'phone' | 'pill' | 'plus' | 'stethoscope' | 'users';
+export type IconName = 'accessibility' | 'alert-triangle' | 'bandage' | 'bell' | 'bolt' | 'chat' | 'check' | 'clipboard' | 'clock' | 'droplet' | 'home' | 'info' | 'logout' | 'map-pin' | 'phone' | 'pill' | 'plus' | 'stethoscope' | 'users';
 
 const iconPaths: Record<IconName, ReactNode> = {
   accessibility: <><circle cx="12" cy="4" r="2"/><path d="M12 7v7M5 9l7 2 7-2m-7 2v3m0 0-4 7m4-7 4 7"/></>,
   'alert-triangle': <><path d="M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/></>,
+  bandage: <><path d="m5 15 8.6-8.6a4 4 0 0 1 5.7 5.7L10.7 20.7A4 4 0 0 1 5 15Z"/><path d="m9 11 4 4m-6.2-1.8h.01m6-6h.01m2.2 10.2h.01m3.8-3.8h.01"/></>,
   bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
   bolt: <path d="M13 2 4 14h7l-1 8 10-13h-7l1-7Z"/>,
   chat: <><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></>,
   check: <path d="m5 12 4 4L19 6"/>,
   clipboard: <><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6a1.5 1.5 0 0 0-1.5-1.5h-3A1.5 1.5 0 0 0 9 4.5ZM9 10h6m-6 4h6m-6 4h3"/></>,
   clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
+  droplet: <><path d="M12 3c-2.5 3.5-6 7-6 11a6 6 0 0 0 12 0c0-4-3.5-7.5-6-11Z"/><path d="M9.5 15.5a2.5 2.5 0 0 0 2.5 2.5"/></>,
   home: <><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V10Z"/></>,
   info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></>,
   logout: <><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></>,

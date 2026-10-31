@@ -514,7 +514,7 @@ export function PainBodyMap({
                       className={`occurrence-pill ${isSelected ? 'selected' : ''}`}
                       onClick={() => setTipoOcorrencia(typeKey)}
                     >
-                      <span aria-hidden="true">{cfg.icon}</span>
+                      <Icon name={cfg.icon} size={18} />
                       <span>{cfg.label}</span>
                     </button>
                   );
@@ -614,7 +614,7 @@ export function PainBodyMap({
               <article key={item.id} className="record-card" style={{ marginBottom: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '18px' }} aria-hidden="true">{config.icon}</span>
+                    <Icon name={config.icon} size={18} />
                     <strong style={{ fontSize: '17px', color: 'var(--ink)' }}>
                       {item.regiao_anatomica}
                     </strong>
