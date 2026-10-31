@@ -3,6 +3,7 @@ import logo from '../images/logo-zelo-verde.png';
 import { Alerta, api, ESAS, Evolucao, LocalDor, Medicacao, Orientacao, Triagem, Usuario } from './api';
 import ChatbotZeloScreen from './chatbot/ChatbotZeloScreen';
 import { AccessibilityProvider, useAccessibilityPreferences } from './accessibility/AccessibilityContext';
+import { Button, Card, Feedback, Field, ModalFrame, NavigationItem } from './components/ui';
 
 type Notice={kind:'success'|'error';text:string};
 type TeamPage='painel'|'pacientes'|'alertas';
@@ -44,7 +45,7 @@ function AppContent(){
  function sair(){localStorage.removeItem(sessionKey);localStorage.removeItem('@zelo/web/access-token');setUsuario(null);setSelecionado(null);setMenuAberto(false);}
  if(!usuario)return <Login entrar={entrar} criarConta={async dados=>{setBusy(true);try{const user=await api.criarPaciente(dados);setUsuario(user);localStorage.setItem(sessionKey,JSON.stringify(user));show('success','Conta do paciente criada.');}finally{setBusy(false);}}} busy={busy} notice={notice} />;
  return <div className="app-shell">
-  <header className="topbar"><button className="brand" onClick={()=>{setSelecionado(null);isTeam?setEquipePagina('painel'):setPaginaPaciente('inicio');}} aria-label="Ir para o início"><img src={logo} alt="Zelo"/><span><b>zelo</b><small>{isTeam?'Portal assistencial':'Área do paciente'}</small></span></button><div className="topbar-user"><span>{usuario.nome}</span><button className="button button-quiet" onClick={sair}>Sair</button></div><button className="menu-trigger" aria-label="Abrir menu" onClick={()=>setMenuAberto(true)}><span className="menu-icon" aria-hidden="true"><i/><i/><i/></span></button></header>
+  <header className="topbar"><button className="brand" onClick={()=>{setSelecionado(null);isTeam?setEquipePagina('painel'):setPaginaPaciente('inicio');}} aria-label="Ir para o início"><img src={logo} alt="Zelo"/><span><b>zelo</b><small>{isTeam?'Portal assistencial':'Área do paciente'}</small></span></button><div className="topbar-user"><span>{usuario.nome}</span><Button variant="quiet" onClick={sair}>Sair</Button></div><button className="menu-trigger" aria-label="Abrir menu" onClick={()=>setMenuAberto(true)}><span className="menu-icon" aria-hidden="true"><i/><i/><i/></span></button></header>
   <div className="workspace">
    <aside className={`sidebar ${menuAberto?'sidebar-open':''}`}>
     <div className="sidebar-head"><strong>{isTeam?'Acompanhamento':'Meu cuidado'}</strong><button className="sidebar-close" onClick={()=>setMenuAberto(false)} aria-label="Fechar menu">×</button></div>
@@ -59,7 +60,7 @@ function AppContent(){
       {id:'medicacoes',name:'Medicações & Receitas',icon:'＋',action:()=>setPaginaPaciente('medicacoes')},
       {id:'mapa',name:'Mapa da dor',icon:'◎',action:()=>setPaginaPaciente('mapa')},
       {id:'orientacoes',name:'Avisos da equipe',icon:'i',action:()=>setPaginaPaciente('orientacoes')},
-    ]).map(item=><button className="nav-item" key={item.id} onClick={()=>{item.action();setMenuAberto(false);}}><span className="nav-icon">{item.icon}</span>{item.name}</button>)}
+    ]).map(item=><NavigationItem key={item.id} icon={item.icon} active={item.id===(isTeam?equipePagina:paginaPaciente)} onClick={()=>{item.action();setMenuAberto(false);}}>{item.name}</NavigationItem>)}
     {isTeam&&<div className="sidebar-note">Use os comandos “Enviar” para registrar cada ação no prontuário do paciente.</div>}
     <fieldset className="sidebar-accessibility">
       <legend>Acessibilidade</legend>
@@ -73,7 +74,7 @@ function AppContent(){
    </aside>
    {menuAberto&&<button aria-label="Fechar menu" className="sidebar-scrim" onClick={()=>setMenuAberto(false)} />}
    <main className="main-content">
-    {notice&&<div className={`notice notice-${notice.kind}`} role="status">{notice.text}<button onClick={()=>setNotice(null)} aria-label="Fechar">×</button></div>}
+    {notice&&<Feedback kind={notice.kind} onDismiss={()=>setNotice(null)}>{notice.text}</Feedback>}
     {isTeam? <TeamArea page={equipePagina} setPage={setEquipePagina} selected={selecionado} setSelected={setSelecionado} patients={pacientes} alerts={alertas} query={query} setQuery={setQuery} details={detalhes} busy={busy} setBusy={setBusy} openPatient={(p)=>{setBusy(true);carregarDetalhe(p).then(()=>setBusy(false)).catch(e=>{setBusy(false);show('error',e.message);});}} refreshDetail={()=>selecionado?carregarDetalhe(selecionado):carregarEquipe()} openModal={setModal} notice={show} updateAlert={async(a,state)=>{try{await api.atualizarAlerta(a.id,{estado:state,revisado_por:usuario.nome,observacao_conduta:state==='Tratado'?'Conduta registrada pela equipe no portal Zelo.':null});await carregarEquipe();show('success',`Alerta atualizado para “${state}”.`);}catch(e){show('error',String((e as Error).message));}}} />
       : <PatientArea usuario={usuario} page={paginaPaciente} setPage={setPaginaPaciente} data={patientData} refresh={()=>carregarPaciente(usuario.id)} notice={show} />}
    </main>
@@ -88,14 +89,14 @@ function Login({entrar,criarConta,busy,notice}:{entrar:(email:string,senha:strin
  function atualizar(chave:string,valor:string){setDados(atual=>({...atual,[chave]:valor}));}
  function submitLogin(e:FormEvent){e.preventDefault();entrar(email.trim(),senha,modo);}
  async function submitSignup(e:FormEvent){e.preventDefault();setErro('');if(etapa===0){if(!dados.nome.trim()||!dados.email.trim()){setErro('Informe o nome e o email do paciente.');return;}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)){setErro('Confira o email informado.');return;}setEtapa(1);return;}if(etapa===1){if(!proprio&&(!dados.cuidador_principal.trim()||!dados.parentesco_cuidador.trim())){setErro('Informe o nome e a relação do responsável, ou indique que o paciente é seu próprio responsável.');return;}setEtapa(2);return;}if(dados.senha.length<8){setErro('Use uma senha com pelo menos 8 caracteres.');return;}const numeric=(value:string)=>value.trim()?Number(value):null;if(dados.idade&&(!Number.isInteger(numeric(dados.idade))||Number(dados.idade)<0||Number(dados.idade)>125)){setErro('Informe uma idade entre 0 e 125 anos.');return;}if(dados.pps_score&&(!Number.isInteger(numeric(dados.pps_score))||Number(dados.pps_score)<0||Number(dados.pps_score)>100)){setErro('Informe o PPS entre 0 e 100.');return;}try{await criarConta({nome:dados.nome.trim(),email:dados.email.trim(),senha:dados.senha,perfil:'paciente',prontuario:dados.prontuario.trim()||null,idade:numeric(dados.idade),sexo:dados.sexo.trim()||null,cpf:dados.cpf.trim()||null,telefone:dados.telefone.trim()||null,cuidador_principal:proprio?dados.nome.trim():dados.cuidador_principal.trim()||null,parentesco_cuidador:proprio?'Próprio paciente':dados.parentesco_cuidador.trim()||null,diagnostico_oncologico:dados.diagnostico_oncologico.trim()||null,tratamento_modificador:dados.tratamento_modificador.trim()||null,pps_score:numeric(dados.pps_score),comorbidades:dados.comorbidades.trim()||null,alergias:dados.alergias.trim()||null,proxima_consulta:dados.proxima_consulta.trim()||null});}catch(error){setErro(error instanceof Error?error.message:'Não foi possível criar a conta.');}}
- const renderField=(key:string,label:string,type='text',optional=true)=><label key={key}>{label}{optional?' (opcional)':' *'}<input type={type} value={dados[key]||''} onChange={e=>atualizar(key,e.target.value)} required={!optional} maxLength={key==='sexo'?10:undefined} min={key==='idade'?'0':key==='pps_score'?'0':undefined} max={key==='idade'?'125':key==='pps_score'?'100':undefined} /></label>;
+ const renderField=(key:string,label:string,type='text',optional=true)=><Field key={key} label={`${label}${optional?' (opcional)':' *'}`}><input type={type} value={dados[key]||''} onChange={e=>atualizar(key,e.target.value)} required={!optional} maxLength={key==='sexo'?10:undefined} min={key==='idade'?'0':key==='pps_score'?'0':undefined} max={key==='idade'?'125':key==='pps_score'?'100':undefined} /></Field>;
  const patientSteps=[
   {title:'Dados do paciente',help:'Etapa 1 de 3 · Primeiro, identifique a pessoa que receberá o cuidado.',fields:[['nome','Nome completo do paciente','text',false],['email','Email do paciente para acesso','email',false],['cpf','CPF do paciente'],['telefone','Telefone do paciente'],['idade','Idade do paciente','number'],['sexo','Sexo do paciente'],['prontuario','Número do prontuário'],['diagnostico_oncologico','Diagnóstico oncológico'],['tratamento_modificador','Tratamento atual'],['pps_score','PPS (0 a 100)','number'],['comorbidades','Comorbidades'],['alergias','Alergias'],['proxima_consulta','Próxima consulta']] as Array<[string,string,string?,boolean?]>},
   {title:'Responsável pelo paciente',help:'Etapa 2 de 3 · Informe quem acompanha e apoia o paciente.',fields:[['cuidador_principal','Nome completo do responsável','text',false],['parentesco_cuidador','Relação com o paciente','text',false]] as Array<[string,string,string?,boolean?]>},
   {title:'Acesso do paciente',help:'Etapa 3 de 3 · Crie a senha da conta do paciente.',fields:[['senha','Senha','password',false]] as Array<[string,string,string?,boolean?]>},
  ];
  const current=patientSteps[etapa];
- return <div className="login-shell"><section className="login-brand"><img src={logo} alt="Zelo"/><p className="eyebrow">CUIDADO CONECTADO</p><h1>Presença e cuidado, em cada etapa.</h1><p>Informações do paciente, registros clínicos e orientações reunidos em um só lugar.</p><div className="login-values"><span>Dados compartilhados com o app</span><span>Fluxos claros para a equipe e a família</span></div></section><section className="login-panel"><div className="login-card"><div className="role-switch"><button className={modo==='equipe'?'active':''} onClick={()=>{setModo('equipe');setCadastrar(false);}}>Equipe assistencial</button><button className={modo==='paciente'?'active':''} onClick={()=>setModo('paciente')}>Paciente</button></div>{modo==='paciente'&&<div className="login-mode-switch"><button className={!cadastrar?'active':''} onClick={()=>{setCadastrar(false);setErro('');}}>Entrar</button><button className={cadastrar?'active':''} onClick={()=>{setCadastrar(true);setEtapa(0);setErro('');}}>Criar conta</button></div>}<h2>{cadastrar?'Cadastro do paciente':'Acessar o Zelo'}</h2><p>{cadastrar?current.help:modo==='equipe'?'Entre com sua conta profissional.':'Entre com os dados da conta do paciente.'}</p>{notice&&<div className={`notice notice-${notice.kind}`}>{notice.text}</div>}{erro&&<div className="notice notice-error">{erro}</div>}{cadastrar?<form onSubmit={submitSignup} className="form-stack">{etapa===1&&<label className="self-check"><input type="checkbox" checked={proprio} onChange={e=>{const checked=e.target.checked;setProprio(checked);if(checked){atualizar('cuidador_principal',dados.nome);atualizar('parentesco_cuidador','Próprio paciente');}else{atualizar('cuidador_principal','');atualizar('parentesco_cuidador','');}}}/><span>O paciente será o próprio responsável</span></label>}{current.fields.filter(([key])=>!(etapa===1&&proprio&&key!=='')).map(([key,label,type,optional])=>renderField(key,label,type,optional))}{etapa===0&&<span className="helper">Os dados de identificação e saúde são opcionais; o paciente e a conta ficam identificados como pessoa atendida.</span>}{etapa===2&&<span className="helper">Ao criar a conta, você concorda com os termos de uso e a política de privacidade do Zelo.</span>}<div className="button-row">{etapa>0&&<button type="button" className="button button-secondary" onClick={()=>setEtapa(v=>v-1)}>Voltar</button>}<button className="button button-primary" disabled={busy}>{busy?'Enviando…':etapa===2?'Criar conta do paciente':'Continuar'}</button></div></form>:<form onSubmit={submitLogin}><label>Email, CPF ou prontuário<input value={email} onChange={e=>setEmail(e.target.value)} autoComplete="username" required /></label><label>Senha<input type="password" value={senha} onChange={e=>setSenha(e.target.value)} autoComplete="current-password" required /></label><button className="button button-primary button-wide" disabled={busy}>{busy?'Entrando…':'Entrar'}</button></form>}<small>{cadastrar?'O responsável é identificado na segunda etapa; a conta permanece sendo do paciente.':'Os mesmos dados de paciente e registros são usados no app Zelo.'}</small></div></section></div>;
+ return <div className="login-shell"><section className="login-brand"><img src={logo} alt="Zelo"/><p className="eyebrow">CUIDADO CONECTADO</p><h1>Presença e cuidado, em cada etapa.</h1><p>Informações do paciente, registros clínicos e orientações reunidos em um só lugar.</p><div className="login-values"><span>Dados compartilhados com o app</span><span>Fluxos claros para a equipe e a família</span></div></section><section className="login-panel"><div className="login-card"><div className="role-switch"><button className={modo==='equipe'?'active':''} onClick={()=>{setModo('equipe');setCadastrar(false);}}>Equipe assistencial</button><button className={modo==='paciente'?'active':''} onClick={()=>setModo('paciente')}>Paciente</button></div>{modo==='paciente'&&<div className="login-mode-switch"><button className={!cadastrar?'active':''} onClick={()=>{setCadastrar(false);setErro('');}}>Entrar</button><button className={cadastrar?'active':''} onClick={()=>{setCadastrar(true);setEtapa(0);setErro('');}}>Criar conta</button></div>}<h2>{cadastrar?'Cadastro do paciente':'Acessar o Zelo'}</h2><p>{cadastrar?current.help:modo==='equipe'?'Entre com sua conta profissional.':'Entre com os dados da conta do paciente.'}</p>{notice&&<Feedback kind={notice.kind}>{notice.text}</Feedback>}{erro&&<Feedback kind="error">{erro}</Feedback>}{cadastrar?<form onSubmit={submitSignup} className="form-stack">{etapa===1&&<label className="self-check"><input type="checkbox" checked={proprio} onChange={e=>{const checked=e.target.checked;setProprio(checked);if(checked){atualizar('cuidador_principal',dados.nome);atualizar('parentesco_cuidador','Próprio paciente');}else{atualizar('cuidador_principal','');atualizar('parentesco_cuidador','');}}}/><span>O paciente será o próprio responsável</span></label>}{current.fields.filter(([key])=>!(etapa===1&&proprio&&key!=='')).map(([key,label,type,optional])=>renderField(key,label,type,optional))}{etapa===0&&<span className="helper">Os dados de identificação e saúde são opcionais; o paciente e a conta ficam identificados como pessoa atendida.</span>}{etapa===2&&<span className="helper">Ao criar a conta, você concorda com os termos de uso e a política de privacidade do Zelo.</span>}<div className="button-row">{etapa>0&&<Button type="button" variant="secondary" onClick={()=>setEtapa(v=>v-1)}>Voltar</Button>}<Button disabled={busy}>{busy?'Enviando…':etapa===2?'Criar conta do paciente':'Continuar'}</Button></div></form>:<form onSubmit={submitLogin}><Field label="Email, CPF ou prontuário"><input value={email} onChange={e=>setEmail(e.target.value)} autoComplete="username" required /></Field><Field label="Senha"><input type="password" value={senha} onChange={e=>setSenha(e.target.value)} autoComplete="current-password" required /></Field><Button wide disabled={busy}>{busy?'Entrando…':'Entrar'}</Button></form>}<small>{cadastrar?'O responsável é identificado na segunda etapa; a conta permanece sendo do paciente.':'Os mesmos dados de paciente e registros são usados no app Zelo.'}</small></div></section></div>;
 }
 function TeamArea({page,setPage,selected,setSelected,patients,alerts,query,setQuery,details,busy,setBusy,openPatient,openModal,notice,refreshDetail,updateAlert}:{page:TeamPage;setPage:(p:TeamPage)=>void;selected:Usuario|null;setSelected:(p:Usuario|null)=>void;patients:Usuario[];alerts:Alerta[];query:string;setQuery:(q:string)=>void;details:{esas:ESAS[];triagens:Triagem[];dor:LocalDor[];medicacoes:Medicacao[];orientacoes:Orientacao[];evolucoes:Evolucao[]};busy:boolean;setBusy:(v:boolean)=>void;openPatient:(p:Usuario)=>void;openModal:(m:'paciente'|'orientacao'|'diagnostico'|'agendamento'|'medicacao'|null)=>void;notice:(kind:Notice['kind'],text:string)=>void;refreshDetail:()=>Promise<void>;updateAlert:(a:Alerta,state:string)=>void}){
  const filtered=useMemo(()=>patients.filter(p=>`${p.nome} ${p.prontuario||''} ${p.diagnostico_oncologico||''}`.toLowerCase().includes(query.toLowerCase())),[patients,query]);
@@ -232,16 +233,7 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
 
   const title={paciente:'Cadastrar paciente',orientacao:'Enviar orientação',diagnostico:'Enviar diagnóstico e justificativa',agendamento:'Enviar agendamento',medicacao:'Prescrever Medicamento ou Receita'}[type];
 
-  return <div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)close();}}>
-    <section className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div className="modal-head">
-        <div>
-          <span className="eyebrow">{patient?.nome||'NOVO PRONTUÁRIO'}</span>
-          <h2 id="modal-title">{title}</h2>
-        </div>
-        <button className="icon-button" onClick={close} aria-label="Fechar">×</button>
-      </div>
-
+  return <ModalFrame id="modal-title" kicker={patient?.nome||'NOVO PRONTUÁRIO'} title={title} onClose={close}>
       <form onSubmit={submit} className="form-stack">
         {type==='paciente'&&<>
           <label>Nome completo do paciente<input name="nome" required maxLength={150}/></label>
@@ -339,8 +331,7 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
           </button>
         </div>
       </form>
-    </section>
-  </div>;
+  </ModalFrame>;
 }
 
 function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario;page:PatientPage;setPage:(p:PatientPage)=>void;data:{esas:ESAS[];medicacoes:Medicacao[];orientacoes:Orientacao[];dor:LocalDor[]};refresh:()=>Promise<void>;notice:(kind:Notice['kind'],text:string)=>void}){
@@ -673,7 +664,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
 
     {/* CHATBOT ZELO: DIRECIONAMENTO DE CUIDADO (IVC 0,95) */}
     {page==='chatbot'&&ultimaDor>=7&&<ChatbotZeloScreen usuario={usuario} dorInicial={ultimaDor} onConcluir={()=>setPage('inicio')} notice={notice} refresh={refresh}/>}
-    {page==='chatbot'&&ultimaDor<7&&<section className="record-card"><PageHeading kicker="TRIAGEM DE DOR" title="Complete a avaliação ESAS" description="O Chatbot Zelo é iniciado quando a nota de Dor na avaliação ESAS é 7 ou mais."/><button className="button button-primary" onClick={()=>setPage('esas')}>Iniciar avaliação ESAS</button></section>}
+    {page==='chatbot'&&ultimaDor<7&&<Card as="section"><PageHeading kicker="TRIAGEM DE DOR" title="Complete a avaliação ESAS" description="O Chatbot Zelo é iniciado quando a nota de Dor na avaliação ESAS é 7 ou mais."/><Button onClick={()=>setPage('esas')}>Iniciar avaliação ESAS</Button></Card>}
 
     {/* MAPA DA DOR */}
     {page==='mapa'&&<>
@@ -696,15 +687,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
     </>}
 
     {/* MODAL DE DOSE DE RESGATE RÁPIDA */}
-    {modalResgate&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setModalResgate(false);}}>
-      <section className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-resgate-title">
-        <div className="modal-head">
-          <div>
-            <span className="eyebrow" style={{color:'var(--danger)'}}>REGISTRO DE URGÊNCIA</span>
-            <h2 id="modal-resgate-title">⚡ Registrar Dose de Resgate Extra</h2>
-          </div>
-          <button className="icon-button" onClick={()=>setModalResgate(false)} aria-label="Fechar">×</button>
-        </div>
+    {modalResgate&&<ModalFrame id="modal-resgate-title" kicker="REGISTRO DE URGÊNCIA" kickerTone="danger" title="⚡ Registrar Dose de Resgate Extra" onClose={()=>setModalResgate(false)}>
         <form onSubmit={registrarDoseResgate} className="form-stack">
           <p className="muted" style={{margin:0}}>Informe a medicação de resgate tomada para crise aguda de dor fora dos horários habituais:</p>
           <label>Qual remédio de resgate você tomou? *
@@ -726,7 +709,6 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
             </button>
           </div>
         </form>
-      </section>
-    </div>}
+    </ModalFrame>}
   </section>;
 }
