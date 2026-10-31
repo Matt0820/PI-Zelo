@@ -244,7 +244,7 @@ export function ESASWizard({
           ].map(group => (
             <div className="rating-group" key={group.label}>
               <div className="rating-label">{group.label}</div>
-              <div className="rating-row">
+              <div className={`rating-row ${group.values.length === 3 ? 'rating-row-three' : ''}`}>
                 {group.values.map(n => (
                   <button
                     type="button"

@@ -10,6 +10,21 @@ import {
   OccurrenceType
 } from './body-regions';
 
+const OPPOSITE_REGION: Record<string, string> = {
+  cabeca_frente: 'cabeca_costas', cabeca_costas: 'cabeca_frente',
+  pescoco_frente: 'cervical', cervical: 'pescoco_frente',
+  ombro_direito: 'braco_dir_costas', braco_dir_costas: 'ombro_direito',
+  ombro_esquerdo: 'braco_esq_costas', braco_esq_costas: 'ombro_esquerdo',
+  torax: 'dorso_superior', dorso_superior: 'torax',
+  abdomen_superior: 'lombar_sacra', lombar_sacra: 'abdomen_superior',
+  abdomen_inferior: 'gluteos', gluteos: 'abdomen_inferior',
+  quadril_frente: 'gluteos',
+  coxa_direita: 'coxa_dir_costas', coxa_dir_costas: 'coxa_direita',
+  coxa_esquerda: 'coxa_esq_costas', coxa_esq_costas: 'coxa_esquerda',
+  joelho_perna_direita: 'panturrilha_pe_dir', panturrilha_pe_dir: 'joelho_perna_direita',
+  joelho_perna_esquerda: 'panturrilha_pe_esq', panturrilha_pe_esq: 'joelho_perna_esquerda'
+};
+
 export interface PainBodyMapProps {
   usuario: Usuario;
   locaisDor: LocalDor[];
@@ -44,6 +59,13 @@ export function PainBodyMap({
     if (reg && reg.view !== view) {
       setView(reg.view);
     }
+  }
+
+  function alternarVista(novaVista: 'frente' | 'costas') {
+    setView(novaVista);
+    const oppositeId = OPPOSITE_REGION[selectedRegionId];
+    const oppositeRegion = ANATOMICAL_REGIONS.find(region => region.id === oppositeId && region.view === novaVista);
+    if (oppositeRegion) setSelectedRegionId(oppositeRegion.id);
   }
 
   async function handleSalvar(e: React.FormEvent) {
@@ -94,7 +116,7 @@ export function PainBodyMap({
       <div className="pain-map-grid">
         {/* COLUNA ESQUERDA: SILHUETA VETORIAL SVG INTERATIVA */}
         <article className="record-card body-silhouette-card">
-          <div className="section-title" style={{ marginTop: 0 }}>
+          <div className="section-title body-map-heading" style={{ marginTop: 0 }}>
             <div>
               <span className="eyebrow" style={{ color: 'var(--green)' }}>SILHUETA VETORIAL ANATÔMICA</span>
               <h2 style={{ fontSize: '20px' }}>
@@ -103,11 +125,11 @@ export function PainBodyMap({
             </div>
 
             {/* Alternância Frente / Costas */}
-            <div className="sub-nav-tabs" style={{ marginBottom: 0 }}>
+            <div className="sub-nav-tabs body-map-tabs" style={{ marginBottom: 0 }}>
               <button
                 type="button"
                 className={`sub-nav-btn ${view === 'frente' ? 'active' : ''}`}
-                onClick={() => setView('frente')}
+                onClick={() => alternarVista('frente')}
                 aria-pressed={view === 'frente'}
               >
               <Icon name="accessibility"/> Frente
@@ -115,7 +137,7 @@ export function PainBodyMap({
               <button
                 type="button"
                 className={`sub-nav-btn ${view === 'costas' ? 'active' : ''}`}
-                onClick={() => setView('costas')}
+                onClick={() => alternarVista('costas')}
                 aria-pressed={view === 'costas'}
               >
                 Costas
@@ -416,6 +438,27 @@ export function PainBodyMap({
                   />
                 </g>
               )}
+              <path
+                className="body-contour"
+                aria-hidden="true"
+                pointerEvents="none"
+                d="M148 110 L145 132 C129 137 111 144 95 152 C85 180 76 207 70 230 L60 300 L80 305 L94 236 C100 210 111 190 127 176 C132 209 130 248 125 285 C121 320 122 359 120 390 L122 470 L108 515 L130 515 L148 480 L156 390 L160 300 L164 390 L172 480 L195 515 L212 515 L198 470 L200 390 C198 359 199 320 195 285 C190 248 188 209 193 176 C209 190 220 210 226 236 L240 305 L260 300 L250 230 C244 207 235 180 225 152 C209 144 191 137 175 132 L172 110"
+              />
+              <g className={`anatomy-details ${view}`} aria-hidden="true" pointerEvents="none">
+                {view === 'frente' ? (
+                  <>
+                    <path d="M105 153 Q132 139 158 151 Q188 139 215 153 M160 154V193 M132 244 Q160 252 188 244" />
+                    <circle cx="160" cy="221" r="2.5" />
+                    <path d="M72 230 60 300 M248 230 260 300 M120 390H153 M167 390H200" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M160 136V301 M132 158 Q148 148 158 177 Q145 191 130 195 M188 158 Q172 148 162 177 Q175 191 190 195" />
+                    <path d="M139 231 Q160 241 181 231 M125 305 Q160 316 195 305 M120 395H153 M167 395H200" />
+                    <circle cx="160" cy="274" r="2.5" />
+                  </>
+                )}
+              </g>
             </svg>
           </div>
 
@@ -518,7 +561,7 @@ export function PainBodyMap({
                 ].map(group => (
                   <div className="rating-group" key={group.label} style={{ padding: '6px 8px' }}>
                     <div className="rating-label">{group.label}</div>
-                    <div className="rating-row">
+                    <div className={`rating-row ${group.values.length === 3 ? 'rating-row-three' : ''}`}>
                       {group.values.map(n => (
                         <button
                           key={n}
