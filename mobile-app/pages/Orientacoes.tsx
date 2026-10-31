@@ -59,7 +59,7 @@ export default function OrientacoesScreen({ orientacoes, onVoltar }: Orientacoes
 
             <Text style={estilos.cardTitulo}>{item.titulo}</Text>
             <Text style={estilos.cardDescricao}>{item.descricao}</Text>
-            <Text style={estilos.atualizacao}>Atualizado em: {new Date(item.atualizadaEm).toLocaleString('pt-BR')}</Text>
+            <Text style={estilos.atualizacao}>Atualizado em: {new Date(item.atualizadaEm).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</Text>
           </View>
         ))}
       </ScrollView>

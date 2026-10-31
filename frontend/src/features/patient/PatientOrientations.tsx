@@ -26,7 +26,8 @@ export function PatientOrientations({ orientacoes }: PatientOrientationsProps): 
           {orientacoes.map(o => {
             const dataFmt = new Date(o.atualizada_em).toLocaleString('pt-BR', {
               dateStyle: 'medium',
-              timeStyle: 'short'
+              timeStyle: 'short',
+              timeZone: 'America/Sao_Paulo'
             });
 
             return (

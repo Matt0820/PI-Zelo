@@ -30,7 +30,8 @@ export function MedicationSchedule({
     try {
       const nowHora = new Date().toLocaleTimeString('pt-BR', {
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        timeZone: 'America/Sao_Paulo'
       });
       const obsAtual = m.observacao
         ? `${m.observacao} · Confirmado às ${nowHora}`
@@ -68,7 +69,8 @@ export function MedicationSchedule({
     try {
       const nowHora = new Date().toLocaleTimeString('pt-BR', {
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        timeZone: 'America/Sao_Paulo'
       });
       await api.criarMedicacao(usuario.id, {
         nome: resgateNome,

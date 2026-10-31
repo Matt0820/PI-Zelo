@@ -102,7 +102,7 @@ export function ChatbotZelo({
     };
     setAnswers(updatedAnswers);
 
-    const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
 
     // Mensagem emitida pelo Zelo no nó atual
     const zeloMessageText =

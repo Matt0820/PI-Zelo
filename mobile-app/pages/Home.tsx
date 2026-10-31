@@ -39,6 +39,7 @@ const dataHoje = new Date().toLocaleDateString('pt-BR', {
   weekday: 'long',
   day: 'numeric',
   month: 'long',
+  timeZone: 'America/Sao_Paulo',
 });
 
 /**
@@ -207,7 +208,7 @@ export default function HomeScreen({
                         <Text style={estilos.itemTitulo}>Avaliação de sintomas</Text>
                         <Text style={estilos.itemBadge}>Dor {item.dor}/10</Text>
                       </View>
-                      <Text style={estilos.itemTexto}>{new Date(item.dataRegistro).toLocaleString('pt-BR')}</Text>
+                      <Text style={estilos.itemTexto}>{new Date(item.dataRegistro).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</Text>
                       <Text style={estilos.itemTexto}>Maior nota: {Math.max(item.dor, item.cansaco, item.nausea, item.depressao, item.ansiedade, item.sonolencia, item.apetite, item.mal_estar, item.falta_de_ar, item.constipacao ?? 0)}/10</Text>
                     </View>
                   ))}

@@ -281,7 +281,8 @@ export function ESASWizard({
         ultimasAvaliacoes.slice(0, 4).map(e => {
           const dataFmt = new Date(e.data_registro).toLocaleString('pt-BR', {
             dateStyle: 'medium',
-            timeStyle: 'short'
+            timeStyle: 'short',
+            timeZone: 'America/Sao_Paulo'
           });
           return (
             <p className="history-line" key={e.id}>

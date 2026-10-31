@@ -163,7 +163,7 @@ export function TeamModal({
         const data = String(f.get('data'));
         const hora = String(f.get('hora'));
         if (!data || !hora) throw new Error('Informe a data e o horário do agendamento.');
-        const agendamento = `Atendimento agendado para ${new Date(`${data}T${hora}`).toLocaleString('pt-BR')}.\nMotivo: ${String(f.get('motivo') || 'Acompanhamento de cuidados paliativos')}`;
+        const agendamento = `Atendimento agendado para ${new Date(`${data}T${hora}:00-03:00`).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.\nMotivo: ${String(f.get('motivo') || 'Acompanhamento de cuidados paliativos')}`;
         const orientacaoAgendamento = String(f.get('orientacao') || '').trim();
         await api.registrarEvolucao(patient.id, {
           profissional_nome: professional.nome,

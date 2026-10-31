@@ -56,7 +56,7 @@ export function PatientRecord({
   const appointment = details.evolucoes.find(e => e.tipo_evolucao === 'Agendamento');
 
   const dateFmt = (value: string) =>
-    new Date(value).toLocaleString('pt-BR', { dateStyle: 'medium', timeStyle: 'short' });
+    new Date(value).toLocaleString('pt-BR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Sao_Paulo' });
 
   return (
     <section aria-label={`Prontuário de ${patient.nome}`}>

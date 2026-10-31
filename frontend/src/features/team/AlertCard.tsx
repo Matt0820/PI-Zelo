@@ -17,7 +17,8 @@ export function AlertCard({
 }: AlertCardProps): React.JSX.Element {
   const dataFmt = new Date(alert.criado_em).toLocaleString('pt-BR', {
     dateStyle: 'medium',
-    timeStyle: 'short'
+    timeStyle: 'short',
+    timeZone: 'America/Sao_Paulo'
   });
 
   const isGrave = alert.severidade === 'grave';

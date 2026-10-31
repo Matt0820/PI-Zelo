@@ -429,7 +429,8 @@ export function PainBodyMap({
             const config = OCCURRENCE_TYPES[item.tipo_ocorrencia as OccurrenceType] || OCCURRENCE_TYPES.dor;
             const dataFmt = new Date(item.criado_em).toLocaleString('pt-BR', {
               dateStyle: 'medium',
-              timeStyle: 'short'
+              timeStyle: 'short',
+              timeZone: 'America/Sao_Paulo'
             });
 
             return (

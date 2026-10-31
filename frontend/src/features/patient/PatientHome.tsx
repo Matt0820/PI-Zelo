@@ -59,7 +59,7 @@ export function PatientHome({
   async function tomarRemedio(m: Medicacao) {
     setLoading(true);
     try {
-      const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
       const obsAtual = m.observacao ? `${m.observacao} · Confirmado às ${nowHora}` : `Confirmado às ${nowHora}`;
       await api.atualizarMedicacao(usuario.id, m.id, { status: 'tomada', observacao: obsAtual });
       await refresh();
@@ -75,7 +75,7 @@ export function PatientHome({
     e.preventDefault();
     setLoading(true);
     try {
-      const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
       await api.criarMedicacao(usuario.id, {
         nome: resgateNome,
         dose: '1 dose de resgate SOS',
@@ -274,7 +274,7 @@ export function PatientHome({
             <h2>Última Avaliação de Sintomas Enviada</h2>
             <p>
               {lastESAS
-                ? `Enviada em ${new Date(lastESAS.data_registro).toLocaleString('pt-BR', { dateStyle: 'medium', timeStyle: 'short' })} · Gravidade: ${lastESAS.gravidade_maxima}`
+                ? `Enviada em ${new Date(lastESAS.data_registro).toLocaleString('pt-BR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Sao_Paulo' })} · Gravidade: ${lastESAS.gravidade_maxima}`
                 : 'Nenhuma avaliação registrada ainda.'}
             </p>
           </div>
