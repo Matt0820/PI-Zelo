@@ -149,7 +149,7 @@ export function TeamArea({
             className="search"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Buscar por nome, prontuário HEG ou diagnóstico..."
+            placeholder="Buscar por nome, prontuário ou diagnóstico..."
             aria-label="Campo de busca de pacientes"
           />
           <span className="muted">{filteredPatients.length} pacientes localizados</span>
@@ -177,7 +177,7 @@ export function TeamArea({
   return (
     <section aria-label="Painel Assistencial de Cuidados Paliativos">
       <PageHeading
-        kicker="PORTAL ASSISTENCIAL · HOSPICE ERASTO GAERTNER"
+        kicker="PORTAL ASSISTENCIAL · EQUIPE MÉDICA"
         title="Painel de Prioridades do Turno"
         description="Visão situacional dos pacientes em cuidados paliativos domiciliares, prioridades de intervenção e alertas do plantão."
         action={

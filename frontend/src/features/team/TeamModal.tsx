@@ -33,7 +33,7 @@ export function TeamModal({
   const [medObs, setMedObs] = useState('');
   const [medResgate, setMedResgate] = useState(false);
 
-  const atalhosHospice = [
+  const atalhosEquipe = [
     {
       nome: 'Morfina 10mg (Resgate)',
       dose: '1 comprimido (10mg)',
@@ -106,7 +106,7 @@ export function TeamModal({
     }
   ];
 
-  function aplicarAtalho(a: typeof atalhosHospice[0]) {
+  function aplicarAtalho(a: typeof atalhosEquipe[0]) {
     setMedNome(a.nome);
     setMedDose(a.dose);
     setMedFreq(a.freq);
@@ -377,10 +377,10 @@ export function TeamModal({
           <>
             <div>
               <label style={{ marginBottom: '6px', display: 'block', fontWeight: 700 }}>
-                Atalhos Rápidos de Cuidados Paliativos (Hospice HEG / RENAME):
+                Atalhos Rápidos de Cuidados Paliativos (Protocolo Clínico / RENAME):
               </label>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
-                {atalhosHospice.map(a => (
+                {atalhosEquipe.map(a => (
                   <button
                     key={a.nome}
                     type="button"

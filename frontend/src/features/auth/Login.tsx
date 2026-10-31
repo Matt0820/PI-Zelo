@@ -204,7 +204,7 @@ export function Login({
           Informações clínicas, registros de sintomas e orientações de cuidados paliativos reunidos em um só lugar.
         </p>
         <div className="login-values">
-          <span>Dados compartilhados com o Hospice</span>
+          <span>Dados compartilhados com a Equipe Médica</span>
           <span>Triagem ágil de sintomas graves</span>
           <span>Acessibilidade para idosos e cuidadores</span>
         </div>
@@ -384,7 +384,7 @@ export function Login({
           <small style={{ display: 'block', marginTop: '18px', color: 'var(--muted)', lineHeight: 1.5 }}>
             {cadastrar
               ? 'O responsável é identificado na segunda etapa; o prontuário permanece sendo do paciente.'
-              : 'Seus dados são integrados diretamente ao acompanhamento ambulatorial e domiciliar do Hospice.'}
+              : 'Seus dados são integrados diretamente ao acompanhamento ambulatorial e domiciliar do Equipe Médica.'}
           </small>
         </div>
       </section>

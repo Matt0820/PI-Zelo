@@ -65,9 +65,9 @@ export function PatientRecord({
       </button>
 
       <PageHeading
-        kicker="PRONTUÁRIO DO PACIENTE · HOSPICE ERASTO GAERTNER"
+        kicker="PRONTUÁRIO DO PACIENTE · EQUIPE MÉDICA"
         title={patient.nome}
-        description={`${patient.prontuario ? `Prontuário HEG ${patient.prontuario}` : 'Sem número de prontuário'} · ${patient.idade ? `${patient.idade} anos` : 'Idade não informada'} · ${patient.cuidador_principal ? `Responsável: ${patient.cuidador_principal}` : 'Responsável não informado'}`}
+        description={`${patient.prontuario ? `Prontuário Zelo ${patient.prontuario}` : 'Sem número de prontuário'} · ${patient.idade ? `${patient.idade} anos` : 'Idade não informada'} · ${patient.cuidador_principal ? `Responsável: ${patient.cuidador_principal}` : 'Responsável não informado'}`}
       />
 
       {/* Barra de Ações Rápidas do Médico/Enfermeiro */}

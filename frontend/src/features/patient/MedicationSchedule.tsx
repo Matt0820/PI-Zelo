@@ -156,7 +156,7 @@ export function MedicationSchedule({
           {medicacoes.length === 0 ? (
             <EmptyState
               title="Nenhum medicamento ativo"
-              text="Sua equipe médica do Hospice ainda não cadastrou medicamentos neste prontuário."
+              text="A equipe médica ainda não cadastrou medicamentos neste prontuário."
             />
           ) : (
             medicacoes.map(m => (
@@ -227,7 +227,7 @@ export function MedicationSchedule({
       {medAba === 'receitas' && (
         <div className="remedy-schedule-list">
           <p className="muted" style={{ margin: '0 0 14px' }}>
-            Relação completa de receitas médicas e orientações de uso emitidas pela equipe do Hospice:
+            Relação completa de receitas médicas e orientações de uso emitidas pela equipe médica:
           </p>
 
           {medicacoes.length === 0 ? (
@@ -251,7 +251,7 @@ export function MedicationSchedule({
                     label="Finalidade"
                     value={m.eh_dose_resgate ? 'Dose de resgate para crise de dor' : 'Uso fixo contínuo'}
                   />
-                  <DataCell label="Médico Prescritor" value={m.medico_prescritor || 'Equipe do Hospice'} />
+                  <DataCell label="Médico Prescritor" value={m.medico_prescritor || 'Equipe Médica'} />
                   <DataCell
                     label="Instruções e Orientações de Uso"
                     value={m.observacao || 'Tomar com água conforme prescrição médica.'}

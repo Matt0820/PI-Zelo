@@ -140,7 +140,7 @@ export function ESASWizard({
         );
         onConcluirComGrave(dorScore);
       } else {
-        notice('success', 'Avaliação ESAS enviada com sucesso para a equipe do Hospice.');
+        notice('success', 'Avaliação ESAS enviada com sucesso para a equipe médica.');
         onConcluirLeve();
       }
     } catch (e) {
@@ -268,7 +268,7 @@ export function ESASWizard({
       </div>
 
       {/* Histórico Recente de ESAS */}
-      <h2 className="section-heading">Avaliações Anteriores no Hospice</h2>
+      <h2 className="section-heading">Avaliações Anteriores com a Equipe Médica</h2>
       {ultimasAvaliacoes.length === 0 ? (
         <p className="muted">Nenhuma avaliação anterior registrada ainda.</p>
       ) : (

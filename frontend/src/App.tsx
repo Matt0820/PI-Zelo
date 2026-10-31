@@ -200,7 +200,7 @@ export default function App(): React.JSX.Element {
       <div className="workspace">
         <aside className={`sidebar ${menuAberto ? 'sidebar-open' : ''}`} aria-label="Menu principal">
           <div className="sidebar-head">
-            <strong>{isTeam ? 'Acompanhamento HEG' : 'Meu cuidado'}</strong>
+            <strong>{isTeam ? 'Acompanhamento Clínico' : 'Meu cuidado'}</strong>
             <button
               className="sidebar-close"
               onClick={() => setMenuAberto(false)}

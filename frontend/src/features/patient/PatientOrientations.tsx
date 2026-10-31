@@ -13,7 +13,7 @@ export function PatientOrientations({ orientacoes }: PatientOrientationsProps): 
       <PageHeading
         kicker="EQUIPE DE CUIDADOS PALIATIVOS"
         title="Avisos e Orientações Médicas"
-        description="Comunicações, pareceres e orientações clínicas enviadas pela equipe multiprofissional do Hospice Erasto Gaertner para seu cuidado domiciliar."
+        description="Comunicações, pareceres e orientações clínicas enviadas pela equipe médica de saúde para seu cuidado domiciliar."
       />
 
       {orientacoes.length === 0 ? (

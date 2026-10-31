@@ -192,7 +192,7 @@ export function ChatbotZelo({
           <span className="eyebrow" style={{ color: 'var(--green)' }}>DIRECIONAMENTO CLÍNICO DOMICILIAR</span>
           <h1 style={{ fontSize: '24px', margin: '4px 0' }}>Enfermeira Virtual Zelo</h1>
           <p className="muted">
-            Protocolo interativo de avaliação da dor validado por juízes especialistas (IVC 0,95).
+            Protocolo interativo de avaliação da dor para orientação e acompanhamento domiciliar.
           </p>
         </div>
         <div className="button-row">
@@ -304,7 +304,7 @@ export function ChatbotZelo({
                 className="button button-danger"
                 style={{ minHeight: '52px', fontSize: '16px', textDecoration: 'none' }}
               >
-                Ligar para o Hospice HEG: (41) 3000-0000
+                Ligar para a Equipe Médica: (41) 3333-0000
               </a>
             </div>
           )}
@@ -335,7 +335,7 @@ export function ChatbotZelo({
             }}
           >
             <div>
-              <strong style={{ color: '#991b1b' }}>Linha Direta do Hospice Erasto Gaertner:</strong>
+              <strong style={{ color: '#991b1b' }}>Linha Direta da Equipe Médica:</strong>
               <p style={{ margin: '3px 0 0', fontSize: '14px', color: '#7f1d1d' }}>
                 Em caso de sintomas graves ou sem conexão, ligue diretamente para o plantão.
               </p>
@@ -350,7 +350,7 @@ export function ChatbotZelo({
                 Tentar Salvar Novamente
               </Button>
               <a href="tel:4130000000" className="button button-secondary" style={{ textDecoration: 'none' }}>
-                Ligar: (41) 3000-0000
+                Ligar: (41) 3333-0000
               </a>
             </div>
           </div>
@@ -404,7 +404,7 @@ export function ChatbotZelo({
               className="button button-secondary"
               style={{ minHeight: '52px', textDecoration: 'none' }}
             >
-              Ligar para o Hospice HEG: (41) 3000-0000
+              Ligar para a Equipe Médica: (41) 3333-0000
             </a>
             <Button variant="quiet" onClick={handleReiniciar}>
               Refazer Avaliação

@@ -102,7 +102,7 @@ export function PatientHome({
       <PageHeading
         kicker="ÁREA DO PACIENTE & CUIDADOR"
         title={`Olá, ${usuario.nome.split(' ')[0]}.`}
-        description="Acompanhe seus horários de remédios, avisos da equipe médica e envie seus sintomas diários para o Hospice."
+        description="Acompanhe seus horários de remédios, avisos da equipe médica e envie seus sintomas diários para o Equipe Médica."
         action={
           <div className="button-row">
             <Button variant="primary" onClick={() => onNavigate('esas')}>
@@ -234,7 +234,7 @@ export function PatientHome({
                 Aviso Clínico: Sua última avaliação registrou sintoma intenso (Nota {lastScoreMax}/10)
               </h3>
               <p>
-                A equipe especializada do Hospice foi notificada. O Chatbot Zelo está pronto para avaliar e direcionar o seu alívio imediato no domicílio.
+                A equipe médica foi notificada. O Chatbot Zelo está pronto para avaliar e direcionar o seu alívio imediato no domicílio.
               </p>
             </div>
           </div>
@@ -249,11 +249,11 @@ export function PatientHome({
               Abrir Chatbot Zelo para Cuidado da Dor ›
             </Button>
             <a
-              href="tel:4130000000"
+              href="tel:4133330000"
               className="button button-call"
               style={{ minHeight: '50px' }}
             >
-              Ligar para o Hospice HEG: (41) 3000-0000
+              Ligar para a Equipe Médica: (41) 3333-0000
             </a>
           </div>
         </aside>

@@ -63,13 +63,13 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
   'bloqueio_emergencia': {
     id: 'bloqueio_emergencia',
     speaker: 'zelo',
-    title: 'Aviso Clínico de Urgência · Hospice Erasto Gaertner',
+    title: 'Aviso Clínico de Urgência · Equipe Médica',
     isEmergencyBlock: true,
     message:
-      'Identificamos um sinal de alerta prioritário que necessita de avaliação presencial imediata da nossa equipe médica e de enfermagem. Por favor, não espere em casa: ligue agora para o plantão do Hospice HEG ou dirija-se ao pronto-atendimento hospitalar.',
+      'Identificamos um sinal de alerta prioritário que necessita de avaliação presencial imediata da nossa equipe médica e de enfermagem. Por favor, não espere em casa: ligue agora para o plantão da equipe médica ou dirija-se ao pronto-atendimento hospitalar.',
     bullets: [
-      'Plantão Telefônico 24h HEG: (41) 3000-0000',
-      'Endereço: Rua Dr. Ovande do Amaral, 201 - Jardim das Américas, Curitiba - PR',
+      'Plantão Telefônico da Equipe Médica: (41) 3333-0000',
+      'Endereço: Central de Atendimento e Suporte Clínico',
       'Leve sua receita médica mais recente e o documento do paciente.'
     ],
     options: [
@@ -82,7 +82,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     ]
   },
 
-  // NÓ 3: SEMIOLOGIA SENSORIAL DA DOR (VALIDADA POR JUÍZES - IVC 0,95)
+  // NÓ 3: SEMIOLOGIA SENSORIAL DA DOR (VALIDADA POR JUÍZES - )
   'semiologia_dor': {
     id: 'semiologia_dor',
     speaker: 'zelo',
@@ -93,21 +93,21 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
       {
         id: 'opt_dor_somatica',
         label: 'Parece uma pontada, aperto no corpo ou sensação de facada',
-        sublabel: 'Dor Somática (Músculos, ossos ou articulações - IVC 1,00)',
+        sublabel: 'Dor muscular, óssea ou articular',
         action: () => ({ caracteristicaDor: 'somatica' }),
         nextNodeId: 'temporalidade_dor'
       },
       {
         id: 'opt_dor_neuropatica',
         label: 'Parece queimação, choque elétrico ou formigamento',
-        sublabel: 'Dor Neuropática (Nervos ou irradiação - IVC 0,95)',
+        sublabel: 'Dor nos nervos, queimação ou irradiação',
         action: () => ({ caracteristicaDor: 'neuropatica' }),
         nextNodeId: 'temporalidade_dor'
       },
       {
         id: 'opt_dor_visceral',
         label: 'Parece uma cólica ou dor espalhada por dentro da barriga',
-        sublabel: 'Dor Visceral (Órgãos internos ou abdômen - IVC 0,91)',
+        sublabel: 'Dor em órgãos internos ou cólica',
         action: () => ({ caracteristicaDor: 'visceral' }),
         nextNodeId: 'temporalidade_dor'
       },
@@ -121,7 +121,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     ]
   },
 
-  // NÓ 4: TEMPORALIDADE DA DOR (AGUDA VS. CRÔNICA - IVC 0,91)
+  // NÓ 4: TEMPORALIDADE DA DOR (AGUDA VS. CRÔNICA - )
   'temporalidade_dor': {
     id: 'temporalidade_dor',
     speaker: 'zelo',
@@ -144,7 +144,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     ]
   },
 
-  // NÓ 5: MANEJO FARMACOLÓGICO E DOSE DE RESGATE (IVC 0,90 e 0,95)
+  // NÓ 5: MANEJO FARMACOLÓGICO E DOSE DE RESGATE
   'manejo_resgate': {
     id: 'manejo_resgate',
     speaker: 'zelo',
@@ -205,7 +205,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     speaker: 'zelo',
     title: 'Enfermeira Virtual Zelo · Desfecho Assistencial',
     message:
-      'Deseja solicitar que a equipe multiprofissional do Hospice Erasto Gaertner entre em contato prioritário com você por telefone ou mensagem neste turno?',
+      'Deseja solicitar que a equipe multiprofissional do Equipe Médica entre em contato prioritário com você por telefone ou mensagem neste turno?',
     options: [
       {
         id: 'opt_contato_sim',
@@ -230,12 +230,12 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     isFinish: true,
     message: (answers) =>
       answers.solicitarContato
-        ? 'Suas respostas foram salvas no prontuário do Hospice Erasto Gaertner. Foi gerado um alerta prioritário na Central da equipe de saúde para retorno ágil.'
-        : 'Suas respostas foram salvas com sucesso no seu prontuário diário para monitoramento contínuo da equipe do Hospice.',
+        ? 'Suas respostas foram salvas no prontuário do Equipe Médica. Foi gerado um alerta prioritário na Central da equipe de saúde para retorno ágil.'
+        : 'Suas respostas foram salvas com sucesso no seu prontuário diário para monitoramento contínuo da equipe do Equipe Médica.',
     bullets: [
       'As medidas não farmacológicas permanecem salvas para consulta.',
       'Se a dor aumentar ou surgirem novos sintomas, você pode refazer a avaliação a qualquer momento.',
-      'Em caso de agravamento súbito, ligue para o Hospice HEG: (41) 3000-0000.'
+      'Em caso de agravamento súbito, ligue para o Equipe Médica: (41) 3333-0000.'
     ]
   }
 };

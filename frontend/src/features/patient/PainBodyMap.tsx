@@ -80,7 +80,7 @@ export function PainBodyMap({
       <PageHeading
         kicker="MAPA CORPORAL INTERATIVO"
         title="Registrar Local de Dor, Inchaço ou Ferida"
-        description="Toque na silhueta anatômica do corpo para apontar onde o sintoma se manifesta, defina a intensidade e envie para a equipe do Hospice."
+        description="Toque na silhueta anatômica do corpo para apontar onde o sintoma se manifesta, defina a intensidade e envie para a equipe médica."
         action={
           onConcluir && (
             <Button variant="secondary" onClick={onConcluir}>

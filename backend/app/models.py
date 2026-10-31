@@ -29,7 +29,7 @@ class User(Base):
     ativo: Mapped[bool] = mapped_column(Boolean, default=True)
     criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
-    # Dados clínicos e sociodemográficos (baseados na pesquisa com 128 prontuários no HEG)
+    # Dados clínicos e sociodemográficos (baseados na pesquisa com 128 prontuários no Equipe Médica)
     prontuario: Mapped[str | None] = mapped_column(String(50), nullable=True)
     idade: Mapped[int | None] = mapped_column(Integer, nullable=True)
     sexo: Mapped[str | None] = mapped_column(String(10), nullable=True)
