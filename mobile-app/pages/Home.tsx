@@ -41,6 +41,9 @@ const dataHoje = new Date().toLocaleDateString('pt-BR', {
   month: 'long',
 });
 
+/**
+ * Resume registros do paciente e encaminha aos fluxos principais.
+ */
 export default function HomeScreen({
   nomeResponsavel,
   orientacoes,

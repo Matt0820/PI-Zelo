@@ -1,9 +1,22 @@
+/**
+ * Define respostas, nós e opções usados pela árvore do chatbot web.
+ */
+
 export type TriageSeverity = 'leve' | 'moderada' | 'grave';
 
+/**
+ * Categorias de descrição da dor aceitas no fluxo.
+ */
 export type PainCharacteristic = 'somatica' | 'neuropatica' | 'visceral' | 'outra';
 
+/**
+ * Classificação de duração que o cliente envia ao backend.
+ */
 export type PainDuration = 'aguda' | 'cronica';
 
+/**
+ * Campos de resposta acumulados até a conclusão da triagem.
+ */
 export interface ChatbotAnswers {
   intensidadeDor: number;
   temSinaisEmergencia: boolean;
@@ -16,6 +29,9 @@ export interface ChatbotAnswers {
   observacoesAdicionais?: string;
 }
 
+/**
+ * Resposta selecionável e próxima transição da árvore.
+ */
 export interface ChatOption {
   id: string;
   label: string;
@@ -26,6 +42,9 @@ export interface ChatOption {
   nextNodeId: string;
 }
 
+/**
+ * Conteúdo e opções que definem uma etapa conversacional.
+ */
 export interface ChatNode {
   id: string;
   speaker: 'zelo' | 'user';
@@ -39,6 +58,9 @@ export interface ChatNode {
   allowCustomNote?: boolean;
 }
 
+/**
+ * Mensagem exibida no histórico da conversa.
+ */
 export interface ChatHistoryEntry {
   id: string;
   nodeId: string;

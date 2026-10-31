@@ -1,5 +1,12 @@
+/**
+ * Padroniza o título, contexto e ação principal das páginas.
+ */
+
 import React, { ReactNode } from 'react';
 
+/**
+ * Conteúdo textual e ação opcional do cabeçalho da página.
+ */
 export interface PageHeadingProps {
   title: string;
   kicker?: string;
@@ -7,6 +14,9 @@ export interface PageHeadingProps {
   action?: ReactNode;
 }
 
+/**
+ * Mostra título, contexto e ação de uma página.
+ */
 export function PageHeading({
   title,
   kicker,

@@ -1,5 +1,12 @@
+/**
+ * Guarda preferências visuais e tipográficas e sincroniza as escolhas com o DOM e o armazenamento local.
+ */
+
 import { createContext, useContext, useEffect, useState, useMemo, ReactNode } from 'react';
 
+/**
+ * Identifica os esquemas visuais que a interface pode aplicar.
+ */
 export type ModoVisual =
   | 'padrao'
   | 'alto-contraste'
@@ -8,8 +15,14 @@ export type ModoVisual =
   | 'deuteranopia'
   | 'tritanopia';
 
+/**
+ * Índice das três escalas tipográficas suportadas.
+ */
 export type FontStep = 0 | 1 | 2;
 
+/**
+ * Ações e valores disponibilizados aos componentes pelo contexto.
+ */
 export interface AccessibilityContextType {
   modoVisual: ModoVisual;
   setModoVisual: (modo: ModoVisual) => void;
@@ -66,6 +79,9 @@ function salvarArmazenamento<T>(chave: string, valor: T): void {
   }
 }
 
+/**
+ * Aplica preferências visuais, fonte e movimento à aplicação e sincroniza o armazenamento.
+ */
 export function AccessibilityProvider({ children }: { children: ReactNode }) {
   const [modoVisual, setModoVisualState] = useState<ModoVisual>(() => {
     const salvo = lerArmazenamento<ModoVisual | null>(STORAGE_KEYS.MODO_VISUAL, null);
@@ -220,6 +236,9 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Lê as preferências de acessibilidade; exige um AccessibilityProvider acima na árvore.
+ */
 export function useAccessibility(): AccessibilityContextType {
   const context = useContext(AccessibilityContext);
   if (!context) {

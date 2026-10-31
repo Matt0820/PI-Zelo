@@ -30,6 +30,9 @@ const statusOpcoes: Array<{ label: string; value: StatusMedicacao }> = [
   { label: 'Atrasada', value: 'atrasada' },
 ];
 
+/**
+ * Lista medicamentos e coleta novos dados para persistência.
+ */
 export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: MedicacoesScreenProps) {
   const { cores } = useVisual();
   const estilos = criarEstilos(cores);

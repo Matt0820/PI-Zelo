@@ -32,6 +32,9 @@ type ESASScreenProps = {
   onAbrirTriagem: (intensidadeDor: number) => void;
 };
 
+/**
+ * Apresenta a avaliação ESAS e permite revisar antes de enviar.
+ */
 export default function ESASScreen({ onVoltar, onSalvar, onAbrirTriagem }: ESASScreenProps) {
   const { cores } = useVisual();
   const styles = criarStyles(cores);

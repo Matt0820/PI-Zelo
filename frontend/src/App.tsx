@@ -1,3 +1,7 @@
+/**
+ * Coordena a sessão web, os dados carregados da API e a escolha entre as áreas do paciente e da equipe.
+ */
+
 import React, { useEffect, useState } from 'react';
 import logo from '../images/logo-zelo-verde.png';
 import {
@@ -20,6 +24,9 @@ import { TeamArea, TeamPage, TeamModal, TeamModalType } from './features/team';
 
 const sessionKey = '@zelo/web/session';
 
+/**
+ * Orquestra a sessão, carrega os dados de cada perfil e alterna entre as áreas de paciente e equipe.
+ */
 export default function App(): React.JSX.Element {
   const [usuario, setUsuario] = useState<Usuario | null>(() => {
     try {

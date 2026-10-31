@@ -1,3 +1,7 @@
+/**
+ * Define os tipos de resposta do backend e concentra as requisições HTTP usadas pelo portal web.
+ */
+
 export type Usuario = {
   id: number; nome: string; email: string; perfil: string; ativo: boolean;
   prontuario: string | null; idade: number | null; sexo: string | null;
@@ -7,12 +11,33 @@ export type Usuario = {
   proxima_consulta: string | null; tratamento_modificador: string | null;
   criado_em: string;
 };
+/**
+ * Representa uma avaliação ESAS persistida pela API.
+ */
 export type ESAS = { id:number; user_id:number; dor:number; cansaco:number; nausea:number; depressao:number; ansiedade:number; sonolencia:number; apetite:number; mal_estar:number; falta_de_ar:number; constipacao:number|null; gravidade_maxima:string; acionou_triagem_dor:boolean; observacao:string|null; data_registro:string };
+/**
+ * Representa a sessão persistida de triagem de dor.
+ */
 export type Triagem = { id:number; user_id:number; intensidade_dor:number; caracteristica_dor:string; mais_de_duas_semanas:boolean; tipo_dor:string; fez_dose_resgate:boolean; medicamentos_efetivos:boolean; em_acompanhamento:boolean; tem_sintoma_acompanhante:boolean; sintoma_acompanhante_desc:string|null; tem_fator_piora:boolean; fator_piora_desc:string|null; solicitou_agendamento:boolean; status_atendimento:string; data_triagem:string };
+/**
+ * Representa o estado e os dados de um alerta clínico.
+ */
 export type Alerta = { id:number; user_id:number; tipo_alerta:string; titulo:string; descricao:string; severidade:string; estado:string; revisado_por:string|null; observacao_conduta:string|null; criado_em:string; atualizado_em:string };
+/**
+ * Representa uma evolução profissional registrada no prontuário.
+ */
 export type Evolucao = { id:number; user_id:number; profissional_nome:string; cargo:string; conselho_classe:string|null; tipo_evolucao:string; conteudo:string; conduta_plano:string|null; criado_em:string };
+/**
+ * Representa uma ocorrência registrada no mapa corporal.
+ */
 export type LocalDor = { id:number; user_id:number; regiao_anatomica:string; tipo_ocorrencia:string; intensidade:number; foto_anexada_url:string|null; observacao:string|null; medicamento_associado:string|null; criado_em:string };
+/**
+ * Representa uma prescrição ou registro de medicamento retornado pela API.
+ */
 export type Medicacao = { id:number; user_id:number; nome:string; dose:string; horario:string; frequencia:string; observacao:string|null; status:string; eh_dose_resgate:boolean; medico_prescritor:string|null; vigencia:string|null };
+/**
+ * Representa uma orientação publicada para o usuário.
+ */
 export type Orientacao = { id:number; user_id:number; titulo:string; descricao:string; categoria:string; prioridade:string; atualizada_em:string };
 
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
@@ -49,6 +74,9 @@ async function request<T>(path:string, init:RequestInit={}):Promise<T>{
 }
 const get=<T,>(path:string)=>request<T>(path);
 const post=<T,>(path:string,data:unknown)=>request<T>(path,{method:'POST',body:JSON.stringify(data)});
+/**
+ * Expõe operações tipadas para autenticação e consulta/registro dos recursos da API.
+ */
 export const api={
   login:async(email:string,senha:string)=>{
     const auth=await post<unknown>('/api/auth/login',{email,senha});

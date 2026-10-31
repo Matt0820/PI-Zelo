@@ -1,13 +1,23 @@
+/**
+ * Lista orientações da equipe destinadas ao paciente.
+ */
+
 import React from 'react';
 import { Orientacao } from '../../api';
 import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
 import { Icon } from '../../components/ui';
 
+/**
+ * Lista de orientações já carregada para o paciente.
+ */
 export interface PatientOrientationsProps {
   orientacoes: Orientacao[];
 }
 
+/**
+ * Apresenta as recomendações enviadas pela equipe.
+ */
 export function PatientOrientations({ orientacoes }: PatientOrientationsProps): React.JSX.Element {
   return (
     <section aria-label="Avisos e Orientações Médicas">

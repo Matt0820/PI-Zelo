@@ -1,5 +1,12 @@
+/**
+ * Reúne ícones SVG e componentes pequenos com estilos e semântica compartilhados.
+ */
+
 import type { ComponentProps, ElementType, ReactNode } from 'react';
 
+/**
+ * Nomes dos ícones SVG suportados pelo conjunto compartilhado.
+ */
 export type IconName = 'accessibility' | 'alert-triangle' | 'bandage' | 'bell' | 'bolt' | 'chat' | 'check' | 'clipboard' | 'clock' | 'droplet' | 'home' | 'info' | 'logout' | 'map-pin' | 'phone' | 'pill' | 'plus' | 'stethoscope' | 'users';
 
 const iconPaths: Record<IconName, ReactNode> = {
@@ -24,6 +31,9 @@ const iconPaths: Record<IconName, ReactNode> = {
   users: <><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.9m-1-12.9a4 4 0 0 1 0 7.8"/></>,
 };
 
+/**
+ * Renderiza um SVG decorativo com tamanho configurável; o nome acessível deve vir do controle pai.
+ */
 export function Icon({ name, size = 18, className = '' }: { name: IconName; size?: number; className?: string }) {
   return <svg className={`ui-icon${className ? ` ${className}` : ''}`} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{iconPaths[name]}</svg>;
 }
@@ -33,6 +43,9 @@ type ButtonProps = ComponentProps<'button'> & {
   wide?: boolean;
 };
 
+/**
+ * Combina variantes visuais com as propriedades nativas de um botão HTML.
+ */
 export function Button({ variant = 'primary', wide = false, className = '', ...props }: ButtonProps) {
   return <button className={`button button-${variant}${wide ? ' button-wide' : ''}${className ? ` ${className}` : ''}`} {...props} />;
 }
@@ -43,11 +56,17 @@ type CardProps<T extends ElementType = 'article'> = {
   className?: string;
 } & Omit<ComponentProps<T>, 'as' | 'children' | 'className'>;
 
+/**
+ * Renderiza uma superfície de conteúdo semântica com estilo compartilhado.
+ */
 export function Card<T extends ElementType = 'article'>({ as, children, className = '', ...props }: CardProps<T>) {
   const Component = as ?? 'article';
   return <Component className={`record-card${className ? ` ${className}` : ''}`} {...props}>{children}</Component>;
 }
 
+/**
+ * Associa um rótulo visível ao controle de formulário filho.
+ */
 export function Field({ label, children, className = '' }: { label: string; children: ReactNode; className?: string }) {
   return <label className={`form-field${className ? ` ${className}` : ''}`}>
     <span>{label}</span>
@@ -55,6 +74,9 @@ export function Field({ label, children, className = '' }: { label: string; chil
   </label>;
 }
 
+/**
+ * Expõe uma mensagem como status ou alerta e pode incluir ação de fechar.
+ */
 export function Feedback({ kind, children, onDismiss }: { kind: 'success' | 'error'; children: ReactNode; onDismiss?: () => void }) {
   return <div className={`notice notice-${kind}`} role={kind === 'error' ? 'alert' : 'status'}>
     <span>{children}</span>
@@ -62,6 +84,9 @@ export function Feedback({ kind, children, onDismiss }: { kind: 'success' | 'err
   </div>;
 }
 
+/**
+ * Estrutura diálogo modal com título acessível, conteúdo e fechamento.
+ */
 export function ModalFrame({ id, kicker, kickerTone = 'default', title, onClose, children }: { id: string; kicker?: ReactNode; kickerTone?: 'default' | 'danger'; title: ReactNode; onClose: () => void; children: ReactNode }) {
   return <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
     <section className="modal-card" role="dialog" aria-modal="true" aria-labelledby={id}>
@@ -74,6 +99,9 @@ export function ModalFrame({ id, kicker, kickerTone = 'default', title, onClose,
   </div>;
 }
 
+/**
+ * Renderiza um item de navegação com indicação semântica da página atual.
+ */
 export function NavigationItem({ children, icon, active = false, ...props }: ComponentProps<'button'> & { icon: IconName; active?: boolean }) {
   return <button className={`nav-item${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined} {...props}>
     <span className="nav-icon" aria-hidden="true"><Icon name={icon} size={18}/></span>{children}

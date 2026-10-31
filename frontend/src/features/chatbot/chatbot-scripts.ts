@@ -1,5 +1,12 @@
+/**
+ * Descreve as perguntas, respostas e transições da árvore do chatbot web ativo.
+ */
+
 import { ChatNode, ChatbotAnswers } from './types';
 
+/**
+ * Valores iniciais das respostas; a intensidade é substituída pelo contexto de entrada.
+ */
 export const INITIAL_CHATBOT_ANSWERS: ChatbotAnswers = {
   intensidadeDor: 8,
   temSinaisEmergencia: false,
@@ -12,6 +19,9 @@ export const INITIAL_CHATBOT_ANSWERS: ChatbotAnswers = {
   observacoesAdicionais: ''
 };
 
+/**
+ * Árvore de nós e transições consumida pelo chatbot web ativo.
+ */
 export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
   // NÓ 1: ACOLHIMENTO E CONTEXTUALIZAÇÃO DO GATILHO ESAS
   'acolhimento': {

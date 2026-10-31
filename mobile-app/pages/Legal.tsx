@@ -92,6 +92,9 @@ const documentos: Record<DocumentoLegal, { titulo: string; secoes: SecaoLegal[] 
   },
 };
 
+/**
+ * Exibe o texto legal selecionado e permite voltar ao cadastro.
+ */
 export default function LegalScreen({ documento, onSelecionarDocumento, onVoltar }: LegalScreenProps) {
   const { cores } = useVisual();
   const estilos = criarEstilos(cores);

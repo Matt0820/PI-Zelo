@@ -1,3 +1,7 @@
+/**
+ * Desenha o mapa anatômico interativo e registra região, ocorrência e intensidade na API.
+ */
+
 import React, { useId, useState } from 'react';
 import { Usuario, LocalDor, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -53,6 +57,9 @@ const ARM_REGION_IDS = {
   }
 } as const;
 
+/**
+ * Registros atuais e callbacks para salvar, atualizar ou concluir.
+ */
 export interface PainBodyMapProps {
   usuario: Usuario;
   locaisDor: LocalDor[];
@@ -61,6 +68,9 @@ export interface PainBodyMapProps {
   onConcluir?: () => void;
 }
 
+/**
+ * Renderiza regiões anatômicas focáveis e acionáveis, com seleção por toque ou teclado.
+ */
 export function PainBodyMap({
   usuario,
   locaisDor,

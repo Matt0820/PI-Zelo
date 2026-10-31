@@ -1,3 +1,7 @@
+/**
+ * Define uma segunda árvore de perguntas de triagem que não está conectada à navegação SPA atual.
+ */
+
 export type ChatbotNodeId =
   | 'emergency'
   | 'painCharacteristic'
@@ -12,6 +16,9 @@ export type ChatbotNodeId =
   | 'comfortMeasures'
   | 'contactRequest';
 
+/**
+ * Formato de respostas mantido pela máquina de fluxo legada.
+ */
 export type ChatbotAnswers = {
   emergencySigns: boolean | null;
   painCharacteristic: 'somatica' | 'neuropatica' | 'visceral' | 'nenhuma' | null;
@@ -26,6 +33,9 @@ export type ChatbotAnswers = {
   contactRequested: boolean | null;
 };
 
+/**
+ * Opção e transição aceitas pela máquina legada.
+ */
 export type ChatbotOption = {
   id: string;
   label: string;
@@ -33,6 +43,9 @@ export type ChatbotOption = {
   next: ChatbotNodeId | 'emergencyEnd' | 'submit';
 };
 
+/**
+ * Pergunta, tipo de entrada e transição de um nó legado.
+ */
 export type ChatbotNode = {
   prompt: string;
   type: 'choice' | 'text' | 'info';
@@ -42,6 +55,9 @@ export type ChatbotNode = {
   next?: ChatbotNodeId;
 };
 
+/**
+ * Árvore usada por flowMachine, não conectada ao fluxo atual de PatientArea.
+ */
 export const chatbotScript: Record<ChatbotNodeId, ChatbotNode> = {
   emergency: {
     type: 'choice',
@@ -142,6 +158,12 @@ export const chatbotScript: Record<ChatbotNodeId, ChatbotNode> = {
   },
 };
 
+/**
+ * Mensagem de encerramento exibida pelo fluxo legado ao detectar emergência.
+ */
 export const emergencyGuidance = 'Você informou um sinal de alerta. A triagem foi interrompida para priorizar atendimento imediato.';
+/**
+ * Cria a saudação inicial do fluxo legado usando nome e intensidade.
+ */
 export const welcomeMessage = (name: string, pain: number) =>
   `Olá, ${name}. Você informou Dor nota ${pain}/10 na escala ESAS. Vou fazer algumas perguntas para orientar o conforto e registrar suas respostas para a equipe.`;

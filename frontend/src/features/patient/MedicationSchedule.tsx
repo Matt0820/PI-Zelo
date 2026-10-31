@@ -1,3 +1,7 @@
+/**
+ * Lista medicamentos e permite registrar ou confirmar ações previstas para o paciente.
+ */
+
 import React, { useState } from 'react';
 import { Usuario, Medicacao, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -7,6 +11,9 @@ import { PageHeading } from '../../components/PageHeading';
 import { DataCell } from '../../components/DataCell';
 import { Icon } from '../../components/ui';
 
+/**
+ * Medicações do usuário e callbacks de atualização/feedback.
+ */
 export interface MedicationScheduleProps {
   usuario: Usuario;
   medicacoes: Medicacao[];
@@ -14,6 +21,9 @@ export interface MedicationScheduleProps {
   notice: (kind: 'success' | 'error', text: string) => void;
 }
 
+/**
+ * Lista as doses e registra confirmações ou dose de resgate pela API.
+ */
 export function MedicationSchedule({
   usuario,
   medicacoes,

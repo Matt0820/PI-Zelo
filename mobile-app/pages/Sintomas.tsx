@@ -29,6 +29,9 @@ const opcoesGravidade: Array<{ label: string; value: GravidadeSintoma }> = [
   { label: 'Grave', value: 'grave' },
 ];
 
+/**
+ * Exibe e registra sintomas genéricos no app.
+ */
 export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: SintomasScreenProps) {
   const [nome, setNome] = useState('');
   const [gravidade, setGravidade] = useState<GravidadeSintoma>('moderada');

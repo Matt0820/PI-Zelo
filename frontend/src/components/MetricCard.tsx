@@ -1,5 +1,12 @@
+/**
+ * Exibe uma métrica resumida com rótulo, valor e estado opcional de alerta.
+ */
+
 import React, { ReactNode } from 'react';
 
+/**
+ * Rótulo, valor e sinalização opcional de uma métrica.
+ */
 export interface MetricCardProps {
   label: string;
   value: number | string;
@@ -8,6 +15,9 @@ export interface MetricCardProps {
   icon?: ReactNode;
 }
 
+/**
+ * Exibe uma métrica e marca valores de alerta quando solicitado.
+ */
 export function MetricCard({
   label,
   value,

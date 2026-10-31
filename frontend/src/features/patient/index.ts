@@ -1,3 +1,7 @@
+/**
+ * Exporta as páginas e tipos públicos da área do paciente.
+ */
+
 export * from './body-regions';
 export * from './PainBodyMap';
 export * from './ESASWizard';

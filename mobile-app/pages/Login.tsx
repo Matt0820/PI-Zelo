@@ -25,6 +25,9 @@ type LoginScreenProps = {
   onEntrar: (email: string, senha: string) => Promise<void>;
 };
 
+/**
+ * Coleta identificador e senha e devolve os dados de login ao App.
+ */
 export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
   const { cores } = useVisual();
   const estilos = criarEstilos(cores);

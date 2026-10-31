@@ -1,3 +1,7 @@
+/**
+ * Apresenta o fluxo mobile de registro de local de dor.
+ */
+
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,6 +10,9 @@ import { Palette, useVisual } from '../visual';
 
 const regioes=['Cabeça','Pescoço','Ombro direito','Ombro esquerdo','Braço direito','Braço esquerdo','Tórax','Abdômen','Costas','Região lombar','Quadril','Perna direita','Perna esquerda','Outra região'];
 type Props={registros:LocalDor[];onVoltar:()=>void;onSalvar:(d:Omit<LocalDor,'id'|'criadoEm'>)=>Promise<void>};
+/**
+ * Conecta a tela de mapa a registros e ações fornecidos pelo App.
+ */
 export default function MapaDorScreen({registros,onVoltar,onSalvar}:Props){
  const {cores}=useVisual();const styles=criarStyles(cores);const [regiao,setRegiao]=useState('');const [tipo,setTipo]=useState('dor');const [intensidade,setIntensidade]=useState(5);const [observacao,setObservacao]=useState('');const [medicamento,setMedicamento]=useState('');const [salvando,setSalvando]=useState(false);
  async function salvar(){if(!regiao){Alert.alert('Selecione uma região','Escolha onde está a dor ou ocorrência.');return;}setSalvando(true);try{await onSalvar({regiaoAnatomica:regiao,tipoOcorrencia:tipo,intensidade,observacao:observacao.trim(),medicamentoAssociado:medicamento.trim()});setRegiao('');setTipo('dor');setIntensidade(5);setObservacao('');setMedicamento('');Alert.alert('Registro enviado','A equipe poderá consultar este registro no prontuário.');}catch(e){Alert.alert('Não foi possível enviar',e instanceof Error?e.message:'Tente novamente.');}finally{setSalvando(false);}}

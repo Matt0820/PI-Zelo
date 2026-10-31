@@ -1,7 +1,14 @@
+/**
+ * Exibe um alerta clínico e as ações de revisão permitidas na interface.
+ */
+
 import React from 'react';
 import { Alerta, Usuario } from '../../api';
 import { Button } from '../../components/Button';
 
+/**
+ * Alerta, paciente associado e ações de navegação/atualização.
+ */
 export interface AlertCardProps {
   alert: Alerta;
   patient?: Usuario;
@@ -9,6 +16,9 @@ export interface AlertCardProps {
   update: (a: Alerta, state: string) => void;
 }
 
+/**
+ * Mostra severidade, estado e ações disponíveis para a equipe.
+ */
 export function AlertCard({
   alert,
   patient,

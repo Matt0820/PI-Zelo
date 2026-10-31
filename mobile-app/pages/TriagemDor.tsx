@@ -36,6 +36,9 @@ type Props = {
 
 let styles: ReturnType<typeof criarStyles>;
 
+/**
+ * Conduz respostas de triagem e as devolve ao App para envio.
+ */
 export default function TriagemDorScreen({ intensidadeDor, onVoltar, onSalvar }: Props) {
   const { cores } = useVisual();
   styles = criarStyles(cores);
