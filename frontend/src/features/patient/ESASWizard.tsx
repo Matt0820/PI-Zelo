@@ -20,7 +20,7 @@ export interface ESASWizardProps {
 }
 
 /**
- * Lista dos nove escores centrais exibidos pelo formulário guiado.
+ * Lista dos dez escores exibidos pelo formulário guiado, incluindo constipação.
  */
 export const ESAS_SYMPTOMS: Array<{
   key: keyof Pick<
@@ -34,6 +34,7 @@ export const ESAS_SYMPTOMS: Array<{
     | 'apetite'
     | 'mal_estar'
     | 'falta_de_ar'
+    | 'constipacao'
   >;
   label: string;
   question: string;
@@ -92,6 +93,12 @@ export const ESAS_SYMPTOMS: Array<{
     label: 'Falta de Ar / Respiração',
     question: 'Está sentindo canseira no peito ou dificuldade para respirar?',
     hint: '0 significa respiração confortável e 10 falta de ar severa.'
+  },
+  {
+    key: 'constipacao',
+    label: 'Constipação / Intestino preso',
+    question: 'Como avalia a dificuldade para evacuar nas últimas 24 horas?',
+    hint: '0 significa hábito intestinal normal e 10 a pior constipação possível.'
   }
 ];
 
@@ -160,7 +167,7 @@ export function ESASWizard({
 
   async function enviarESAS() {
     if (ESAS_SYMPTOMS.some(s => scores[s.key] === null)) {
-      notice('error', 'Por favor, responda a todos os 9 sintomas antes de enviar.');
+      notice('error', 'Por favor, responda a todos os 10 sintomas antes de enviar.');
       return;
     }
 
@@ -205,7 +212,7 @@ export function ESASWizard({
       <PageHeading
         kicker="ESCALA EDMONTON DE SINTOMAS (ESAS)"
         title="Avaliação Diária de Sintomas"
-        description="Escolha uma nota de 0 a 10 para cada um dos 9 sintomas. Nota 7 ou mais em Dor inicia a triagem do Chatbot Zelo."
+        description="Escolha uma nota de 0 a 10 para cada um dos 10 sintomas. Nota 7 ou mais em Dor inicia a triagem do Chatbot Zelo."
       />
 
       <div className="wizard-card">
