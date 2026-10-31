@@ -18,6 +18,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useVisual, Palette } from '../visual';
 
 type LoginScreenProps = {
   onVoltar: () => void;
@@ -25,6 +26,8 @@ type LoginScreenProps = {
 };
 
 export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
+  const { cores } = useVisual();
+  const estilos = criarEstilos(cores);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [senhaVisivel, setSenhaVisivel] = useState(false);
@@ -33,14 +36,10 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
   async function entrar() {
     // Validação local para evitar requisições com dados vazios ou inválidos.
     if (!email.trim() || !senha) {
-      Alert.alert('Faltam alguns dados', 'Preencha seu email e sua senha para continuar.');
+      Alert.alert('Faltam alguns dados', 'Informe seu email, CPF ou prontuário e sua senha.');
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      Alert.alert('Email inválido', 'Confira o endereço de email informado.');
-      return;
-    }
 
     setEntrando(true);
     try {
@@ -52,13 +51,6 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
     }
   }
 
-  function entrarCom(provedor: string) {
-    // Login social ainda está em fase de planejamento/integracao futura.
-    Alert.alert(
-      `Login com ${provedor}`,
-      `A integração com ${provedor} ainda precisa ser configurada.`,
-    );
-  }
 
   return (
     <SafeAreaView style={estilos.safeArea} edges={['top', 'left', 'right']}>
@@ -101,16 +93,16 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
 
             <View style={estilos.formulario}>
               <View style={estilos.campoGrupo}>
-                <Text style={estilos.rotulo}>Email</Text>
+                <Text style={estilos.rotulo}>Email, CPF ou prontuário</Text>
                 <TextInput
                   style={estilos.campo}
-                  placeholder="voce@email.com"
-                  placeholderTextColor="#87958E"
+                  placeholder="voce@email.com ou CPF/prontuário"
+                  placeholderTextColor="#6E655C"
                   value={email}
                   onChangeText={setEmail}
-                  keyboardType="email-address"
+                  keyboardType="default"
                   autoCapitalize="none"
-                  autoComplete="email"
+                  autoComplete="username"
                   autoCorrect={false}
                   returnKeyType="next"
                 />
@@ -130,7 +122,7 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
                 <TextInput
                   style={estilos.campo}
                   placeholder="Digite sua senha"
-                  placeholderTextColor="#87958E"
+                  placeholderTextColor="#6E655C"
                   value={senha}
                   onChangeText={setSenha}
                   secureTextEntry={!senhaVisivel}
@@ -152,43 +144,9 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
               </Pressable>
             </View>
 
-            <View style={estilos.alternativas}>
-              <View style={estilos.divisor}>
-                <View style={estilos.linhaDivisoria} />
-                <Text style={estilos.textoDivisor}>OU ENTRE COM</Text>
-                <View style={estilos.linhaDivisoria} />
-              </View>
-
-              <Pressable
-                style={({ pressed }) => [estilos.botaoSocial, pressed && estilos.botaoSocialPressionado]}
-                onPress={() => entrarCom('Google')}
-                accessibilityRole="button"
-                accessibilityLabel="Entrar com Google"
-              >
-                <Text style={[estilos.marcaSocial, estilos.marcaGoogle]}>G</Text>
-                <Text style={estilos.textoSocial}>Continuar com Google</Text>
-              </Pressable>
-
-              <Pressable
-                style={({ pressed }) => [estilos.botaoSocial, pressed && estilos.botaoSocialPressionado]}
-                onPress={() => entrarCom('Facebook')}
-                accessibilityRole="button"
-                accessibilityLabel="Entrar com Facebook"
-              >
-                <Text style={[estilos.marcaSocial, estilos.marcaFacebook]}>f</Text>
-                <Text style={estilos.textoSocial}>Continuar com Facebook</Text>
-              </Pressable>
-
-              <Pressable
-                style={({ pressed }) => [estilos.botaoSocial, pressed && estilos.botaoSocialPressionado]}
-                onPress={() => entrarCom('X (Twitter)')}
-                accessibilityRole="button"
-                accessibilityLabel="Entrar com X, antigo Twitter"
-              >
-                <Text style={[estilos.marcaSocial, estilos.marcaX]}>X</Text>
-                <Text style={estilos.textoSocial}>Continuar com X</Text>
-              </Pressable>
-            </View>
+            <Text style={estilos.textoAjuda}>
+              Entre com o email, CPF ou prontuário cadastrado.
+            </Text>
 
             <View style={estilos.rodape}>
               <Text style={estilos.textoRodape}>Ainda não tem uma conta?</Text>
@@ -203,10 +161,10 @@ export default function LoginScreen({ onVoltar, onEntrar }: LoginScreenProps) {
   );
 }
 
-const estilos = StyleSheet.create({
+function criarEstilos(cores: Palette) { return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#174C3D',
+    backgroundColor: cores.primaria,
   },
   cabecalho: {
     height: 76,
@@ -214,14 +172,14 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     paddingHorizontal: 24,
-    backgroundColor: '#174C3D',
+    backgroundColor: cores.primaria,
   },
   logo: {
     width: 36,
     height: 64,
   },
   marca: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 24,
     fontWeight: '700',
     letterSpacing: 0,
@@ -232,13 +190,13 @@ const estilos = StyleSheet.create({
     paddingVertical: 10,
   },
   textoVoltar: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 14,
     fontWeight: '600',
   },
   corpo: {
     flex: 1,
-    backgroundColor: '#F3F7F3',
+    backgroundColor: cores.fundo,
   },
   keyboardArea: {
     flex: 1,
@@ -256,14 +214,14 @@ const estilos = StyleSheet.create({
     marginBottom: 30,
   },
   sobreTitulo: {
-    color: '#B55D45',
+    color: cores.perigo,
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1.1,
     marginBottom: 12,
   },
   titulo: {
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 32,
     lineHeight: 38,
     fontWeight: '700',
@@ -271,7 +229,7 @@ const estilos = StyleSheet.create({
     maxWidth: 360,
   },
   descricao: {
-    color: '#63736B',
+    color: cores.textoSecundario,
     fontSize: 15,
     lineHeight: 22,
     marginTop: 12,
@@ -289,23 +247,23 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
   },
   rotulo: {
-    color: '#28463B',
+    color: cores.texto,
     fontSize: 14,
     fontWeight: '600',
   },
   acaoCampo: {
-    color: '#26745C',
+    color: cores.primaria,
     fontSize: 13,
     fontWeight: '600',
   },
   campo: {
     minHeight: 54,
     borderWidth: 1,
-    borderColor: '#D9E3DC',
+    borderColor: cores.borda,
     borderRadius: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: cores.superficie,
     paddingHorizontal: 16,
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 15,
   },
   botao: {
@@ -313,79 +271,31 @@ const estilos = StyleSheet.create({
     marginTop: 4,
     paddingHorizontal: 18,
     borderRadius: 8,
-    backgroundColor: '#26745C',
+    backgroundColor: cores.primaria,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
   },
   botaoPressionado: {
-    backgroundColor: '#1E624D',
+    backgroundColor: cores.primariaHover,
   },
   textoBotao: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 16,
     fontWeight: '700',
   },
   setaBotao: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 19,
     lineHeight: 22,
   },
-  alternativas: {
-    gap: 10,
-    marginTop: 24,
-  },
-  divisor: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 4,
-  },
-  linhaDivisoria: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#D9E3DC',
-  },
-  textoDivisor: {
-    color: '#718078',
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  botaoSocial: {
-    minHeight: 50,
-    borderWidth: 1,
-    borderColor: '#D9E3DC',
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    paddingHorizontal: 16,
-  },
-  botaoSocialPressionado: {
-    backgroundColor: '#EAF1EC',
-  },
-  marcaSocial: {
-    width: 22,
-    textAlign: 'center',
-    fontSize: 19,
-    fontWeight: '700',
-  },
-  marcaGoogle: {
-    color: '#4285F4',
-  },
-  marcaFacebook: {
-    color: '#1877F2',
-  },
-  marcaX: {
-    color: '#111111',
-  },
-  textoSocial: {
-    color: '#28463B',
+  textoAjuda: {
+    color: cores.textoSecundario,
     fontSize: 14,
-    fontWeight: '600',
+    lineHeight: 20,
+    textAlign: 'center',
+    marginTop: 16,
   },
   rodape: {
     flexDirection: 'row',
@@ -396,12 +306,13 @@ const estilos = StyleSheet.create({
     paddingTop: 32,
   },
   textoRodape: {
-    color: '#63736B',
+    color: cores.textoSecundario,
     fontSize: 14,
   },
   linkRodape: {
-    color: '#26745C',
+    color: cores.primaria,
     fontSize: 14,
     fontWeight: '700',
   },
 });
+}

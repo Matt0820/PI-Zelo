@@ -14,11 +14,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException, Query, status
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import desc, or_, select, text
+from sqlalchemy import desc, inspect, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -74,8 +74,10 @@ app.add_middleware(
 )
 
 frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
-if frontend_dir.exists():
-    app.mount("/frontend", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
+frontend_build_dir = frontend_dir / "dist"
+frontend_static_dir = frontend_build_dir if (frontend_build_dir / "index.html").exists() else frontend_dir
+if frontend_static_dir.exists():
+    app.mount("/frontend", StaticFiles(directory=str(frontend_static_dir), html=True), name="frontend")
 
 
 
@@ -411,6 +413,12 @@ def seed_initial_data(db: Session) -> None:
 @app.on_event('startup')
 def startup() -> None:
     Base.metadata.create_all(bind=engine)
+    user_columns = {column['name'] for column in inspect(engine).get_columns('users')}
+    if 'motivo_cuidados_paliativos' not in user_columns:
+        with engine.begin() as connection:
+            connection.execute(
+                text('ALTER TABLE users ADD COLUMN motivo_cuidados_paliativos TEXT NULL')
+            )
     with SessionLocal() as db:
         seed_initial_data(db)
 
@@ -460,6 +468,7 @@ def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) ->
         comorbidades=payload.comorbidades,
         alergias=payload.alergias,
         proxima_consulta=payload.proxima_consulta,
+        tratamento_modificador=payload.tratamento_modificador,
         ativo=True,
     )
     db.add(user)
@@ -851,9 +860,17 @@ def list_symptoms(
     return db.scalars(select(Symptom).where(Symptom.user_id == user_id)).all()
 
 
+@app.get('/favicon.ico', include_in_schema=False)
+def favicon() -> FileResponse:
+    return FileResponse(frontend_dir / 'favicon.ico', media_type='image/vnd.microsoft.icon')
+
+
 @app.get('/')
-def root():
-    return RedirectResponse(url="/frontend/index.html")
+def root(request: Request):
+    if (frontend_build_dir / 'index.html').exists():
+        return RedirectResponse(url='/frontend/index.html')
+    host = request.url.hostname or '127.0.0.1'
+    return RedirectResponse(url=f'{request.url.scheme}://{host}:5173/')
 
 
 @app.get('/api')

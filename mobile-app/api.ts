@@ -5,7 +5,7 @@
  * aplicativo, incluindo a escala ESAS e a triagem conversacional da dor.
  */
 import { Platform } from 'react-native';
-import type { ESASAssessment, Medicacao, Orientacao, PainTriageData, Sintoma } from './types';
+import type { ESASAssessment, LocalDor, Medicacao, Orientacao, PainTriageData, Sintoma } from './types';
 
 const hostLocal = Platform.OS === 'android' ? '10.0.2.2' : '127.0.0.1';
 const API_URL = (process.env.EXPO_PUBLIC_API_URL || `http://${hostLocal}:8000`).replace(/\/$/, '');
@@ -69,6 +69,11 @@ type OrientacaoApi = {
   user_id: number;
 };
 
+type LocalDorApi = {
+  id:number; user_id:number; regiao_anatomica:string; tipo_ocorrencia:string;
+  intensidade:number; observacao:string|null; medicamento_associado:string|null; criado_em:string;
+};
+
 async function requisicao<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
@@ -91,13 +96,15 @@ async function requisicao<T>(path: string, options: RequestInit = {}): Promise<T
       : Array.isArray(detail)
         ? detail.map((item) => (item as { msg?: string }).msg || 'Campo inválido').join('\n')
         : 'Não foi possível concluir a solicitação.';
-    throw new Error(message);
+    throw new Error(`API ${response.status} em ${path}: ${message}`);
   }
 
   return body as T;
 }
 
-export function criarUsuario(dados: { nome: string; email: string; senha: string }) {
+export type DadosUsuario = { nome:string; email:string; senha:string; perfil:'paciente'|'cuidador'; prontuario:string|null; idade:number|null; sexo:string|null; cpf:string|null; telefone:string|null; cuidador_principal:string|null; parentesco_cuidador:string|null; diagnostico_oncologico:string|null; pps_score:number|null; comorbidades:string|null; alergias:string|null; proxima_consulta:string|null; tratamento_modificador:string|null };
+
+export function criarUsuario(dados: DadosUsuario) {
   return requisicao<UsuarioApi>('/api/users', {
     method: 'POST',
     body: JSON.stringify(dados),
@@ -254,4 +261,14 @@ export async function buscarOrientacoes(userId: number): Promise<Orientacao[]> {
     prioridade: item.prioridade,
     atualizadaEm: item.atualizada_em,
   }));
+}
+
+export async function buscarLocaisDor(userId:number):Promise<LocalDor[]> {
+  const rows=await requisicao<LocalDorApi[]>(`/api/users/${userId}/locais-dor`);
+  return rows.map(row=>({id:String(row.id),regiaoAnatomica:row.regiao_anatomica,tipoOcorrencia:row.tipo_ocorrencia,intensidade:row.intensidade,observacao:row.observacao||'',medicamentoAssociado:row.medicamento_associado||'',criadoEm:row.criado_em}));
+}
+
+export async function registrarLocalDor(userId:number,dados:Omit<LocalDor,'id'|'criadoEm'>):Promise<LocalDor> {
+  const row=await requisicao<LocalDorApi>(`/api/users/${userId}/locais-dor`,{method:'POST',body:JSON.stringify({regiao_anatomica:dados.regiaoAnatomica,tipo_ocorrencia:dados.tipoOcorrencia,intensidade:dados.intensidade,observacao:dados.observacao||null,medicamento_associado:dados.medicamentoAssociado||null})});
+  return {id:String(row.id),regiaoAnatomica:row.regiao_anatomica,tipoOcorrencia:row.tipo_ocorrencia,intensidade:row.intensidade,observacao:row.observacao||'',medicamentoAssociado:row.medicamento_associado||'',criadoEm:row.criado_em};
 }

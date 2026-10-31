@@ -50,6 +50,16 @@ export type PainTriageData = {
   solicitouAgendamento: boolean;
 };
 
+export type LocalDor = {
+  id: string;
+  regiaoAnatomica: string;
+  tipoOcorrencia: string;
+  intensidade: number;
+  observacao: string;
+  medicamentoAssociado: string;
+  criadoEm: string;
+};
+
 export type Medicacao = {
   id: string;
   nome: string;

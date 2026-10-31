@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useVisual, Palette } from '../visual';
 
 type DocumentoLegal = 'termos' | 'privacidade';
 
@@ -65,37 +66,35 @@ const documentos: Record<DocumentoLegal, { titulo: string; secoes: SecaoLegal[] 
       {
         titulo: '1. Dados tratados',
         texto:
-          'No cadastro atual, o aplicativo solicita nome, email e senha. A senha é usada temporariamente em memória para validação e não é gravada no armazenamento local nem enviada a um servidor pelo código atual.',
+          'No cadastro, o app pode enviar à API nome, email, senha, perfil, prontuário, idade, sexo, CPF, telefone, dados do cuidador, diagnóstico, PPS, comorbidades, alergias, tratamento atual e próxima consulta. Campos clínicos são opcionais. O app também envia avaliações ESAS, triagens de dor e medicações quando você usa esses recursos. A senha é enviada à API para autenticação e o backend atual a armazena como hash SHA-256.',
       },
       {
-        titulo: '2. Armazenamento no dispositivo',
+        titulo: '2. Armazenamento e sessão',
         texto:
-          'Após a validação do cadastro, nome, email e data de criação do perfil são salvos neste dispositivo pelo AsyncStorage. Esse armazenamento local não possui criptografia adicional implementada pelo aplicativo. Ainda não há uma opção para excluir o perfil dentro do app.',
+          'O backend do projeto persiste os dados de perfil e os registros de cuidado no banco configurado pelo projeto. O app mantém no AsyncStorage deste dispositivo os dados básicos necessários para restaurar a sessão (identificador, nome e email) e a preferência visual. O app não implementa criptografia adicional para esse armazenamento local. Sair remove os dados locais da sessão, mas não exclui a conta nem os registros do servidor.',
       },
       {
-        titulo: '3. Compartilhamento e serviços externos',
+        titulo: '3. Uso e serviços externos',
         texto:
-          'A versão atual não envia os dados do perfil a um servidor. Os botões de acesso por Google, Facebook e X ainda não estão conectados e não iniciam autenticação nem compartilhamento de dados.',
+          'Os dados informados são enviados ao backend Zelo configurado para que os recursos de cadastro, autenticação e acompanhamento funcionem. A infraestrutura, as pessoas autorizadas que podem acessar esses dados, os prazos de retenção e as bases legais devem ser confirmados pelos responsáveis pelo serviço antes de disponibilizar o app a pacientes.',
       },
       {
         titulo: '4. Controle dos dados',
         texto:
-          'Como os dados do perfil ficam no armazenamento local do aplicativo, limpar os dados do app ou desinstalá-lo pode removê-los deste dispositivo. O comportamento de cópias de segurança depende das configurações do sistema operacional.',
+          'Ainda não há uma opção para excluir ou corrigir a conta dentro do app. Para solicitar acesso, correção ou exclusão, procure a equipe responsável pelo serviço. Limpar os dados do app ou desinstalá-lo pode remover os dados locais; isso não apaga os dados que já foram enviados ao backend.',
       },
       {
-        titulo: '5. Próximas integrações',
+        titulo: '5. Preferências visuais',
         texto:
-          'Se o Zelo passar a enviar dados a servidores, integrar provedores de login ou tratar informações de saúde, esta política deverá ser atualizada antes da ativação desses recursos, com a identificação do controlador, as finalidades, as bases legais, os prazos de retenção e os canais para exercício dos direitos previstos na LGPD.',
+          'A escolha de tema claro ou escuro, alto contraste ou paleta para daltonismo fica salva localmente neste dispositivo e não é enviada à API.',
       },
     ],
   },
 };
 
-export default function LegalScreen({
-  documento,
-  onSelecionarDocumento,
-  onVoltar,
-}: LegalScreenProps) {
+export default function LegalScreen({ documento, onSelecionarDocumento, onVoltar }: LegalScreenProps) {
+  const { cores } = useVisual();
+  const estilos = criarEstilos(cores);
   const conteudo = documentos[documento];
 
   return (
@@ -167,10 +166,10 @@ export default function LegalScreen({
   );
 }
 
-const estilos = StyleSheet.create({
+function criarEstilos(cores: Palette) { return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#174C3D',
+    backgroundColor: cores.primaria,
   },
   cabecalho: {
     minHeight: 76,
@@ -178,21 +177,21 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#174C3D',
+    backgroundColor: cores.primaria,
   },
   marca: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 24,
     fontWeight: '700',
   },
   voltar: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 14,
     fontWeight: '600',
   },
   corpo: {
     flex: 1,
-    backgroundColor: '#F3F7F3',
+    backgroundColor: cores.fundo,
   },
   conteudo: {
     width: '100%',
@@ -203,20 +202,20 @@ const estilos = StyleSheet.create({
     paddingBottom: 40,
   },
   sobreTitulo: {
-    color: '#B55D45',
+    color: cores.perigo,
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1.1,
     marginBottom: 10,
   },
   titulo: {
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 30,
     lineHeight: 38,
     fontWeight: '700',
   },
   atualizacao: {
-    color: '#718078',
+    color: cores.textoSecundario,
     fontSize: 12,
     marginTop: 8,
   },
@@ -226,7 +225,7 @@ const estilos = StyleSheet.create({
     marginTop: 24,
     marginBottom: 24,
     borderRadius: 8,
-    backgroundColor: '#E4ECE6',
+    backgroundColor: cores.primariaClara,
   },
   aba: {
     flex: 1,
@@ -237,16 +236,16 @@ const estilos = StyleSheet.create({
     borderRadius: 6,
   },
   abaSelecionada: {
-    backgroundColor: '#26745C',
+    backgroundColor: cores.primaria,
   },
   textoAba: {
-    color: '#385C4D',
+    color: cores.textoSecundario,
     fontSize: 13,
     fontWeight: '600',
     textAlign: 'center',
   },
   textoAbaSelecionada: {
-    color: '#FFFFFF',
+    color: cores.superficie,
   },
   secoes: {
     gap: 22,
@@ -255,22 +254,23 @@ const estilos = StyleSheet.create({
     gap: 7,
   },
   tituloSecao: {
-    color: '#28463B',
+    color: cores.texto,
     fontSize: 16,
     fontWeight: '700',
   },
   textoSecao: {
-    color: '#52645B',
+    color: cores.textoLeve,
     fontSize: 14,
     lineHeight: 22,
   },
   nota: {
-    color: '#718078',
+    color: cores.textoSecundario,
     fontSize: 12,
     lineHeight: 18,
     marginTop: 28,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#D9E3DC',
+    borderTopColor: cores.borda,
   },
 });
+}

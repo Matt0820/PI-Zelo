@@ -5,37 +5,34 @@
  * carregados do backend. Ele atua como orquestrador entre a interface e o serviço
  * de API, facilitando a manutenção e a evolução das telas do app.
  */
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import {
+  buscarESAS,
+  buscarLocaisDor,
   buscarMedicacoes,
   buscarOrientacoes,
-  buscarSintomas,
   criarMedicacao,
-  criarSintoma,
   criarUsuario,
+  registrarESAS,
+  registrarLocalDor,
+  registrarTriagemDor,
   entrar as autenticar,
 } from './api';
 import LoginScreen from './pages/Login';
+import CadastroScreen, { DadosCadastro } from './pages/Cadastro';
+import ConfiguracoesScreen from './pages/Configuracoes';
+import { VisualProvider } from './visual';
 import LegalScreen from './pages/Legal';
 import HomeScreen from './pages/Home';
-import SintomasScreen from './pages/Sintomas';
+import ESASScreen from './pages/ESAS';
+import TriagemDorScreen from './pages/TriagemDor';
 import MedicacoesScreen from './pages/Medicacoes';
 import OrientacoesScreen from './pages/Orientacoes';
-import type { Medicacao, Orientacao, Sintoma } from './types';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import MapaDorScreen from './pages/MapaDor';
+import type { ESASAssessment, LocalDor, Medicacao, Orientacao, PainTriageData } from './types';
+import { Alert } from 'react-native';
 
 const STORAGE_KEYS = {
   perfil: '@zelo/perfil',
@@ -43,34 +40,44 @@ const STORAGE_KEYS = {
 
 export default function App() {
   // Estado de navegação: controla qual tela deve ser renderizada.
-  const [pagina, setPagina] = useState<'registro' | 'login' | 'legal' | 'home' | 'sintomas' | 'medicacoes' | 'orientacoes'>('registro');
+  const [pagina, setPagina] = useState<'registro' | 'login' | 'legal' | 'home' | 'esas' | 'triagem-dor' | 'medicacoes' | 'orientacoes' | 'mapa-dor' | 'configuracoes'>('registro');
   const [documentoLegal, setDocumentoLegal] = useState<'termos' | 'privacidade'>('termos');
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [senhaVisivel, setSenhaVisivel] = useState(false);
+
   const [userId, setUserId] = useState<number | null>(null);
   const [orientacoes, setOrientacoes] = useState<Orientacao[]>([]);
-  const [sintomas, setSintomas] = useState<Sintoma[]>([]);
+  const [avaliacoesESAS, setAvaliacoesESAS] = useState<ESASAssessment[]>([]);
+  const [intensidadeDorTriagem, setIntensidadeDorTriagem] = useState(7);
   const [medicacoes, setMedicacoes] = useState<Medicacao[]>([]);
+  const [locaisDor, setLocaisDor] = useState<LocalDor[]>([]);
 
-  const cadastroJsonTemporario = nome.trim() && email.trim() && senha
-    ? JSON.stringify({ nome: nome.trim(), email: email.trim(), senha })
-    : null;
+
 
   useEffect(() => {
-    // Carrega o perfil persistido para manter a sessão consistente ao abrir o app.
+    // Restaura a sessão completa para manter os registros do paciente acessíveis.
     async function carregarPersistencia() {
       try {
         const perfilSalvo = await AsyncStorage.getItem(STORAGE_KEYS.perfil);
+        if (!perfilSalvo) return;
 
-        if (perfilSalvo) {
-          const perfil = JSON.parse(perfilSalvo) as { nome?: string; email?: string };
-          if (perfil.nome) setNome(perfil.nome);
-          if (perfil.email) setEmail(perfil.email);
+        const perfil = JSON.parse(perfilSalvo) as { id?: number; nome?: string; email?: string };
+        if (!Number.isInteger(perfil.id) || !perfil.nome || !perfil.email) {
+          await AsyncStorage.removeItem(STORAGE_KEYS.perfil);
+          return;
+        }
+
+        setNome(perfil.nome);
+        setEmail(perfil.email);
+        setUserId(perfil.id!);
+        setPagina('home');
+        try {
+          await carregarDadosUsuario(perfil.id!);
+        } catch {
+          Alert.alert('Dados indisponíveis', 'Sua sessão foi restaurada, mas não foi possível carregar os registros agora.');
         }
       } catch {
-        // Ignora falha de carregamento inicial em ambiente local.
+        await AsyncStorage.removeItem(STORAGE_KEYS.perfil).catch(() => undefined);
       }
     }
 
@@ -79,14 +86,16 @@ export default function App() {
 
   async function carregarDadosUsuario(id: number) {
     // Executa as consultas em paralelo para reduzir o tempo de carregamento inicial.
-    const [listaSintomas, listaMedicacoes, listaOrientacoes] = await Promise.all([
-      buscarSintomas(id),
+    const [listaMedicacoes, listaOrientacoes, listaESAS, listaLocaisDor] = await Promise.all([
       buscarMedicacoes(id),
       buscarOrientacoes(id),
+      buscarESAS(id),
+      buscarLocaisDor(id),
     ]);
-    setSintomas(listaSintomas);
     setMedicacoes(listaMedicacoes);
     setOrientacoes(listaOrientacoes);
+    setAvaliacoesESAS(listaESAS);
+    setLocaisDor(listaLocaisDor);
   }
 
   async function iniciarSessao(usuario: { id: number; nome: string; email: string }) {
@@ -103,34 +112,21 @@ export default function App() {
     }
   }
 
-  async function registrar() {
-    if (!cadastroJsonTemporario) {
-      Alert.alert('Faltam alguns dados', 'Preencha seu nome, email e senha para continuar.');
-      return;
-    }
-
-    const cadastro = JSON.parse(cadastroJsonTemporario) as {
-      nome: string;
-      email: string;
-      senha: string;
-    };
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cadastro.email)) {
-      Alert.alert('Email inválido', 'Confira o endereço de email informado.');
-      return;
-    }
-
-    if (cadastro.senha.length < 8) {
-      Alert.alert('Senha muito curta', 'Use pelo menos 8 caracteres na sua senha.');
-      return;
-    }
-
-    try {
-      const usuario = await criarUsuario(cadastro);
-      await iniciarSessao(usuario);
-    } catch (error) {
-      Alert.alert('Não foi possível criar a conta', error instanceof Error ? error.message : 'Tente novamente em alguns instantes.');
-    }
+  async function registrar(dados: DadosCadastro) {
+    const usuario = await criarUsuario({
+      nome:dados.nome.trim(), email:dados.email.trim(), senha:dados.senha,
+      perfil:'paciente', prontuario:dados.prontuario.trim()||null,
+      idade:dados.idade?Number(dados.idade):null, sexo:dados.sexo.trim()||null,
+      cpf:dados.cpf.trim()||null, telefone:dados.telefone.trim()||null,
+      cuidador_principal:dados.cuidador_principal.trim()||null,
+      parentesco_cuidador:dados.parentesco_cuidador.trim()||null,
+      diagnostico_oncologico:dados.diagnostico_oncologico.trim()||null,
+      pps_score:dados.pps_score?Number(dados.pps_score):null,
+      comorbidades:dados.comorbidades.trim()||null, alergias:dados.alergias.trim()||null,
+      proxima_consulta:dados.proxima_consulta.trim()||null,
+      tratamento_modificador:dados.tratamento_modificador.trim()||null,
+    });
+    await iniciarSessao(usuario);
   }
 
   async function login(emailInformado: string, senhaInformada: string) {
@@ -138,11 +134,16 @@ export default function App() {
     await iniciarSessao(usuario);
   }
 
-  async function salvarSintoma(dados: Omit<Sintoma, 'id' | 'atualizadoEm'>): Promise<Sintoma> {
-    if (userId === null) throw new Error('Entre novamente para registrar um sintoma.');
-    const salvo = await criarSintoma(userId, dados);
-    setSintomas((atuais) => [salvo, ...atuais]);
-    return salvo;
+  async function salvarESAS(dados: Omit<ESASAssessment, 'id' | 'dataRegistro' | 'acionouTriagem'>): Promise<ESASAssessment> {
+    if (userId === null) throw new Error('Entre novamente para registrar a avaliação.');
+    const salva = await registrarESAS(userId, dados);
+    setAvaliacoesESAS((atuais) => [salva, ...atuais]);
+    return salva;
+  }
+
+  async function salvarTriagemDor(dados: PainTriageData): Promise<void> {
+    if (userId === null) throw new Error('Entre novamente para registrar a triagem.');
+    await registrarTriagemDor(userId, dados);
   }
 
   async function salvarMedicacao(dados: Omit<Medicacao, 'id'>): Promise<Medicacao> {
@@ -152,28 +153,55 @@ export default function App() {
     return salva;
   }
 
+  async function salvarLocalDor(dados: Omit<LocalDor, 'id' | 'criadoEm'>): Promise<void> {
+    if (userId === null) throw new Error('Entre novamente para registrar o mapa de dor.');
+    const registro = await registrarLocalDor(userId, dados);
+    setLocaisDor((atuais) => [registro, ...atuais]);
+  }
+
+  async function abrirOrientacoes() {
+    if (userId !== null) {
+      try { setOrientacoes(await buscarOrientacoes(userId)); }
+      catch { Alert.alert('Orientações indisponíveis', 'Não foi possível consultar as orientações agora.'); }
+    }
+    setPagina('orientacoes');
+  }
+
+  async function abrirMapaDor() {
+    if (userId !== null) {
+      try { setLocaisDor(await buscarLocaisDor(userId)); }
+      catch { Alert.alert('Mapa indisponível', 'Não foi possível consultar os registros agora.'); }
+    }
+    setPagina('mapa-dor');
+  }
+
   async function sair() {
     await AsyncStorage.removeItem(STORAGE_KEYS.perfil);
     setUserId(null);
-    setSintomas([]);
+    setAvaliacoesESAS([]);
     setMedicacoes([]);
     setOrientacoes([]);
+    setLocaisDor([]);
     setPagina('registro');
   }
 
   return (
-    <SafeAreaProvider>
+    <VisualProvider><SafeAreaProvider>
       {pagina === 'home' ? (
         <HomeScreen
           nomeResponsavel={nome}
           orientacoes={orientacoes}
-          sintomas={sintomas}
+          avaliacoesESAS={avaliacoesESAS}
           medicacoes={medicacoes}
           onSair={sair}
-          onAbrirOrientacoes={() => setPagina('orientacoes')}
-          onAbrirSintomas={() => setPagina('sintomas')}
+          onAbrirOrientacoes={abrirOrientacoes}
+          onAbrirESAS={() => setPagina('esas')}
           onAbrirMedicacoes={() => setPagina('medicacoes')}
+          onAbrirMapaDor={abrirMapaDor}
+          onAbrirConfiguracoes={() => setPagina('configuracoes')}
         />
+      ) : pagina === 'configuracoes' ? (
+        <ConfiguracoesScreen onVoltar={() => setPagina('home')} />
       ) : pagina === 'login' ? (
         <LoginScreen onVoltar={() => setPagina('registro')} onEntrar={login} />
       ) : pagina === 'legal' ? (
@@ -184,290 +212,24 @@ export default function App() {
         />
       ) : pagina === 'orientacoes' ? (
         <OrientacoesScreen orientacoes={orientacoes} onVoltar={() => setPagina('home')} />
-      ) : pagina === 'sintomas' ? (
-        <SintomasScreen sintomas={sintomas} onVoltar={() => setPagina('home')} onSalvar={salvarSintoma} />
+      ) : pagina === 'mapa-dor' ? (
+        <MapaDorScreen registros={locaisDor} onVoltar={() => setPagina('home')} onSalvar={salvarLocalDor} />
+      ) : pagina === 'esas' ? (
+        <ESASScreen
+          onVoltar={() => setPagina('home')}
+          onSalvar={salvarESAS}
+          onAbrirTriagem={(intensidade) => {
+            setIntensidadeDorTriagem(intensidade);
+            setPagina('triagem-dor');
+          }}
+        />
+      ) : pagina === 'triagem-dor' ? (
+        <TriagemDorScreen intensidadeDor={intensidadeDorTriagem} onVoltar={() => setPagina('home')} onSalvar={salvarTriagemDor} />
       ) : pagina === 'medicacoes' ? (
         <MedicacoesScreen medicacoes={medicacoes} onVoltar={() => setPagina('home')} onSalvar={salvarMedicacao} />
       ) : (
-        <SafeAreaView style={estilos.safeArea} edges={['top', 'left', 'right']}>
-          <View style={estilos.cabecalho}>
-            <Image
-              source={require('./assets/logo.png')}
-              style={estilos.logo}
-              resizeMode="contain"
-              accessibilityLabel="Zelo - Cuidados Paliativos"
-            />
-          </View>
-          <View style={estilos.corpo}>
-            <KeyboardAvoidingView
-              style={estilos.keyboardArea}
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            >
-              <ScrollView
-                contentContainerStyle={estilos.conteudo}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-              >
-                <View style={estilos.introducao}>
-                  <Text style={estilos.sobreTitulo}>CUIDADO COMEÇA COM CONEXÃO</Text>
-                  <Text style={estilos.titulo}>Vamos criar sua conta.</Text>
-                  <Text style={estilos.descricao}>
-                    Um espaço de cuidado, presença e apoio para você e sua família.
-                  </Text>
-                </View>
-
-                <View style={estilos.formulario}>
-                  <View style={estilos.campoGrupo}>
-                    <Text style={estilos.rotulo}>Nome completo</Text>
-                    <TextInput
-                      style={estilos.campo}
-                      placeholder="Como podemos chamar você?"
-                      placeholderTextColor="#87958E"
-                      value={nome}
-                      onChangeText={setNome}
-                      autoCapitalize="words"
-                      autoComplete="name"
-                      returnKeyType="next"
-                    />
-                  </View>
-
-                  <View style={estilos.campoGrupo}>
-                    <Text style={estilos.rotulo}>Email</Text>
-                    <TextInput
-                      style={estilos.campo}
-                      placeholder="voce@email.com"
-                      placeholderTextColor="#87958E"
-                      value={email}
-                      onChangeText={setEmail}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      autoCorrect={false}
-                      returnKeyType="next"
-                    />
-                  </View>
-
-                  <View style={estilos.campoGrupo}>
-                    <View style={estilos.rotuloLinha}>
-                      <Text style={estilos.rotulo}>Senha</Text>
-                      <Pressable
-                        onPress={() => setSenhaVisivel(!senhaVisivel)}
-                        accessibilityRole="button"
-                        accessibilityLabel={senhaVisivel ? 'Ocultar senha' : 'Mostrar senha'}
-                      >
-                        <Text style={estilos.acaoCampo}>{senhaVisivel ? 'Ocultar' : 'Mostrar'}</Text>
-                      </Pressable>
-                    </View>
-                    <TextInput
-                      style={estilos.campo}
-                      placeholder="Pelo menos 8 caracteres"
-                      placeholderTextColor="#87958E"
-                      value={senha}
-                      onChangeText={setSenha}
-                      secureTextEntry={!senhaVisivel}
-                      autoCapitalize="none"
-                      autoComplete="new-password"
-                      returnKeyType="done"
-                      onSubmitEditing={registrar}
-                    />
-                  </View>
-
-                  <Pressable
-                    style={({ pressed }) => [estilos.botao, pressed && estilos.botaoPressionado]}
-                    onPress={registrar}
-                    accessibilityRole="button"
-                  >
-                    <Text style={estilos.textoBotao}>Criar minha conta</Text>
-                    <Text style={estilos.setaBotao}>→</Text>
-                  </Pressable>
-
-                  <Text style={estilos.termos}>
-                    Ao continuar, você concorda com nossos{' '}
-                    <Text
-                      style={estilos.termosDestaque}
-                      accessibilityRole="link"
-                      onPress={() => {
-                        setDocumentoLegal('termos');
-                        setPagina('legal');
-                      }}
-                    >
-                      Termos de uso
-                    </Text>{' '}e{' '}
-                    <Text
-                      style={estilos.termosDestaque}
-                      accessibilityRole="link"
-                      onPress={() => {
-                        setDocumentoLegal('privacidade');
-                        setPagina('legal');
-                      }}
-                    >
-                      Política de privacidade
-                    </Text>.
-                  </Text>
-                </View>
-
-                <View style={estilos.rodape}>
-                  <Text style={estilos.textoRodape}>Já tem uma conta?</Text>
-                  <Pressable accessibilityRole="button" onPress={() => setPagina('login')}>
-                    <Text style={estilos.linkRodape}>Fazer login</Text>
-                  </Pressable>
-                </View>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </View>
-        </SafeAreaView>
+        <CadastroScreen onCriar={registrar} onLogin={() => setPagina('login')} onLegal={(doc) => { setDocumentoLegal(doc); setPagina('legal'); }} />
       )}
-    </SafeAreaProvider>
+    </SafeAreaProvider></VisualProvider>
   );
 }
-
-const estilos = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#174C3D',
-  },
-  cabecalho: {
-    height: 76,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: 10,
-    paddingHorizontal: 24,
-    backgroundColor: '#174C3D',
-  },
-  logo: {
-    width: 36,
-    height: 64,
-  },
-  marca: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '700',
-    letterSpacing: 0,
-  },
-  corpo: {
-    flex: 1,
-    backgroundColor: '#F3F7F3',
-  },
-  keyboardArea: {
-    flex: 1,
-  },
-  conteudo: {
-    flexGrow: 1,
-    width: '100%',
-    maxWidth: 520,
-    alignSelf: 'center',
-    paddingHorizontal: 28,
-    paddingTop: 22,
-    paddingBottom: 28,
-  },
-  introducao: {
-    marginBottom: 30,
-  },
-
-  sobreTitulo: {
-    color: '#B55D45',
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.1,
-    marginBottom: 12,
-  },
-  titulo: {
-    color: '#173D33',
-    fontSize: 32,
-    lineHeight: 38,
-    fontWeight: '700',
-    letterSpacing: 0,
-    maxWidth: 360,
-  },
-  descricao: {
-    color: '#63736B',
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 12,
-    maxWidth: 360,
-  },
-  formulario: {
-    gap: 20,
-  },
-  campoGrupo: {
-    gap: 8,
-  },
-  rotuloLinha: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  rotulo: {
-    color: '#28463B',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  acaoCampo: {
-    color: '#26745C',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  campo: {
-    minHeight: 54,
-    borderWidth: 1,
-    borderColor: '#D9E3DC',
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    color: '#173D33',
-    fontSize: 15,
-  },
-  botao: {
-    minHeight: 56,
-    marginTop: 4,
-    paddingHorizontal: 18,
-    borderRadius: 8,
-    backgroundColor: '#26745C',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  botaoPressionado: {
-    backgroundColor: '#1E624D',
-  },
-  textoBotao: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  setaBotao: {
-    color: '#FFFFFF',
-    fontSize: 19,
-    lineHeight: 22,
-  },
-  termos: {
-    color: '#718078',
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: 'center',
-    marginTop: -4,
-  },
-  termosDestaque: {
-    color: '#385C4D',
-    fontWeight: '600',
-  },
-  rodape: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 5,
-    marginTop: 'auto',
-    paddingTop: 32,
-  },
-  textoRodape: {
-    color: '#63736B',
-    fontSize: 14,
-  },
-  linkRodape: {
-    color: '#26745C',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});

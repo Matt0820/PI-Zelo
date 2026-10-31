@@ -15,6 +15,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useVisual, Palette } from '../visual';
 import type { Medicacao, StatusMedicacao } from '../types';
 
 type MedicacoesScreenProps = {
@@ -30,13 +31,15 @@ const statusOpcoes: Array<{ label: string; value: StatusMedicacao }> = [
 ];
 
 export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: MedicacoesScreenProps) {
+  const { cores } = useVisual();
+  const estilos = criarEstilos(cores);
   // Os dados iniciais vêm do estado global da aplicação, mas a tela também mantém
   // uma lista local para refletir inserções imediatamente sem recarregar a tela.
-  const [nome, setNome] = useState('Paracetamol');
-  const [dose, setDose] = useState('500mg');
-  const [horario, setHorario] = useState('08:00');
-  const [frequencia, setFrequencia] = useState('1x ao dia');
-  const [observacao, setObservacao] = useState('Tomar com água.');
+  const [nome, setNome] = useState('');
+  const [dose, setDose] = useState('');
+  const [horario, setHorario] = useState('');
+  const [frequencia, setFrequencia] = useState('');
+  const [observacao, setObservacao] = useState('');
   const [status, setStatus] = useState<StatusMedicacao>('agendada');
   const [lista, setLista] = useState<Medicacao[]>(medicacoes);
 
@@ -48,16 +51,21 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
     // Validação mínima antes de salvar: um nome sempre precisa existir para evitar
     // registros vazios no histórico do paciente.
     if (!nome.trim()) {
-      Alert.alert('Medicamento sem nome', 'Informe o nome da medicação.');
+      Alert.alert('Dados incompletos', 'Informe o nome da medicação.');
+      return;
+    }
+
+    if (!dose.trim() || !horario.trim() || !frequencia.trim()) {
+      Alert.alert('Dados incompletos', 'Informe dose, horário e frequência conforme a prescrição.');
       return;
     }
 
     const dadosMedicacao = {
       nome: nome.trim(),
-      horario: horario.trim() || '08:00',
-      dose: dose.trim() || '1 dose',
-      frequencia: frequencia.trim() || '1x ao dia',
-      observacao: observacao.trim() || 'Sem observações adicionais.',
+      horario: horario.trim(),
+      dose: dose.trim(),
+      frequencia: frequencia.trim(),
+      observacao: observacao.trim(),
       status,
     };
 
@@ -95,7 +103,7 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
             value={nome}
             onChangeText={setNome}
             placeholder="Ex: Paracetamol"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
           />
 
           <Text style={estilos.rotulo}>Dose</Text>
@@ -104,7 +112,7 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
             value={dose}
             onChangeText={setDose}
             placeholder="Ex: 500mg"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
           />
 
           <Text style={estilos.rotulo}>Horário</Text>
@@ -113,7 +121,7 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
             value={horario}
             onChangeText={setHorario}
             placeholder="Ex: 08:00"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
           />
 
           <Text style={estilos.rotulo}>Frequência</Text>
@@ -122,7 +130,7 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
             value={frequencia}
             onChangeText={setFrequencia}
             placeholder="Ex: 1x ao dia"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
           />
 
           <Text style={estilos.rotulo}>Status</Text>
@@ -148,7 +156,7 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
             value={observacao}
             onChangeText={setObservacao}
             placeholder="Informações úteis para a tomada"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
             multiline
             numberOfLines={4}
           />
@@ -181,10 +189,10 @@ export default function MedicacoesScreen({ medicacoes, onVoltar, onSalvar }: Med
   );
 }
 
-const estilos = StyleSheet.create({
+function criarEstilos(cores: Palette) { return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F3F7F3',
+    backgroundColor: cores.fundo,
   },
   cabecalho: {
     paddingHorizontal: 20,
@@ -192,15 +200,15 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#174C3D',
+    backgroundColor: cores.primaria,
   },
   botaoVoltar: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 16,
     fontWeight: '700',
   },
   titulo: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 26,
     fontWeight: '700',
   },
@@ -209,29 +217,29 @@ const estilos = StyleSheet.create({
     gap: 20,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: cores.superficie,
     borderRadius: 18,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E0E8E2',
+    borderColor: cores.borda,
   },
   rotulo: {
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 10,
     marginTop: 8,
   },
   input: {
-    backgroundColor: '#F4F7F3',
+    backgroundColor: '#F3EFE9',
     borderWidth: 1,
-    borderColor: '#D8E1DB',
+    borderColor: cores.borda,
     borderRadius: 12,
     minHeight: 52,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#173D33',
+    color: cores.texto,
     marginBottom: 8,
   },
   inputMultilinha: {
@@ -248,31 +256,31 @@ const estilos = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 999,
-    backgroundColor: '#F2F6F3',
+    backgroundColor: '#F3EFE9',
     borderWidth: 1,
-    borderColor: '#D8E1DB',
+    borderColor: cores.borda,
   },
   opcaoAtiva: {
-    backgroundColor: '#174C3D',
-    borderColor: '#174C3D',
+    backgroundColor: cores.primaria,
+    borderColor: cores.primaria,
   },
   textoOpcao: {
-    color: '#173D33',
+    color: cores.texto,
     fontWeight: '700',
     fontSize: 14,
   },
   textoOpcaoAtivo: {
-    color: '#FFFFFF',
+    color: cores.superficie,
   },
   botaoPrimario: {
-    backgroundColor: '#174C3D',
+    backgroundColor: cores.primaria,
     borderRadius: 12,
     paddingVertical: 16,
     marginTop: 18,
     alignItems: 'center',
   },
   textoBotaoPrimario: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -280,20 +288,20 @@ const estilos = StyleSheet.create({
     gap: 12,
   },
   subtitulo: {
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 20,
     fontWeight: '700',
   },
   vazio: {
-    color: '#5C6D67',
+    color: cores.textoLeve,
     fontSize: 15,
     lineHeight: 22,
   },
   itemLista: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: cores.superficie,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E0E8E2',
+    borderColor: cores.borda,
     padding: 16,
     gap: 6,
   },
@@ -304,29 +312,30 @@ const estilos = StyleSheet.create({
     gap: 10,
   },
   itemTitulo: {
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 18,
     fontWeight: '700',
     flex: 1,
   },
   badge: {
-    color: '#174C3D',
+    color: cores.primaria,
     fontWeight: '700',
     fontSize: 11,
-    backgroundColor: '#E9F3EF',
+    backgroundColor: cores.primariaClara,
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 4,
     textTransform: 'capitalize',
   },
   itemDetalhe: {
-    color: '#5C6D67',
+    color: cores.textoLeve,
     fontSize: 13,
     fontWeight: '600',
   },
   itemTexto: {
-    color: '#41534E',
+    color: cores.textoLeve,
     fontSize: 15,
     lineHeight: 22,
   },
 });
+}

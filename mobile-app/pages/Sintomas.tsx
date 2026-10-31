@@ -30,12 +30,10 @@ const opcoesGravidade: Array<{ label: string; value: GravidadeSintoma }> = [
 ];
 
 export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: SintomasScreenProps) {
-  // A tela usa valores pré-populados para acelerar a entrada e reduzir fricção em
-  // uso de rotina, mas o usuário pode alterar tudo ao salvar um novo registro.
-  const [nome, setNome] = useState('Dor no corpo');
+  const [nome, setNome] = useState('');
   const [gravidade, setGravidade] = useState<GravidadeSintoma>('moderada');
-  const [momento, setMomento] = useState('Hoje pela manhã');
-  const [observacao, setObservacao] = useState('Melhorou depois de descansar.');
+  const [momento, setMomento] = useState('');
+  const [observacao, setObservacao] = useState('');
   const [lista, setLista] = useState<Sintoma[]>(sintomas);
 
   useEffect(() => {
@@ -88,7 +86,7 @@ export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: Sintoma
             value={nome}
             onChangeText={setNome}
             placeholder="Ex: Dor de cabeça"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
           />
 
           <Text style={estilos.rotulo}>Gravidade</Text>
@@ -114,7 +112,7 @@ export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: Sintoma
             value={momento}
             onChangeText={setMomento}
             placeholder="Ex: Hoje à noite"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
           />
 
           <Text style={estilos.rotulo}>Observações</Text>
@@ -123,7 +121,7 @@ export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: Sintoma
             value={observacao}
             onChangeText={setObservacao}
             placeholder="Descreva como o sintoma está se manifestando"
-            placeholderTextColor="#8A9890"
+            placeholderTextColor="#6E655C"
             multiline
             numberOfLines={4}
           />
@@ -158,7 +156,7 @@ export default function SintomasScreen({ sintomas, onVoltar, onSalvar }: Sintoma
 const estilos = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F3F7F3',
+    backgroundColor: '#FAF6F0',
   },
   cabecalho: {
     paddingHorizontal: 20,
@@ -166,7 +164,7 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#174C3D',
+    backgroundColor: '#1B5E4A',
   },
   botaoVoltar: {
     color: '#FFFFFF',
@@ -187,25 +185,25 @@ const estilos = StyleSheet.create({
     borderRadius: 18,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E0E8E2',
+    borderColor: '#D6CEC2',
   },
   rotulo: {
-    color: '#173D33',
+    color: '#1E1B18',
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 10,
     marginTop: 8,
   },
   input: {
-    backgroundColor: '#F4F7F3',
+    backgroundColor: '#F3EFE9',
     borderWidth: 1,
-    borderColor: '#D8E1DB',
+    borderColor: '#D6CEC2',
     borderRadius: 12,
     minHeight: 52,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#173D33',
+    color: '#1E1B18',
     marginBottom: 8,
   },
   inputMultilinha: {
@@ -222,16 +220,16 @@ const estilos = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 999,
-    backgroundColor: '#F2F6F3',
+    backgroundColor: '#F3EFE9',
     borderWidth: 1,
-    borderColor: '#D8E1DB',
+    borderColor: '#D6CEC2',
   },
   opcaoAtiva: {
-    backgroundColor: '#174C3D',
-    borderColor: '#174C3D',
+    backgroundColor: '#1B5E4A',
+    borderColor: '#1B5E4A',
   },
   textoOpcao: {
-    color: '#173D33',
+    color: '#1E1B18',
     fontWeight: '700',
     fontSize: 14,
   },
@@ -239,7 +237,7 @@ const estilos = StyleSheet.create({
     color: '#FFFFFF',
   },
   botaoPrimario: {
-    backgroundColor: '#174C3D',
+    backgroundColor: '#1B5E4A',
     borderRadius: 12,
     paddingVertical: 16,
     marginTop: 18,
@@ -254,12 +252,12 @@ const estilos = StyleSheet.create({
     gap: 12,
   },
   subtitulo: {
-    color: '#173D33',
+    color: '#1E1B18',
     fontSize: 20,
     fontWeight: '700',
   },
   vazio: {
-    color: '#5C6D67',
+    color: '#6E655C',
     fontSize: 15,
     lineHeight: 22,
   },
@@ -267,7 +265,7 @@ const estilos = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E0E8E2',
+    borderColor: '#D6CEC2',
     padding: 16,
     gap: 6,
   },
@@ -278,28 +276,28 @@ const estilos = StyleSheet.create({
     gap: 10,
   },
   itemTitulo: {
-    color: '#173D33',
+    color: '#1E1B18',
     fontSize: 18,
     fontWeight: '700',
     flex: 1,
   },
   badge: {
-    color: '#174C3D',
+    color: '#1B5E4A',
     fontWeight: '700',
     fontSize: 11,
-    backgroundColor: '#E9F3EF',
+    backgroundColor: '#EAF5EC',
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 4,
     textTransform: 'uppercase',
   },
   itemDetalhe: {
-    color: '#5C6D67',
+    color: '#6E655C',
     fontSize: 13,
     fontWeight: '600',
   },
   itemTexto: {
-    color: '#41534E',
+    color: '#6E655C',
     fontSize: 15,
     lineHeight: 22,
   },

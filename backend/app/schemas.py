@@ -33,11 +33,32 @@ class UserBase(BaseModel):
     comorbidades: str | None = None
     alergias: str | None = None
     proxima_consulta: str | None = None
+    tratamento_modificador: str | None = None
+    motivo_cuidados_paliativos: str | None = None
 
 
 class UserCreate(UserBase):
     """Estrutura aceita no cadastro de um novo usuário."""
     senha: str
+
+
+class UserUpdate(BaseModel):
+    """Campos editáveis do prontuário; credenciais e perfil não podem ser alterados aqui."""
+    nome: str | None = None
+    prontuario: str | None = None
+    idade: int | None = None
+    sexo: str | None = None
+    cpf: str | None = None
+    telefone: str | None = None
+    cuidador_principal: str | None = None
+    parentesco_cuidador: str | None = None
+    diagnostico_oncologico: str | None = None
+    motivo_cuidados_paliativos: str | None = None
+    pps_score: int | None = None
+    comorbidades: str | None = None
+    alergias: str | None = None
+    proxima_consulta: str | None = None
+    tratamento_modificador: str | None = None
 
 
 class UserLogin(BaseModel):

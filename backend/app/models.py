@@ -42,6 +42,7 @@ class User(Base):
     comorbidades: Mapped[str | None] = mapped_column(Text, nullable=True)  # ex: HAS, DM, Cardiopatias
     alergias: Mapped[str | None] = mapped_column(String(255), nullable=True)
     tratamento_modificador: Mapped[str | None] = mapped_column(String(100), default='Cuidados Paliativos Exclusivos')
+    motivo_cuidados_paliativos: Mapped[str | None] = mapped_column(Text, nullable=True)
     proxima_consulta: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     # Relações

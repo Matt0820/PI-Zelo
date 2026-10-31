@@ -6,6 +6,7 @@
  */
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useVisual, Palette } from '../visual';
 import type { Orientacao } from '../types';
 
 type OrientacoesScreenProps = {
@@ -14,9 +15,9 @@ type OrientacoesScreenProps = {
 };
 
 const prioridadeCor: Record<Orientacao['prioridade'], string> = {
-  baixa: '#DCEBDF',
-  media: '#F4E9D0',
-  alta: '#F7D4D4',
+  baixa: '#EAF5EC',
+  media: '#FEF8EC',
+  alta: '#FDF2F0',
 };
 
 const prioridadeTexto: Record<Orientacao['prioridade'], string> = {
@@ -26,6 +27,8 @@ const prioridadeTexto: Record<Orientacao['prioridade'], string> = {
 };
 
 export default function OrientacoesScreen({ orientacoes, onVoltar }: OrientacoesScreenProps) {
+  const { cores } = useVisual();
+  const estilos = criarEstilos(cores);
   // As orientações são exibidas como cartões, destacando nível de urgência e
   // contexto do cuidado para leitura rápida e entendimento do caso.
   return (
@@ -61,10 +64,10 @@ export default function OrientacoesScreen({ orientacoes, onVoltar }: Orientacoes
   );
 }
 
-const estilos = StyleSheet.create({
+function criarEstilos(cores: Palette) { return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F3F7F3',
+    backgroundColor: cores.fundo,
   },
   cabecalho: {
     paddingHorizontal: 20,
@@ -72,15 +75,15 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#174C3D',
+    backgroundColor: cores.primaria,
   },
   botaoVoltar: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 16,
     fontWeight: '700',
   },
   titulo: {
-    color: '#FFFFFF',
+    color: cores.superficie,
     fontSize: 26,
     fontWeight: '700',
   },
@@ -89,17 +92,17 @@ const estilos = StyleSheet.create({
     gap: 16,
   },
   introducao: {
-    color: '#536760',
+    color: cores.textoLeve,
     fontSize: 15,
     lineHeight: 22,
     marginBottom: 8,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: cores.superficie,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E0E8E2',
+    borderColor: cores.borda,
     gap: 10,
   },
   cardTopo: {
@@ -109,7 +112,7 @@ const estilos = StyleSheet.create({
     gap: 10,
   },
   categoria: {
-    color: '#174C3D',
+    color: cores.primaria,
     fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -121,24 +124,25 @@ const estilos = StyleSheet.create({
     paddingVertical: 6,
   },
   prioridadeTexto: {
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
   },
   cardTitulo: {
-    color: '#173D33',
+    color: cores.texto,
     fontSize: 20,
     fontWeight: '700',
   },
   cardDescricao: {
-    color: '#41534E',
+    color: cores.textoLeve,
     fontSize: 15,
     lineHeight: 22,
   },
   atualizacao: {
-    color: '#5C6D67',
+    color: cores.textoLeve,
     fontSize: 12,
     fontWeight: '600',
   },
 });
+}
