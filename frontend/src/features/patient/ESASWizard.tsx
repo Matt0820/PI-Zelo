@@ -161,15 +161,16 @@ export function ESASWizard({
       <div className="wizard-card">
         {/* Barra de Progresso com Acessibilidade */}
         <div className="wizard-progress">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="wizard-progress-header">
             <span>
               Sintoma {step + 1} de {ESAS_SYMPTOMS.length} · <b>{currentSymptom.label}</b>
             </span>
-            <span style={{ fontSize: '12px' }}>
+            <span style={{ fontSize: '13px' }}>
               {Math.round(((step + 1) / ESAS_SYMPTOMS.length) * 100)}% concluído
             </span>
           </div>
           <div
+            className="wizard-progress-track"
             role="progressbar"
             aria-valuenow={step + 1}
             aria-valuemin={1}
@@ -187,7 +188,7 @@ export function ESASWizard({
           {currentSymptom.question}
         </p>
         <small className="muted" style={{ display: 'block', marginBottom: '22px' }}>
-          💡 {currentSymptom.hint}
+          <b>Orientações da escala:</b> {currentSymptom.hint}
         </small>
 
         {/* Seleção Ergonômica de Notas (Botões Táteis ≥ 48px) */}
@@ -278,7 +279,7 @@ export function ESASWizard({
           });
           return (
             <p className="history-line" key={e.id}>
-              📅 {dataFmt} · <b>Dor:</b> {e.dor}/10 · <b>Cansaço:</b> {e.cansaco}/10 ·{' '}
+              {dataFmt} · <b>Dor:</b> {e.dor}/10 · <b>Cansaço:</b> {e.cansaco}/10 ·{' '}
               <b>Constipação:</b> {e.constipacao ?? '—'}/10 · Gravidade:{' '}
               <span className={`pill ${e.gravidade_maxima === 'grave' ? 'severity-high' : ''}`}>
                 {e.gravidade_maxima}

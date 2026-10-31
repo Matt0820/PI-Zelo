@@ -45,17 +45,29 @@ export function AlertCard({
 
       <div className="button-row" style={{ marginTop: '14px' }}>
         {patient && (
-          <Button variant="secondary" onClick={() => openPatient(patient)}>
+          <Button
+            variant="secondary"
+            onClick={() => openPatient(patient)}
+            title="Acessar o histórico completo, medicações e evoluções deste paciente"
+          >
             Abrir prontuário
           </Button>
         )}
         {alert.estado === 'Novo' && (
-          <Button variant="secondary" onClick={() => update(alert, 'Em revisao')}>
+          <Button
+            variant="secondary"
+            onClick={() => update(alert, 'Em revisao')}
+            title="Assumir este chamado e colocar o caso em revisão no seu plantão"
+          >
             Iniciar revisão
           </Button>
         )}
         {alert.estado !== 'Tratado' && (
-          <Button variant="primary" onClick={() => update(alert, 'Tratado')}>
+          <Button
+            variant="primary"
+            onClick={() => update(alert, 'Tratado')}
+            title="Concluir o atendimento clínico deste alerta e retirá-lo da fila de pendências"
+          >
             Registrar conduta e tratar
           </Button>
         )}

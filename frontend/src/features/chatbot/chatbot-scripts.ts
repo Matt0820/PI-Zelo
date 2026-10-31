@@ -45,14 +45,14 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     options: [
       {
         id: 'opt_emergencia_sim',
-        label: '⚠️ Sim, alguma dessas situações graves está acontecendo',
+        label: 'Sim, alguma dessas situações graves está acontecendo',
         isEmergencyAlert: true,
         action: () => ({ temSinaisEmergencia: true }),
         nextNodeId: 'bloqueio_emergencia'
       },
       {
         id: 'opt_emergencia_nao',
-        label: '✓ Não aconteceu nenhuma dessas situações (Continuar)',
+        label: 'Não aconteceu nenhuma dessas situações (Continuar)',
         action: () => ({ temSinaisEmergencia: false }),
         nextNodeId: 'semiologia_dor'
       }
@@ -75,7 +75,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     options: [
       {
         id: 'opt_corrigir_emergencia',
-        label: '↺ Toquei por engano — Não tenho nenhuma dessas situações graves',
+        label: 'Corrigir: Não tenho nenhuma dessas situações graves',
         action: () => ({ temSinaisEmergencia: false }),
         nextNodeId: 'semiologia_dor'
       }
@@ -92,28 +92,28 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     options: [
       {
         id: 'opt_dor_somatica',
-        label: '👉 Parece uma pontada, aperto no corpo ou sensação de facada',
+        label: 'Parece uma pontada, aperto no corpo ou sensação de facada',
         sublabel: 'Dor Somática (Músculos, ossos ou articulações - IVC 1,00)',
         action: () => ({ caracteristicaDor: 'somatica' }),
         nextNodeId: 'temporalidade_dor'
       },
       {
         id: 'opt_dor_neuropatica',
-        label: '⚡ Parece queimação, choque elétrico ou formigamento',
+        label: 'Parece queimação, choque elétrico ou formigamento',
         sublabel: 'Dor Neuropática (Nervos ou irradiação - IVC 0,95)',
         action: () => ({ caracteristicaDor: 'neuropatica' }),
         nextNodeId: 'temporalidade_dor'
       },
       {
         id: 'opt_dor_visceral',
-        label: '🌊 Parece uma cólica ou dor espalhada por dentro da barriga',
+        label: 'Parece uma cólica ou dor espalhada por dentro da barriga',
         sublabel: 'Dor Visceral (Órgãos internos ou abdômen - IVC 0,91)',
         action: () => ({ caracteristicaDor: 'visceral' }),
         nextNodeId: 'temporalidade_dor'
       },
       {
         id: 'opt_dor_outra',
-        label: '❓ Outra sensação / Não consigo definir exatamente',
+        label: 'Outra sensação / Não consigo definir exatamente',
         sublabel: 'Desconforto geral ou outra manifestação',
         action: () => ({ caracteristicaDor: 'outra' }),
         nextNodeId: 'temporalidade_dor'
@@ -131,13 +131,13 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     options: [
       {
         id: 'opt_duracao_cronica',
-        label: '📅 Sim, essa dor começou há mais de 2 semanas (Crônica)',
+        label: 'Sim, essa dor começou há mais de 2 semanas (Crônica)',
         action: () => ({ duracaoDor: 'cronica', maisDeDuasSemanas: true }),
         nextNodeId: 'manejo_resgate'
       },
       {
         id: 'opt_duracao_aguda',
-        label: '⏱️ Não, começou há poucos dias ou hoje (Dor Aguda)',
+        label: 'Não, começou há poucos dias ou hoje (Dor Aguda)',
         action: () => ({ duracaoDor: 'aguda', maisDeDuasSemanas: false }),
         nextNodeId: 'manejo_resgate'
       }
@@ -154,19 +154,19 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     options: [
       {
         id: 'opt_resgate_tomado_sem_alivio',
-        label: '💊 Já tomei a dose de resgate, mas a dor continua forte',
+        label: 'Já tomei a dose de resgate, mas a dor continua forte',
         action: () => ({ fezDoseResgate: true, medicamentosEfetivos: false }),
         nextNodeId: 'conforto_nao_farmacologico'
       },
       {
         id: 'opt_resgate_nao_tomado',
-        label: '⏳ Ainda não tomei a dose de resgate prescrita',
+        label: 'Ainda não tomei a dose de resgate prescrita',
         action: () => ({ fezDoseResgate: false, medicamentosEfetivos: false }),
         nextNodeId: 'conforto_nao_farmacologico'
       },
       {
         id: 'opt_resgate_tomado_com_alivio',
-        label: '✓ Tomei o resgate e já estou sentindo alívio gradual',
+        label: 'Tomei o resgate e já estou sentindo alívio gradual',
         action: () => ({ fezDoseResgate: true, medicamentosEfetivos: true }),
         nextNodeId: 'conforto_nao_farmacologico'
       }
@@ -181,10 +181,10 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     message:
       'Enquanto a medicação age no organismo, adote imediatamente estas medidas práticas de alívio validadas pela equipe de cuidados paliativos:',
     bullets: [
-      '🛋️ Posicionamento do corpo: Coloque travesseiros macios sob as pernas ou na lombar para aliviar a pressão muscular.',
-      '🌬️ Respiração suave: Puxe o ar devagar pelo nariz contando mentalmente até 3 e solte suavemente pela boca.',
-      '🌿 Ambiente calmo: Diminua luzes diretas no quarto, feche janelas para ruídos externos e coloque uma música suave.',
-      '💧 Hidratação e apoio: Beba pequenos goles de água e mantenha um familiar cuidador próximo para apoio e segurança.'
+      'Posicionamento do corpo: Coloque travesseiros macios sob as pernas ou na lombar para aliviar a pressão muscular.',
+      'Respiração suave: Puxe o ar devagar pelo nariz contando mentalmente até 3 e solte suavemente pela boca.',
+      'Ambiente calmo: Diminua luzes diretas no quarto, feche janelas para ruídos externos e coloque uma música suave.',
+      'Hidratação e apoio: Beba pequenos goles de água e mantenha um familiar cuidador próximo para apoio e segurança.'
     ],
     clinicalTip: answers =>
       !answers.fezDoseResgate
@@ -209,13 +209,13 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     options: [
       {
         id: 'opt_contato_sim',
-        label: '📞 Sim, quero solicitar contato prioritário da equipe',
+        label: 'Sim, quero solicitar contato prioritário da equipe',
         action: () => ({ solicitarContato: true }),
         nextNodeId: 'conclusao'
       },
       {
         id: 'opt_contato_nao',
-        label: '✓ Não, vou aplicar as medidas de conforto e aguardar o alívio',
+        label: 'Não, vou aplicar as medidas de conforto e aguardar o alívio',
         action: () => ({ solicitarContato: false }),
         nextNodeId: 'conclusao'
       }
@@ -230,8 +230,8 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     isFinish: true,
     message: (answers) =>
       answers.solicitarContato
-        ? '✓ Suas respostas foram salvas no prontuário do Hospice Erasto Gaertner. Foi gerado um ALERTA PRIORITÁRIO na Central da equipe de saúde para retorno ágil.'
-        : '✓ Suas respostas foram salvas com sucesso no seu prontuário diário para monitoramento contínuo da equipe do Hospice.',
+        ? 'Suas respostas foram salvas no prontuário do Hospice Erasto Gaertner. Foi gerado um alerta prioritário na Central da equipe de saúde para retorno ágil.'
+        : 'Suas respostas foram salvas com sucesso no seu prontuário diário para monitoramento contínuo da equipe do Hospice.',
     bullets: [
       'As medidas não farmacológicas permanecem salvas para consulta.',
       'Se a dor aumentar ou surgirem novos sintomas, você pode refazer a avaliação a qualquer momento.',

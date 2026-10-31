@@ -245,8 +245,8 @@ export default function App(): React.JSX.Element {
             : [
                 { id: 'inicio', name: 'Início', icon: '⌂', action: () => setPaginaPaciente('inicio') },
                 { id: 'esas', name: 'Avaliação ESAS', icon: '◷', action: () => setPaginaPaciente('esas') },
-                { id: 'chatbot', name: 'Chatbot Zelo (Apoio)', icon: '💬', action: () => setPaginaPaciente('chatbot') },
-                { id: 'medicacoes', name: 'Medicações & Receitas', icon: '💊', action: () => setPaginaPaciente('medicacoes') },
+                { id: 'chatbot', name: 'Chatbot Zelo (Apoio)', icon: 'Z', action: () => setPaginaPaciente('chatbot') },
+                { id: 'medicacoes', name: 'Medicações & Receitas', icon: 'Rx', action: () => setPaginaPaciente('medicacoes') },
                 { id: 'mapa', name: 'Mapa da dor', icon: '◎', action: () => setPaginaPaciente('mapa') },
                 { id: 'orientacoes', name: 'Avisos da equipe', icon: 'i', action: () => setPaginaPaciente('orientacoes') }
               ]

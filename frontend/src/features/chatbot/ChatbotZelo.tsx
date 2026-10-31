@@ -198,7 +198,7 @@ export function ChatbotZelo({
         <div className="button-row">
           {history.length > 0 && (
             <Button variant="quiet" onClick={handleReiniciar} title="Reiniciar do começo">
-              ↺ Reiniciar Triagem
+              Reiniciar Triagem
             </Button>
           )}
           <Button variant="secondary" onClick={onConcluir}>
@@ -245,7 +245,7 @@ export function ChatbotZelo({
                   color: 'var(--ink)'
                 }}
               >
-                💡 <b>{item.clinicalTip}</b>
+                <b>Orientação Clínica:</b> {item.clinicalTip}
               </p>
             )}
 
@@ -292,7 +292,7 @@ export function ChatbotZelo({
                 fontWeight: 600
               }}
             >
-              💡 {currentTip}
+              Orientação Clínica: {currentTip}
             </p>
           )}
 
@@ -304,7 +304,7 @@ export function ChatbotZelo({
                 className="button button-danger"
                 style={{ minHeight: '52px', fontSize: '16px', textDecoration: 'none' }}
               >
-                📞 Ligar Imediatamente para o Hospice HEG: (41) 3000-0000
+                Ligar para o Hospice HEG: (41) 3000-0000
               </a>
             </div>
           )}
@@ -350,7 +350,7 @@ export function ChatbotZelo({
                 Tentar Salvar Novamente
               </Button>
               <a href="tel:4130000000" className="button button-secondary" style={{ textDecoration: 'none' }}>
-                📞 Ligar (41) 3000-0000
+                Ligar: (41) 3000-0000
               </a>
             </div>
           </div>
@@ -397,14 +397,14 @@ export function ChatbotZelo({
               onClick={onConcluir}
               style={{ minHeight: '52px', fontSize: '16px' }}
             >
-              ✓ Concluir e Voltar ao Início
+              Concluir e Voltar ao Início
             </Button>
             <a
               href="tel:4130000000"
               className="button button-secondary"
               style={{ minHeight: '52px', textDecoration: 'none' }}
             >
-              📞 Ligar para o Hospice HEG: (41) 3000-0000
+              Ligar para o Hospice HEG: (41) 3000-0000
             </a>
             <Button variant="quiet" onClick={handleReiniciar}>
               Refazer Avaliação
@@ -421,7 +421,7 @@ export function ChatbotZelo({
               onClick={handleVoltar}
               title="Voltar à pergunta anterior se tocou por engano"
             >
-              ↺ Corrigir / Voltar à pergunta anterior
+              Corrigir / Voltar à pergunta anterior
             </Button>
             <span className="muted" style={{ fontSize: '13px' }}>
               Etapa {Math.floor(history.length / 2) + 1} de 6

@@ -141,7 +141,7 @@ export function PatientHome({
                 style={{ background: '#fcfbf8', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--border)' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <b style={{ color: 'var(--green)', fontSize: '16px' }}>🩺 {o.titulo}</b>
+                  <b style={{ color: 'var(--green)', fontSize: '16px' }}>{o.titulo}</b>
                   <span className={`pill ${o.prioridade === 'alta' ? 'severity-high' : ''}`}>
                     Prioridade {o.prioridade}
                   </span>
@@ -163,7 +163,7 @@ export function PatientHome({
             <h2 style={{ margin: '4px 0', fontSize: '22px', color: 'var(--ink)' }}>Próximo Remédio Programado</h2>
           </div>
           {proximoRemedio && (
-            <span className="remedy-time-badge">⏰ {proximoRemedio.horario || 'Horário flexível'}</span>
+            <span className="remedy-time-badge">{proximoRemedio.horario || 'Horário flexível'}</span>
           )}
         </div>
 
@@ -173,12 +173,12 @@ export function PatientHome({
               <strong>{proximoRemedio.nome}</strong> · {proximoRemedio.dose} · ({proximoRemedio.frequencia})
               {proximoRemedio.eh_dose_resgate && (
                 <span className="pill" style={{ marginLeft: '8px', background: 'var(--danger-soft)', color: 'var(--danger)' }}>
-                  ⚡ Resgate
+                  Resgate
                 </span>
               )}
               {proximoRemedio.observacao && (
                 <p style={{ margin: '8px 0 0', fontSize: '14px', color: 'var(--muted)', background: 'var(--paper)', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                  📋 <b>Orientação da receita:</b> {proximoRemedio.observacao}
+                  <b>Orientação da receita:</b> {proximoRemedio.observacao}
                 </p>
               )}
             </div>
@@ -197,7 +197,7 @@ export function PatientHome({
                   loadingText="Confirmando…"
                   style={{ minHeight: '48px' }}
                 >
-                  ✓ Confirmar que já tomei {proximoRemedio.nome}
+                  Confirmar que já tomei {proximoRemedio.nome}
                 </Button>
               )}
               <Button variant="secondary" onClick={() => setModalResgate(true)}>
@@ -222,25 +222,19 @@ export function PatientHome({
 
       {/* 3. ALERTA ESAS E DISPARO DIRETO DO CHATBOT ZELO */}
       {temGraveRecente && (
-        <div
-          className="notice notice-error"
-          style={{
-            padding: '18px 20px',
-            borderRadius: '12px',
-            marginBottom: '22px',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            gap: '12px'
-          }}
+        <aside
+          className="clinical-alert-callout"
+          role="alert"
+          aria-label="Aviso Clínico de Sintoma Intenso"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '26px' }} aria-hidden="true">⚠️</span>
+          <div className="alert-header">
             <div>
-              <strong style={{ fontSize: '16.5px' }}>
+              <span className="alert-tag">Atenção Prioritária</span>
+              <h3>
                 Aviso Clínico: Sua última avaliação registrou sintoma intenso (Nota {lastScoreMax}/10)
-              </strong>
-              <p style={{ margin: '3px 0 0', fontSize: '14px', color: 'inherit' }}>
-                A equipe especializada do Hospice foi notificada. O Chatbot Zelo está pronto para avaliar e direcionar o seu alívio agora.
+              </h3>
+              <p>
+                A equipe especializada do Hospice foi notificada. O Chatbot Zelo está pronto para avaliar e direcionar o seu alívio imediato no domicílio.
               </p>
             </div>
           </div>
@@ -256,13 +250,13 @@ export function PatientHome({
             </Button>
             <a
               href="tel:4130000000"
-              className="button button-secondary"
-              style={{ borderColor: 'var(--danger)', color: 'var(--danger)', textDecoration: 'none', minHeight: '50px' }}
+              className="button button-call"
+              style={{ minHeight: '50px' }}
             >
-              📞 Ligar para o Hospice HEG: (41) 3000-0000
+              Ligar para o Hospice HEG: (41) 3000-0000
             </a>
           </div>
-        </div>
+        </aside>
       )}
 
       {/* 4. MÉTRICAS E INDICADORES DO PACIENTE */}
@@ -308,7 +302,7 @@ export function PatientHome({
       {/* 6. ATALHOS RÁPIDOS DA HOME */}
       <div className="quick-links" style={{ marginTop: '20px' }}>
         <button className="quick-link" onClick={() => onNavigate('medicacoes')}>
-          <span><b>💊</b> Verificar Medicamentos e Horários</span><b>›</b>
+          <span>Verificar Medicamentos e Horários</span><b>›</b>
         </button>
         <button className="quick-link" onClick={() => onNavigate('mapa')}>
           <span><b>◎</b> Registrar Local no Mapa Corporal</span><b>›</b>
