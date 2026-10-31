@@ -263,6 +263,13 @@ class MedicationCreate(MedicationBase):
     pass
 
 
+class RescueDoseCreate(BaseModel):
+    """Registro autodeclarado pelo paciente de uma dose de resgate já tomada."""
+    nome: str = Field(min_length=1, max_length=160)
+    horario: str = Field(min_length=1, max_length=20)
+    observacao: str | None = Field(default=None, max_length=2000)
+
+
 class MedicationUpdate(BaseModel):
     nome: str | None = None
     dose: str | None = None

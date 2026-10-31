@@ -75,5 +75,8 @@ export const api={
   atualizarAlerta:(id:number,data:unknown)=>request<Alerta>(`/api/alertas/${id}`,{method:'PATCH',body:JSON.stringify(data)}),
   criarMedicacao:(id:number,data:unknown)=>post<Medicacao>(`/api/users/${id}/medications`,data),
   atualizarMedicacao:(id:number,medId:number,data:unknown)=>request<Medicacao>(`/api/users/${id}/medications/${medId}`,{method:'PATCH',body:JSON.stringify(data)}),
+  confirmarMedicacao:(id:number,medId:number)=>post<Medicacao>(`/api/users/${id}/medications/${medId}/confirm`,{}),
+  desfazerConfirmacaoMedicacao:(id:number,medId:number)=>post<Medicacao>(`/api/users/${id}/medications/${medId}/undo-confirmation`,{}),
+  registrarDoseResgate:(id:number,data:unknown)=>post<Medicacao>(`/api/users/${id}/rescue-doses`,data),
   registrarTriagem:(id:number,data:unknown)=>post<Triagem>(`/api/users/${id}/triagem-dor`,data),
 };

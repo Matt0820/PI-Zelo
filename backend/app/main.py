@@ -51,6 +51,7 @@ from app.schemas import (
     MedicationCreate,
     MedicationResponse,
     MedicationUpdate,
+    RescueDoseCreate,
     OrientationCreate,
     OrientationResponse,
     PainMapCreate,
@@ -170,8 +171,13 @@ async def authenticate_api_requests(request: Request, call_next):
     user_path = re.match(r'^/api/users/(\d+)(?:/|$)', path)
     if user_path and not is_team and int(user_path.group(1)) != int(user_id):
         return JSONResponse(status_code=403, content={'detail': 'Acesso permitido apenas aos próprios dados.'})
-    if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|medications|orientations)(?:/|$)', path):
-        return JSONResponse(status_code=403, content={'detail': 'Esta ação é restrita à equipe assistencial.'})
+    if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|medications|orientations|rescue-doses)(?:/|$)', path):
+        patient_medication_action = request.method == 'POST' and (
+            re.fullmatch(rf'/api/users/{user_id}/rescue-doses', path)
+            or re.fullmatch(rf'/api/users/{user_id}/medications/\d+/(confirm|undo-confirmation)', path)
+        )
+        if not patient_medication_action:
+            return JSONResponse(status_code=403, content={'detail': 'Esta ação é restrita à equipe assistencial.'})
 
     return await call_next(request)
 
@@ -898,12 +904,72 @@ def create_medication(
     return med
 
 
+@app.post('/api/users/{user_id}/rescue-doses', response_model=MedicationResponse, status_code=status.HTTP_201_CREATED)
+def record_rescue_dose(
+    user_id: int,
+    payload: RescueDoseCreate,
+    db: Annotated[Session, Depends(get_db)],
+) -> Medication:
+    """Paciente registra uma dose de resgate já tomada, sem criar prescrição."""
+    if not db.get(User, user_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Paciente nao encontrado.')
+    nome = payload.nome.strip()
+    if not nome:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='Informe o medicamento de resgate.')
+    observacao = payload.observacao.strip() if payload.observacao else None
+    med = Medication(
+        user_id=user_id,
+        nome=nome,
+        dose='1 dose de resgate SOS',
+        horario=payload.horario,
+        frequencia='Uso pontual para crise aguda de dor',
+        observacao=observacao or None,
+        status='tomada',
+        eh_dose_resgate=True,
+        medico_prescritor='Prescrição de resgate domiciliar',
+    )
+    db.add(med)
+    db.commit()
+    db.refresh(med)
+    return med
+
+
 @app.get('/api/users/{user_id}/medications', response_model=list[MedicationResponse])
 def list_medications(
     user_id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> list[Medication]:
     return db.scalars(select(Medication).where(Medication.user_id == user_id)).all()
+
+
+@app.post('/api/users/{user_id}/medications/{med_id}/confirm', response_model=MedicationResponse)
+def confirm_medication_taken(
+    user_id: int,
+    med_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> Medication:
+    med = db.scalar(select(Medication).where(Medication.id == med_id, Medication.user_id == user_id))
+    if not med:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Medicação não encontrada.')
+    med.status = 'tomada'
+    db.commit()
+    db.refresh(med)
+    return med
+
+
+@app.post('/api/users/{user_id}/medications/{med_id}/undo-confirmation', response_model=MedicationResponse)
+def undo_medication_taken_confirmation(
+    user_id: int,
+    med_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> Medication:
+    med = db.scalar(select(Medication).where(Medication.id == med_id, Medication.user_id == user_id))
+    if not med:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Medicação não encontrada.')
+    med.status = 'ativo'
+    db.commit()
+    db.refresh(med)
+    return med
 
 
 @app.patch('/api/users/{user_id}/medications/{med_id}', response_model=MedicationResponse)
