@@ -94,6 +94,26 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const handleAccessibilityShortcut = (event: KeyboardEvent) => {
+      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      const target = event.target;
+      if (target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select, [contenteditable="true"]'))) return;
+      if (event.key.toLowerCase() === 'a') {
+        event.preventDefault();
+        setPreferences(current => ({
+          ...current,
+          fontSize: current.fontSize === 'normal' ? 'large' : current.fontSize === 'large' ? 'xlarge' : 'normal',
+        }));
+      } else if (event.key.toLowerCase() === 'c') {
+        event.preventDefault();
+        setPreferences(current => ({ ...current, highContrast: !current.highContrast }));
+      }
+    };
+    window.addEventListener('keydown', handleAccessibilityShortcut);
+    return () => window.removeEventListener('keydown', handleAccessibilityShortcut);
+  }, []);
+
+  useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(preferences));
       setStorageAvailable(true);

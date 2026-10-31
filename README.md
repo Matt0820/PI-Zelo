@@ -10,13 +10,15 @@ Plataforma de acompanhamento em cuidados paliativos com site React/Vite, aplicat
 
 ## Iniciar
 
-Na raiz do projeto, em Linux/macOS:
+Na raiz do projeto, use o inicializador do seu sistema:
 
 ```sh
 ./iniciar_zelo.sh
 ```
 
-O script inicia a API, o site Vite e o Expo. Site: `http://localhost:5173`. Swagger: `http://localhost:8000/docs`.
+No Windows, execute `iniciar_zelo.bat`. Os inicializadores instalam as dependências ausentes e abrem a API, o site Vite e o Expo. Site: `http://localhost:5173`. Swagger: `http://localhost:8000/docs`. No Windows, os serviços ficam em janelas separadas; feche as três para encerrar tudo.
+
+Para abrir o Expo em um celular físico, permita a porta 8000 no firewall e mantenha o computador e o celular na mesma rede. Os scripts tentam detectar o IP local e configurá-lo no Expo; também é possível definir `EXPO_PUBLIC_API_URL` manualmente. Emuladores podem exigir endereços próprios, como `http://10.0.2.2:8000` no Android.
 
 Para iniciar apenas o site: `cd frontend && npm ci && npm run dev`. O Vite encaminha `/api` ao backend em `http://127.0.0.1:8000`.
 

@@ -9,8 +9,8 @@ type Notice={kind:'success'|'error';text:string};
 type TeamPage='painel'|'pacientes'|'alertas';
 type PatientPage='inicio'|'esas'|'chatbot'|'mapa'|'medicacoes'|'orientacoes';
 const sessionKey='@zelo/web/session';
-const symptomRows:Array<{key:keyof Pick<ESAS,'dor'|'cansaco'|'nausea'|'depressao'|'ansiedade'|'sonolencia'|'apetite'|'mal_estar'|'falta_de_ar'|'constipacao'>;label:string}>= [
- {key:'dor',label:'Dor'}, {key:'cansaco',label:'Cansaço'}, {key:'nausea',label:'Náusea'}, {key:'depressao',label:'Tristeza'}, {key:'ansiedade',label:'Ansiedade'}, {key:'sonolencia',label:'Sonolência'}, {key:'apetite',label:'Falta de apetite'}, {key:'mal_estar',label:'Mal-estar'}, {key:'falta_de_ar',label:'Falta de ar'}, {key:'constipacao',label:'Constipação'},
+const symptomRows:Array<{key:keyof Pick<ESAS,'dor'|'cansaco'|'nausea'|'depressao'|'ansiedade'|'sonolencia'|'apetite'|'mal_estar'|'falta_de_ar'>;label:string}>= [
+ {key:'dor',label:'Dor'}, {key:'cansaco',label:'Cansaço'}, {key:'nausea',label:'Náusea'}, {key:'depressao',label:'Tristeza'}, {key:'ansiedade',label:'Ansiedade'}, {key:'sonolencia',label:'Sonolência'}, {key:'apetite',label:'Falta de apetite'}, {key:'mal_estar',label:'Mal-estar'}, {key:'falta_de_ar',label:'Falta de ar'},
 ];
 const date=(value:string)=>new Date(value).toLocaleString('pt-BR',{dateStyle:'medium',timeStyle:'short'});
 
@@ -337,8 +337,22 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
 
 function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario;page:PatientPage;setPage:(p:PatientPage)=>void;data:{esas:ESAS[];medicacoes:Medicacao[];orientacoes:Orientacao[];dor:LocalDor[]};refresh:()=>Promise<void>;notice:(kind:Notice['kind'],text:string)=>void}){
   const [loading,setLoading]=useState(false);
-  const [step,setStep]=useState(0);
-  const [scores,setScores]=useState<Record<string,number|null>>(()=>Object.fromEntries(symptomRows.map(s=>[s.key,null])));
+  const draftKey=`@zelo/web/esas-draft/${usuario.id}`;
+  const readEsasDraft=()=>{
+    const empty=Object.fromEntries(symptomRows.map(s=>[s.key,null]));
+    try{
+      const saved=localStorage.getItem(draftKey);
+      if(!saved)return {step:0,scores:empty};
+      const draft=JSON.parse(saved) as {step?:unknown;scores?:Record<string,unknown>};
+      const scores:Record<string,number|null>={...empty};
+      for(const symptom of symptomRows){const value=draft.scores?.[symptom.key];if(value===null||(typeof value==='number'&&Number.isInteger(value)&&value>=0&&value<=10))scores[symptom.key]=value as number|null;}
+      const step=typeof draft.step==='number'&&Number.isInteger(draft.step)?Math.max(0,Math.min(symptomRows.length-1,draft.step)):0;
+      return {step,scores};
+    }catch{return {step:0,scores:empty};}
+  };
+  const [initialDraft]=useState(readEsasDraft);
+  const [step,setStep]=useState(initialDraft.step);
+  const [scores,setScores]=useState<Record<string,number|null>>(initialDraft.scores);
   const [mapRegion,setMapRegion]=useState('');
   const [mapType,setMapType]=useState('dor');
   const [mapScore,setMapScore]=useState(5);
@@ -347,6 +361,22 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
   const [modalResgate,setModalResgate]=useState(false);
   const [resgateNome,setResgateNome]=useState('Morfina 10mg');
   const [resgateObs,setResgateObs]=useState('');
+
+  useEffect(()=>{
+    const hasAnswers=Object.values(scores).some(value=>value!==null);
+    try{
+      if(hasAnswers)localStorage.setItem(draftKey,JSON.stringify({step,scores}));
+      else localStorage.removeItem(draftKey);
+    }catch{/* Avaliação segue utilizável mesmo sem armazenamento local. */}
+  },[draftKey,step,scores]);
+
+  useEffect(()=>{
+    const protectDraft=(event:BeforeUnloadEvent)=>{
+      if(Object.values(scores).some(value=>value!==null)){event.preventDefault();event.returnValue='';}
+    };
+    window.addEventListener('beforeunload',protectDraft);
+    return()=>window.removeEventListener('beforeunload',protectDraft);
+  },[scores]);
 
 
 
@@ -418,7 +448,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
 
   async function enviarESAS(){
     if(symptomRows.some(s=>scores[s.key]===null)){
-      notice('error','Responda aos dez sintomas antes de enviar.');
+      notice('error','Responda aos nove sintomas antes de enviar.');
       return;
     }
     setLoading(true);
@@ -426,6 +456,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
       const dorScore=Number(scores.dor)||0;
       const temGrave=dorScore>=7;
       await api.registrarESAS(usuario.id,{...scores,observacao:temGrave?'Gatilho de dor intensa acionado':''});
+      try{localStorage.removeItem(draftKey);}catch{/* A avaliação já foi enviada. */}
       await refresh();
       setStep(0);
       setScores(Object.fromEntries(symptomRows.map(s=>[s.key,null])));
@@ -617,18 +648,19 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
 
       </>}
 
-    {/* TELA DE AVALIAÇÃO ESAS (WIZARD DE 10 SINTOMAS) */}
+    {/* TELA DE AVALIAÇÃO ESAS (WIZARD DE 9 SINTOMAS) */}
     {page==='esas'&&<>
       <PageHeading kicker="ESCALA ESAS" title="Avaliação de Sintomas" description="Escolha uma nota de 0 a 10 para cada sintoma. Nota 7 ou mais em Dor inicia a triagem do Chatbot Zelo."/>
       <div className="wizard-card">
         <div className="wizard-progress">
-          <span>Sintoma {step+1} de {symptomRows.length} · {symptomRows[step].label}</span>
-          <div><i style={{width:`${((step+1)/symptomRows.length)*100}%`}}/></div>
+          <span>{step===symptomRows.length?`Revisão final · ${symptomRows.length} sintomas`:`Sintoma ${step+1} de ${symptomRows.length} · ${symptomRows[step].label}`}</span>
+          <div><i style={{width:`${(Math.min(step+1,symptomRows.length)/symptomRows.length)*100}%`}}/></div>
         </div>
-        <h2>{symptomRows[step].label}</h2>
-        <p>Como o senhor(a) está se sentindo em relação a <b>{symptomRows[step].label.toLowerCase()}</b> neste momento?</p>
+        {step<symptomRows.length? <>
+          <h2>{symptomRows[step].label}</h2>
+          <p>Como o senhor(a) está se sentindo em relação a <b>{symptomRows[step].label.toLowerCase()}</b> neste momento?</p>
         
-        <div className="rating-groups" role="radiogroup" aria-label={`Nota de ${symptomRows[step].label}`}>
+          <div className="rating-groups" role="radiogroup" aria-label={`Nota de ${symptomRows[step].label}`}>
           {[{label:'Sem sintoma a Leve (0 a 3)',values:[0,1,2,3]},{label:'Moderado (4 a 6)',values:[4,5,6]},{label:'Forte a Pior Possível (7 a 10)',values:[7,8,9,10]}].map(group=>(
             <div className="rating-group" key={group.label}>
               <div className="rating-label">{group.label}</div>
@@ -641,20 +673,31 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
               </div>
             </div>
           ))}
-        </div>
+          </div>
 
-        <div className="range-captions">
-          <span>0 · Ausência do sintoma</span>
-          <span>10 · Pior intensidade possível</span>
-        </div>
+          <div className="range-captions">
+            <span>0 · Ausência do sintoma</span>
+            <span>10 · Pior intensidade possível</span>
+          </div>
+        </>:<>
+          <h2>Confira suas respostas</h2>
+          <p>Revise as notas antes de enviar à equipe. Selecione um sintoma para corrigir a resposta.</p>
+          <div className="score-grid">
+            {symptomRows.map((symptom,index)=><button type="button" className="score review-score" key={symptom.key} onClick={()=>setStep(index)} aria-label={`Corrigir ${symptom.label}, nota ${scores[symptom.key]}`}>
+              <span>{symptom.label}</span><b>{scores[symptom.key]}/10</b><small>Corrigir</small>
+            </button>)}
+          </div>
+        </>}
 
         <div className="button-row wizard-actions">
-          <button className="button button-secondary" disabled={!step} onClick={()=>setStep(v=>Math.max(0,v-1))}>Voltar</button>
+          <button className="button button-secondary" disabled={!step} onClick={()=>setStep(v=>Math.max(0,v===symptomRows.length?symptomRows.length-1:v-1))}>{step===symptomRows.length?'Voltar às perguntas':'Voltar'}</button>
           {step<symptomRows.length-1?(
             <button className="button button-primary" disabled={scores[symptomRows[step].key]===null} onClick={()=>setStep(v=>v+1)}>Próximo sintoma ›</button>
+          ):step===symptomRows.length-1?(
+            <button className="button button-primary" disabled={scores[symptomRows[step].key]===null} onClick={()=>setStep(symptomRows.length)}>Revisar respostas</button>
           ):(
-            <button className="button button-primary" disabled={scores[symptomRows[step].key]===null||loading} onClick={enviarESAS}>
-              {loading?'Gravando e validando…':'Finalizar e Enviar Avaliação'}
+            <button className="button button-primary" disabled={loading} onClick={enviarESAS}>
+              {loading?'Gravando e validando…':'Confirmar e Enviar Avaliação'}
             </button>
           )}
         </div>
