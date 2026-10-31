@@ -450,7 +450,7 @@ html.reduce-motion * {
   transition: fill .15s ease, stroke .15s ease;
 }
 .svg-body-part:hover:not(.selected) {
-  fill: rgba(104, 196, 153, .1);
+  fill: rgba(104, 196, 153, .2);
 }
 .svg-body-part:focus-visible {
   outline: none;
@@ -837,7 +837,7 @@ html.theme-dark .svg-silhouette-wrapper {
 html.theme-escuro .svg-body-part:hover,
 :root[data-visual="escuro"] .svg-body-part:hover,
 html.theme-dark .svg-body-part:hover {
-  fill: rgba(104, 196, 153, .12);
+  fill: rgba(104, 196, 153, .2);
   stroke: transparent;
 }
 html.theme-escuro .svg-body-part.selected,
