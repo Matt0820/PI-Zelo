@@ -20,6 +20,20 @@ const tokenKey='@zelo/web/access-token';
 function getToken(){try{return localStorage.getItem(tokenKey);}catch{return null;}}
 function setToken(token:string|null){try{if(token)localStorage.setItem(tokenKey,token);else localStorage.removeItem(tokenKey);}catch{/* armazenamento indisponível: a sessão valerá até recarregar */}}
 type AuthResponse={user:Usuario;access_token:string;token_type:'bearer'};
+function isRecord(value:unknown):value is Record<string,unknown>{return typeof value==='object'&&value!==null;}
+function isNullableString(value:unknown){return value===null||typeof value==='string';}
+function isUsuario(value:unknown):value is Usuario{
+  return isRecord(value)
+    &&typeof value.id==='number'
+    &&typeof value.nome==='string'
+    &&typeof value.email==='string'
+    &&typeof value.perfil==='string'
+    &&typeof value.ativo==='boolean'
+    &&typeof value.criado_em==='string'
+    &&['prontuario','sexo','cpf','telefone','cuidador_principal','parentesco_cuidador','diagnostico_oncologico','comorbidades','alergias','proxima_consulta','tratamento_modificador'].every((key)=>isNullableString(value[key]))
+    &&(value.idade===null||typeof value.idade==='number')
+    &&(value.pps_score===null||typeof value.pps_score==='number');
+}
 async function request<T>(path:string, init:RequestInit={}):Promise<T>{
   let response:Response;
   const token=getToken();
@@ -36,7 +50,14 @@ async function request<T>(path:string, init:RequestInit={}):Promise<T>{
 const get=<T,>(path:string)=>request<T>(path);
 const post=<T,>(path:string,data:unknown)=>request<T>(path,{method:'POST',body:JSON.stringify(data)});
 export const api={
-  login:async(email:string,senha:string)=>{const auth=await post<AuthResponse>('/api/auth/login',{email,senha});setToken(auth.access_token);return auth.user;},
+  login:async(email:string,senha:string)=>{
+    const auth=await post<unknown>('/api/auth/login',{email,senha});
+    if(!isRecord(auth)||!isUsuario(auth.user)||typeof auth.access_token!=='string'){
+      throw new Error('A API de login está desatualizada ou incompatível. Reinicie o backend na versão atual e recarregue o site.');
+    }
+    setToken(auth.access_token);
+    return auth.user;
+  },
   pacientes:()=>get<Usuario[]>('/api/users?perfil=paciente'),
   paciente:(id:number)=>get<Usuario>(`/api/users/${id}`),
   criarPaciente:async(data:unknown)=>{const auth=await post<AuthResponse>('/api/users',data);setToken(auth.access_token);return auth.user;},
