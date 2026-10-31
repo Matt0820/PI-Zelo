@@ -3,7 +3,7 @@ import type { ComponentProps, ElementType, ReactNode } from 'react';
 export type IconName = 'accessibility' | 'alert-triangle' | 'bell' | 'bolt' | 'chat' | 'check' | 'clipboard' | 'clock' | 'home' | 'info' | 'logout' | 'map-pin' | 'phone' | 'pill' | 'plus' | 'stethoscope' | 'users';
 
 const iconPaths: Record<IconName, ReactNode> = {
-  accessibility: <><circle cx="12" cy="4" r="2"/><path d="M4 8h16M12 8v13m0-8-5 7m5-7 5 7"/></>,
+  accessibility: <><circle cx="12" cy="4" r="2"/><path d="M12 7v7M5 9l7 2 7-2m-7 2v3m0 0-4 7m4-7 4 7"/></>,
   'alert-triangle': <><path d="M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/></>,
   bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
   bolt: <path d="M13 2 4 14h7l-1 8 10-13h-7l1-7Z"/>,

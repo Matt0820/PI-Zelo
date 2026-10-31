@@ -2,6 +2,7 @@ import React from 'react';
 import { useAccessibility, ModoVisual } from '../../context/AccessibilityContext';
 import { PageHeading } from '../../components/PageHeading';
 import { Button } from '../../components/Button';
+import { Icon } from '../../components/ui';
 
 export function AccessibilityPage(): React.JSX.Element {
   const {
@@ -155,13 +156,23 @@ export function AccessibilityPage(): React.JSX.Element {
                       <span
                         className="pill"
                         style={{
+                          display: 'inline-flex',
+                          flex: '0 0 auto',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '5px',
                           background: 'var(--green)',
                           color: modoVisual === 'alto-contraste' ? '#000000' : '#ffffff',
                           fontWeight: 800,
-                          fontSize: '11.5px'
+                          fontSize: '11.5px',
+                          lineHeight: 1,
+                          whiteSpace: 'nowrap',
+                          minHeight: '28px',
+                          padding: '6px 10px'
                         }}
                       >
-                        ✓ Em uso
+                        <Icon name="check" size={13} />
+                        Em uso
                       </span>
                     )}
                   </div>
