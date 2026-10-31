@@ -161,6 +161,7 @@ export function PainBodyMap({
               className="body-svg-canvas"
               role="group"
               aria-label={`Silhueta anatômica humana - ${view === 'frente' ? 'Frente' : 'Costas'}`}
+              aria-describedby={`${bodyMaskId}-description`}
             >
               <defs>
                 <mask
@@ -192,8 +193,7 @@ export function PainBodyMap({
                 preserveAspectRatio="none"
                 aria-hidden="true"
               />
-              <title>Mapa corporal interativo</title>
-              <desc>
+              <desc id={`${bodyMaskId}-description`}>
                 Selecione uma região da silhueta para registrar o local do sintoma. O destaque acompanha o contorno do corpo.
               </desc>
 

@@ -441,7 +441,8 @@ html.reduce-motion * {
 .svg-body-part {
   fill: rgba(0, 0, 0, 0);
   stroke: transparent;
-  stroke-width: 5;
+  /* A borda invisível amplia a área clicável nas divisões entre regiões. */
+  stroke-width: 32;
   stroke-linejoin: round;
   stroke-linecap: round;
   cursor: pointer;
@@ -455,12 +456,12 @@ html.reduce-motion * {
   outline: none;
   fill: rgba(104, 196, 153, .24);
   stroke: var(--green);
-  stroke-width: 3;
+  stroke-width: 7;
 }
 .svg-body-part.selected {
-  fill: rgba(255, 213, 79, .4) !important;
-  stroke: #d89e12 !important;
-  stroke-width: 4 !important;
+  fill: rgba(255, 193, 7, .7) !important;
+  stroke: #a85c00 !important;
+  stroke-width: 10 !important;
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
 .rating-row.rating-row-three { grid-template-columns: repeat(3, minmax(56px, 1fr)); }
@@ -488,7 +489,7 @@ html.theme-high-contrast .svg-body-part:hover {
 html.theme-high-contrast .svg-body-part.selected {
   fill: rgba(255, 255, 0, .58) !important;
   stroke: #ffff00 !important;
-  stroke-width: 2.5 !important;
+  stroke-width: 9 !important;
 }
 html.theme-high-contrast .svg-body-part:focus-visible {
   fill: rgba(255, 255, 0, .25);
@@ -842,15 +843,15 @@ html.theme-dark .svg-body-part:hover {
 html.theme-escuro .svg-body-part.selected,
 :root[data-visual="escuro"] .svg-body-part.selected,
 html.theme-dark .svg-body-part.selected {
-  fill: rgba(230, 184, 0, .4) !important;
-  stroke: #f2c94c !important;
-  stroke-width: 4 !important;
+  fill: rgba(255, 193, 7, .7) !important;
+  stroke: #a85c00 !important;
+  stroke-width: 10 !important;
 }
 html.theme-escuro .svg-body-part:focus-visible,
 :root[data-visual="escuro"] .svg-body-part:focus-visible,
 html.theme-dark .svg-body-part:focus-visible {
   stroke: #89d4b0;
-  stroke-width: 3;
+  stroke-width: 7;
 }
 
 /* Opções de Emergência no Chatbot no Modo Escuro */
