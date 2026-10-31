@@ -5,6 +5,9 @@ import json
 import time
 
 import pytest
+from sqlalchemy import event
+from sqlalchemy.orm import Session
+
 from app.database import SessionLocal
 from app.main import _hash_password, settings
 from app.models import User
@@ -134,3 +137,33 @@ def test_patient_can_read_own_record_but_not_another_patient(client, accounts):
     assert own_record.json()["id"] == accounts["patient"].id
     assert other_record.status_code == 403
     assert other_record.json()["detail"] == "Acesso permitido apenas aos próprios dados."
+
+
+def test_authentication_and_endpoint_share_one_session_and_transaction(client, accounts):
+    login = client.post(
+        "/api/auth/login",
+        json={"email": accounts["patient"].email, "senha": "senha-teste-123"},
+    ).json()
+    headers = {"Authorization": f"Bearer {login['access_token']}"}
+    session_ids = []
+    transaction_session_ids = []
+
+    def record_query_session(execute_state):
+        session_ids.append(id(execute_state.session))
+
+    def record_transaction(session, transaction, connection):
+        transaction_session_ids.append(id(session))
+
+    event.listen(Session, "do_orm_execute", record_query_session)
+    event.listen(Session, "after_begin", record_transaction)
+    try:
+        response = client.get(f"/api/users/{accounts['patient'].id}", headers=headers)
+    finally:
+        event.remove(Session, "do_orm_execute", record_query_session)
+        event.remove(Session, "after_begin", record_transaction)
+
+    assert response.status_code == 200
+    assert len(session_ids) == 1
+    assert len(set(session_ids)) == 1
+    assert len(set(transaction_session_ids)) == 1
+    assert len(transaction_session_ids) == 1

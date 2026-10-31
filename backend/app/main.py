@@ -21,7 +21,7 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, inspect, or_, select, text
 from sqlalchemy.orm import Session
@@ -66,22 +66,6 @@ from app.schemas import (
     UserLogin,
     UserResponse,
 )
-
-app = FastAPI(
-    title=settings.APP_NAME,
-    version=settings.APP_VERSION,
-    description=settings.APP_DESCRIPTION,
-    swagger_ui_parameters={"persistAuthorization": True},
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=False,
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
-
 
 def _b64encode(value: bytes) -> str:
     return base64.urlsafe_b64encode(value).rstrip(b'=').decode('ascii')
@@ -135,52 +119,69 @@ def _verify_password(password: str, stored: str) -> tuple[bool, bool]:
     return valid, valid
 
 
-@app.middleware('http')
-async def authenticate_api_requests(request: Request, call_next):
+def get_current_user(
+    request: Request,
+    db: Annotated[Session, Depends(get_db)],
+) -> User | None:
+    """Valida sessão e autorização usando a mesma sessão do endpoint."""
     path = request.url.path
     if not path.startswith('/api/') or request.method == 'OPTIONS':
-        return await call_next(request)
+        return None
 
     public = (path in {'/api/auth/login', '/api/login'} or (path == '/api/users' and request.method == 'POST'))
     if public:
-        return await call_next(request)
+        return None
 
     header = request.headers.get('authorization', '')
     if not header.lower().startswith('bearer '):
-        return JSONResponse(status_code=401, content={'detail': 'Autenticação necessária.'})
-    try:
-        claims = _decode_access_token(header[7:].strip())
-    except HTTPException as exc:
-        return JSONResponse(status_code=exc.status_code, content={'detail': exc.detail})
+        raise HTTPException(status_code=401, detail='Autenticação necessária.')
+
+    claims = _decode_access_token(header[7:].strip())
 
     try:
-        with SessionLocal() as db:
-            user = db.get(User, int(claims.get('sub')))
-            if not user or not user.ativo:
-                return JSONResponse(status_code=401, content={'detail': 'Conta inativa ou inexistente. Entre novamente.'})
-            role = user.perfil
-            user_id = user.id
+        user = db.get(User, int(claims.get('sub')))
     except (TypeError, ValueError):
-        return JSONResponse(status_code=401, content={'detail': 'Sessão inválida. Entre novamente.'})
-    is_team = role in {'admin', 'assistencial'}
-    if path == '/api/seed' and role != 'admin':
-        return JSONResponse(status_code=403, content={'detail': 'Apenas administradores podem popular a base.'})
+        raise HTTPException(status_code=401, detail='Sessão inválida. Entre novamente.') from None
+    if not user or not user.ativo:
+        raise HTTPException(status_code=401, detail='Conta inativa ou inexistente. Entre novamente.')
+
+    is_team = user.perfil in {'admin', 'assistencial'}
+    if path == '/api/seed' and user.perfil != 'admin':
+        raise HTTPException(status_code=403, detail='Apenas administradores podem popular a base.')
     if path == '/api/users' and request.method == 'GET' and not is_team:
-        return JSONResponse(status_code=403, content={'detail': 'Acesso restrito à equipe assistencial.'})
+        raise HTTPException(status_code=403, detail='Acesso restrito à equipe assistencial.')
     if path.startswith('/api/alertas') and not is_team:
-        return JSONResponse(status_code=403, content={'detail': 'Acesso restrito à equipe assistencial.'})
+        raise HTTPException(status_code=403, detail='Acesso restrito à equipe assistencial.')
     user_path = re.match(r'^/api/users/(\d+)(?:/|$)', path)
-    if user_path and not is_team and int(user_path.group(1)) != int(user_id):
-        return JSONResponse(status_code=403, content={'detail': 'Acesso permitido apenas aos próprios dados.'})
+    if user_path and not is_team and int(user_path.group(1)) != user.id:
+        raise HTTPException(status_code=403, detail='Acesso permitido apenas aos próprios dados.')
     if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|medications|orientations|rescue-doses)(?:/|$)', path):
         patient_medication_action = request.method == 'POST' and (
-            re.fullmatch(rf'/api/users/{user_id}/rescue-doses', path)
-            or re.fullmatch(rf'/api/users/{user_id}/medications/\d+/(confirm|undo-confirmation)', path)
+            re.fullmatch(rf'/api/users/{user.id}/rescue-doses', path)
+            or re.fullmatch(rf'/api/users/{user.id}/medications/\d+/(confirm|undo-confirmation)', path)
         )
         if not patient_medication_action:
-            return JSONResponse(status_code=403, content={'detail': 'Esta ação é restrita à equipe assistencial.'})
+            raise HTTPException(status_code=403, detail='Esta ação é restrita à equipe assistencial.')
 
-    return await call_next(request)
+    request.state.current_user = user
+    return user
+
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+    description=settings.APP_DESCRIPTION,
+    swagger_ui_parameters={"persistAuthorization": True},
+    dependencies=[Depends(get_current_user)],
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=False,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
 frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
 frontend_build_dir = frontend_dir / "dist"
