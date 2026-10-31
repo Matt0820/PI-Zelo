@@ -1,6 +1,6 @@
 # Frontend web
 
-**Objetivo:** orientar quem vai navegar ou alterar o portal web sem confundir a SPA ativa com as páginas HTML anteriores.
+**Objetivo:** orientar quem vai navegar ou alterar o portal web React/TypeScript ativo.
 
 ## Entrada e navegação
 
@@ -22,7 +22,7 @@
 - `src/context/`: contexto de acessibilidade.
 - `src/styles.css`: tokens CSS, layout responsivo e regras de temas.
 
-As pastas HTML `pages/`, `paciente/`, `assistencial/`, `styles/` e `scripts/` e o arquivo `login.html` são legados: a configuração Vite padrão gera a SPA de `index.html`. Não os apague sem migração/decisão registrada.
+As antigas telas estáticas de `pages/`, `paciente/` e `assistencial/`, seus estilos e scripts, e `login.html` foram removidos após verificar que a SPA Vite parte de `index.html` e carrega a interface de `src/main.tsx`. Um backup temporário de recuperação foi criado fora do repositório. `scripts/auditoria-zelo.js` foi preservado como utilitário independente.
 
 ## Estado e sessão
 
