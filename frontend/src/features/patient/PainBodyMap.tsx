@@ -201,7 +201,7 @@ export function PainBodyMap({
                 onClick={() => alternarVista('costas')}
                 aria-pressed={view === 'costas'}
               >
-                Costas
+                <Icon name="accessibility"/> Costas
               </button>
             </div>
           </div>
