@@ -154,17 +154,17 @@ export function PainBodyMap({
           {/* SVG INTERATIVO DA SILHUETA HUMANA */}
           <div className="svg-silhouette-wrapper">
             <svg
-              viewBox="0 0 320 540"
+              viewBox="0 0 1024 1536"
               className="body-svg-canvas"
-              role="img"
+              role="group"
               aria-label={`Silhueta anatômica humana - ${view === 'frente' ? 'Frente' : 'Costas'}`}
             >
               <image
                 href={view === 'frente' ? bodyMapFront : bodyMapBack}
-                x="15"
-                y="23"
-                width="290"
-                height="524"
+                x="0"
+                y="0"
+                width="1024"
+                height="1536"
                 preserveAspectRatio="none"
                 aria-hidden="true"
               />
@@ -174,7 +174,7 @@ export function PainBodyMap({
                 <g className="svg-body-group frente">
                   {/* Cabeça / Face */}
                   <path
-                    d="M 160 30 C 140 30 130 45 130 70 C 130 95 142 110 160 110 C 178 110 190 95 190 70 C 190 45 180 30 160 30 Z"
+                    d="M512 20 C459 20 444 63 444 111 C444 153 455 190 482 207 Q512 226 542 207 C569 190 580 153 580 111 C580 63 565 20 512 20Z"
                     className={`svg-body-part ${selectedRegionId === 'cabeca_frente' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('cabeca_frente')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('cabeca_frente')}
@@ -185,7 +185,7 @@ export function PainBodyMap({
                   />
                   {/* Pescoço anterior */}
                   <path
-                    d="M 148 110 L 172 110 L 175 132 L 145 132 Z"
+                    d="M482 205 Q512 225 542 205 C548 226 556 241 564 251 Q512 278 460 251 C468 241 476 226 482 205Z"
                     className={`svg-body-part ${selectedRegionId === 'pescoco_frente' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('pescoco_frente')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('pescoco_frente')}
@@ -196,7 +196,7 @@ export function PainBodyMap({
                   />
                   {/* Ombro Direito */}
                   <path
-                    d="M 145 132 L 95 152 L 110 182 L 138 155 Z"
+                    d="M466 239 C426 256 365 276 321 293 Q312 321 314 358 C350 342 384 327 421 316 Q420 279 466 239Z"
                     className={`svg-body-part ${selectedRegionId === 'ombro_direito' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('ombro_direito')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('ombro_direito')}
@@ -207,7 +207,7 @@ export function PainBodyMap({
                   />
                   {/* Ombro Esquerdo */}
                   <path
-                    d="M 175 132 L 225 152 L 210 182 L 182 155 Z"
+                    d="M558 239 C598 256 659 276 703 293 Q712 321 710 358 C674 342 640 327 603 316 Q604 279 558 239Z"
                     className={`svg-body-part ${selectedRegionId === 'ombro_esquerdo' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('ombro_esquerdo')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('ombro_esquerdo')}
@@ -218,7 +218,7 @@ export function PainBodyMap({
                   />
                   {/* Tórax anterior / Peito */}
                   <path
-                    d="M 138 140 L 182 140 L 188 200 L 132 200 Z"
+                    d="M421 315 Q512 304 603 315 C620 354 639 404 644 451 Q627 457 603 449 Q558 435 512 421 Q466 435 421 449 Q397 457 380 451 C385 404 404 354 421 315Z"
                     className={`svg-body-part ${selectedRegionId === 'torax' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('torax')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('torax')}
@@ -229,7 +229,7 @@ export function PainBodyMap({
                   />
                   {/* Abdômen Superior */}
                   <path
-                    d="M 132 200 L 188 200 L 186 242 L 134 242 Z"
+                    d="M421 449 Q466 435 512 421 Q558 435 603 449 L590 538 Q512 547 434 538Z"
                     className={`svg-body-part ${selectedRegionId === 'abdomen_superior' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('abdomen_superior')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('abdomen_superior')}
@@ -240,7 +240,7 @@ export function PainBodyMap({
                   />
                   {/* Abdômen Inferior / Pélvis */}
                   <path
-                    d="M 134 242 L 186 242 L 195 285 L 125 285 Z"
+                    d="M434 538 Q512 547 590 538 L588 644 Q512 656 434 644Z"
                     className={`svg-body-part ${selectedRegionId === 'abdomen_inferior' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('abdomen_inferior')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('abdomen_inferior')}
@@ -249,9 +249,20 @@ export function PainBodyMap({
                     aria-label="Abdômen inferior e pélvis"
                     aria-pressed={selectedRegionId === 'abdomen_inferior'}
                   />
+                  {/* Quadril anterior */}
+                  <path
+                    d="M434 644 Q512 656 588 644 C603 694 624 744 660 780 Q594 802 512 790 Q430 802 364 780 C400 744 419 694 434 644Z"
+                    className={`svg-body-part ${selectedRegionId === 'quadril_frente' ? 'selected' : ''}`}
+                    onClick={() => selecionarRegiao('quadril_frente')}
+                    onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('quadril_frente')}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Quadril e bacia anterior"
+                    aria-pressed={selectedRegionId === 'quadril_frente'}
+                  />
                   {/* Braço Direito */}
                   <path
-                    d="M 95 152 L 72 230 L 60 300 L 80 305 L 94 235 L 110 182 Z"
+                    d="M314 358 C304 405 302 463 293 507 L264 604 C250 650 235 697 219 735 Q195 751 164 777 L184 850 Q197 861 210 850 L229 836 Q244 849 256 834 L266 789 Q269 764 260 742 C282 706 300 662 316 618 L350 536 C365 493 380 454 385 420 Q389 387 405 358Z"
                     className={`svg-body-part ${selectedRegionId === 'braco_direito' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('braco_direito')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('braco_direito')}
@@ -262,7 +273,7 @@ export function PainBodyMap({
                   />
                   {/* Braço Esquerdo */}
                   <path
-                    d="M 225 152 L 248 230 L 260 300 L 240 305 L 226 235 L 210 182 Z"
+                    d="M710 358 C720 405 722 463 731 507 L760 604 C774 650 789 697 805 735 Q829 751 860 777 L840 850 Q827 861 814 850 L795 836 Q780 849 768 834 L758 789 Q755 764 764 742 C742 706 724 662 708 618 L674 536 C659 493 644 454 639 420 Q635 387 619 358Z"
                     className={`svg-body-part ${selectedRegionId === 'braco_esquerdo' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('braco_esquerdo')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('braco_esquerdo')}
@@ -273,7 +284,7 @@ export function PainBodyMap({
                   />
                   {/* Coxa Direita */}
                   <path
-                    d="M 125 285 L 157 285 L 153 390 L 120 390 Z"
+                    d="M364 780 Q430 802 512 790 L512 970 Q480 966 447 961 Q395 953 363 965 C363 910 357 835 364 780Z"
                     className={`svg-body-part ${selectedRegionId === 'coxa_direita' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('coxa_direita')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('coxa_direita')}
@@ -284,7 +295,7 @@ export function PainBodyMap({
                   />
                   {/* Coxa Esquerda */}
                   <path
-                    d="M 163 285 L 195 285 L 200 390 L 167 390 Z"
+                    d="M512 790 Q594 802 660 780 C667 835 661 910 661 965 Q629 953 577 961 Q544 966 512 970Z"
                     className={`svg-body-part ${selectedRegionId === 'coxa_esquerda' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('coxa_esquerda')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('coxa_esquerda')}
@@ -295,7 +306,7 @@ export function PainBodyMap({
                   />
                   {/* Joelho, Perna e Pé Direito */}
                   <path
-                    d="M 120 390 L 153 390 L 148 480 L 125 515 L 108 515 L 122 470 Z"
+                    d="M363 965 Q395 953 447 961 Q480 966 512 970 L495 1160 Q483 1248 476 1335 L482 1373 Q472 1414 441 1440 Q410 1462 369 1432 Q347 1413 356 1380 L392 1320 Q390 1275 382 1220 Q365 1110 363 965Z"
                     className={`svg-body-part ${selectedRegionId === 'joelho_perna_direita' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('joelho_perna_direita')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('joelho_perna_direita')}
@@ -306,7 +317,7 @@ export function PainBodyMap({
                   />
                   {/* Joelho, Perna e Pé Esquerdo */}
                   <path
-                    d="M 167 390 L 200 390 L 198 470 L 212 515 L 195 515 L 172 480 Z"
+                    d="M512 970 Q544 966 577 961 Q629 953 661 965 C659 1110 642 1220 634 1275 Q626 1320 662 1380 Q671 1413 649 1432 Q608 1462 577 1440 Q546 1414 536 1373 L542 1335 Q535 1248 529 1160Z"
                     className={`svg-body-part ${selectedRegionId === 'joelho_perna_esquerda' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('joelho_perna_esquerda')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('joelho_perna_esquerda')}
@@ -323,7 +334,7 @@ export function PainBodyMap({
                 <g className="svg-body-group costas">
                   {/* Cabeça / Nuca */}
                   <path
-                    d="M 160 30 C 140 30 130 45 130 70 C 130 95 142 110 160 110 C 178 110 190 95 190 70 C 190 45 180 30 160 30 Z"
+                    d="M512 20 C459 20 444 63 444 111 C444 153 455 190 482 207 Q512 226 542 207 C569 190 580 153 580 111 C580 63 565 20 512 20Z"
                     className={`svg-body-part ${selectedRegionId === 'cabeca_costas' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('cabeca_costas')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('cabeca_costas')}
@@ -334,7 +345,7 @@ export function PainBodyMap({
                   />
                   {/* Cervical */}
                   <path
-                    d="M 148 110 L 172 110 L 175 135 L 145 135 Z"
+                    d="M482 205 Q512 225 542 205 C548 226 556 241 564 251 Q512 278 460 251 C468 241 476 226 482 205Z"
                     className={`svg-body-part ${selectedRegionId === 'cervical' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('cervical')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('cervical')}
@@ -345,7 +356,7 @@ export function PainBodyMap({
                   />
                   {/* Dorso / Costas Superior / Escápulas */}
                   <path
-                    d="M 135 135 L 185 135 L 190 215 L 130 215 Z"
+                    d="M466 239 C425 256 366 277 320 295 Q313 326 316 358 C350 343 383 329 418 317 C420 399 426 494 432 594 Q512 615 592 594 C598 494 604 399 606 317 C641 329 674 343 708 358 Q711 326 704 295 C658 277 599 256 558 239 Q512 269 466 239Z"
                     className={`svg-body-part ${selectedRegionId === 'dorso_superior' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('dorso_superior')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('dorso_superior')}
@@ -356,7 +367,7 @@ export function PainBodyMap({
                   />
                   {/* Região Lombar / Sacra */}
                   <path
-                    d="M 130 215 L 190 215 L 188 260 L 132 260 Z"
+                    d="M432 594 Q512 615 592 594 L588 690 Q512 706 436 690Z"
                     className={`svg-body-part ${selectedRegionId === 'lombar_sacra' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('lombar_sacra')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('lombar_sacra')}
@@ -367,7 +378,7 @@ export function PainBodyMap({
                   />
                   {/* Glúteos */}
                   <path
-                    d="M 132 260 L 188 260 L 195 305 L 125 305 Z"
+                    d="M436 690 Q512 706 588 690 C610 725 637 756 660 780 Q594 802 512 790 Q430 802 364 780 C387 756 414 725 436 690Z"
                     className={`svg-body-part ${selectedRegionId === 'gluteos' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('gluteos')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('gluteos')}
@@ -378,7 +389,7 @@ export function PainBodyMap({
                   />
                   {/* Braço Direito Posterior */}
                   <path
-                    d="M 95 152 L 72 230 L 60 300 L 80 305 L 94 235 L 110 182 Z"
+                    d="M316 358 C304 405 302 463 293 507 L264 604 C250 650 235 697 219 735 Q195 751 164 777 L184 850 Q197 861 210 850 L229 836 Q244 849 256 834 L266 789 Q269 764 260 742 C282 706 300 662 316 618 L350 536 C365 493 380 454 385 420 Q389 387 405 358Z"
                     className={`svg-body-part ${selectedRegionId === 'braco_dir_costas' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('braco_dir_costas')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('braco_dir_costas')}
@@ -389,7 +400,7 @@ export function PainBodyMap({
                   />
                   {/* Braço Esquerdo Posterior */}
                   <path
-                    d="M 225 152 L 248 230 L 260 300 L 240 305 L 226 235 L 210 182 Z"
+                    d="M708 358 C720 405 722 463 731 507 L760 604 C774 650 789 697 805 735 Q829 751 860 777 L840 850 Q827 861 814 850 L795 836 Q780 849 768 834 L758 789 Q755 764 764 742 C742 706 724 662 708 618 L674 536 C659 493 644 454 639 420 Q635 387 619 358Z"
                     className={`svg-body-part ${selectedRegionId === 'braco_esq_costas' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('braco_esq_costas')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('braco_esq_costas')}
@@ -400,7 +411,7 @@ export function PainBodyMap({
                   />
                   {/* Coxa Direita Posterior */}
                   <path
-                    d="M 125 305 L 157 305 L 153 395 L 120 395 Z"
+                    d="M364 780 Q430 802 512 790 L512 968 Q480 967 446 961 Q394 952 363 965 C363 900 358 835 364 780Z"
                     className={`svg-body-part ${selectedRegionId === 'coxa_dir_costas' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('coxa_dir_costas')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('coxa_dir_costas')}
@@ -411,7 +422,7 @@ export function PainBodyMap({
                   />
                   {/* Coxa Esquerda Posterior */}
                   <path
-                    d="M 163 305 L 195 305 L 200 395 L 167 395 Z"
+                    d="M512 790 Q594 802 660 780 C666 835 661 900 661 965 Q630 952 578 961 Q544 967 512 968Z"
                     className={`svg-body-part ${selectedRegionId === 'coxa_esq_costas' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('coxa_esq_costas')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('coxa_esq_costas')}
@@ -422,7 +433,7 @@ export function PainBodyMap({
                   />
                   {/* Panturrilha / Calcanhar Direito */}
                   <path
-                    d="M 120 395 L 153 395 L 148 480 L 138 520 L 118 520 L 122 470 Z"
+                    d="M363 965 Q394 952 446 961 Q480 967 512 968 L495 1162 Q482 1248 476 1338 L482 1375 Q472 1415 442 1440 Q411 1463 370 1433 Q348 1414 356 1381 L392 1321 Q390 1276 382 1220 Q365 1110 363 965Z"
                     className={`svg-body-part ${selectedRegionId === 'panturrilha_pe_dir' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('panturrilha_pe_dir')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('panturrilha_pe_dir')}
@@ -433,7 +444,7 @@ export function PainBodyMap({
                   />
                   {/* Panturrilha / Calcanhar Esquerdo */}
                   <path
-                    d="M 167 395 L 200 395 L 198 470 L 202 520 L 182 520 L 172 480 Z"
+                    d="M512 968 Q544 967 578 961 Q630 952 661 965 C659 1110 642 1220 634 1276 Q626 1321 662 1381 Q670 1414 648 1433 Q607 1463 576 1440 Q546 1415 536 1375 L542 1338 Q535 1248 529 1162Z"
                     className={`svg-body-part ${selectedRegionId === 'panturrilha_pe_esq' ? 'selected' : ''}`}
                     onClick={() => selecionarRegiao('panturrilha_pe_esq')}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && selecionarRegiao('panturrilha_pe_esq')}

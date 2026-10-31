@@ -432,16 +432,16 @@ html.reduce-motion * {
   min-height: clamp(380px, 48vw, 500px);
 }
 .body-svg-canvas {
-  width: 100%;
-  max-width: 330px;
-  height: min(560px, 72vh);
+  width: min(100%, 340px);
+  height: auto;
+  aspect-ratio: 2 / 3;
   max-height: 560px;
   display: block;
 }
 .svg-body-part {
   fill: rgba(0, 0, 0, 0);
   stroke: transparent;
-  stroke-width: 2;
+  stroke-width: 5;
   stroke-linejoin: round;
   stroke-linecap: round;
   cursor: pointer;
@@ -450,17 +450,18 @@ html.reduce-motion * {
 .svg-body-part:hover {
   fill: rgba(104, 196, 153, .2);
   stroke: var(--green);
-  stroke-width: 2.5;
+  stroke-width: 7;
 }
 .svg-body-part:focus-visible {
   outline: 3px solid var(--green);
   outline-offset: 2px;
   stroke: var(--green);
+  stroke-width: 7;
 }
 .svg-body-part.selected {
   fill: rgba(255, 213, 79, .4) !important;
   stroke: #d89e12 !important;
-  stroke-width: 2.5 !important;
+  stroke-width: 7.5 !important;
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
 .rating-row.rating-row-three { grid-template-columns: repeat(3, minmax(56px, 1fr)); }
@@ -469,7 +470,7 @@ html.reduce-motion * {
   .body-map-tabs { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
   .body-map-tabs .sub-nav-btn { justify-content: center; }
   .svg-silhouette-wrapper { min-height: 380px; padding: 10px; }
-  .body-svg-canvas { width: min(100%, 300px); height: min(500px, 65vh); }
+  .body-svg-canvas { width: min(100%, 300px); height: auto; }
 }
 
 /* Modo Alto Contraste para a Silhueta SVG */
@@ -833,14 +834,14 @@ html.theme-escuro .svg-body-part:hover,
 html.theme-dark .svg-body-part:hover {
   fill: rgba(104, 196, 153, .24);
   stroke: #89d4b0;
-  stroke-width: 2.5;
+  stroke-width: 7;
 }
 html.theme-escuro .svg-body-part.selected,
 :root[data-visual="escuro"] .svg-body-part.selected,
 html.theme-dark .svg-body-part.selected {
   fill: rgba(230, 184, 0, .4) !important;
   stroke: #f2c94c !important;
-  stroke-width: 3 !important;
+  stroke-width: 7.5 !important;
 }
 
 /* Opções de Emergência no Chatbot no Modo Escuro */
