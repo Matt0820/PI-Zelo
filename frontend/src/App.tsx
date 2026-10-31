@@ -341,7 +341,6 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
   const [mapType,setMapType]=useState('dor');
   const [mapScore,setMapScore]=useState(5);
   const [mapNote,setMapNote]=useState('');
-  const [chatbotDor,setChatbotDor]=useState<number>(8);
   const [medAba,setMedAba]=useState<'hoje'|'receitas'>('hoje');
   const [modalResgate,setModalResgate]=useState(false);
   const [resgateNome,setResgateNome]=useState('Morfina 10mg');
@@ -350,8 +349,8 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
 
 
   const last=data.esas[0];
-  const lastScoreMax=last?Math.max(last.dor,last.cansaco,last.nausea,last.depressao,last.ansiedade,last.sonolencia,last.apetite,last.mal_estar,last.falta_de_ar,last.constipacao||0):0;
-  const temGraveRecente=lastScoreMax>=7;
+  const ultimaDor=last?.dor??0;
+  const temGraveRecente=ultimaDor>=7;
 
   // Próximo remédio a tomar hoje
   const remediosOrdenados=[...data.medicacoes].sort((a,b)=>(a.horario||'').localeCompare(b.horario||''));
@@ -422,15 +421,13 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
     }
     setLoading(true);
     try{
-      const maxScore=Math.max(...Object.values(scores).map(v=>Number(v)||0));
-      const temGrave=maxScore>=7;
-      const dorScore=Number(scores.dor)||maxScore;
-      await api.registrarESAS(usuario.id,{...scores,observacao:temGrave?'Gatilho de intensidade severa acionado':''});
+      const dorScore=Number(scores.dor)||0;
+      const temGrave=dorScore>=7;
+      await api.registrarESAS(usuario.id,{...scores,observacao:temGrave?'Gatilho de dor intensa acionado':''});
       await refresh();
       setStep(0);
       setScores(Object.fromEntries(symptomRows.map(s=>[s.key,null])));
       if(temGrave){
-        setChatbotDor(dorScore);
         setPage('chatbot');
         notice('success',`Avaliação enviada. Como você indicou intensidade forte (${dorScore}/10), abrimos o Chatbot Zelo para cuidar do seu alívio agora.`);
       }else{
@@ -518,12 +515,12 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
           <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
             <span style={{fontSize:'22px'}}>⚠️</span>
             <div>
-              <strong style={{fontSize:'16px'}}>Aviso Clínico: Sua última avaliação registrou sintoma intenso (Nota {lastScoreMax}/10)</strong>
+              <strong style={{fontSize:'16px'}}>Aviso Clínico: Sua última avaliação registrou dor intensa (Nota {ultimaDor}/10)</strong>
               <p style={{margin:'3px 0 0',fontSize:'14px'}}>Nossa equipe especializada do Hospice foi notificada. O Chatbot Zelo está pronto para direcionar seu alívio imediato.</p>
             </div>
           </div>
           <div className="button-row">
-            <button className="button button-primary" onClick={()=>{setChatbotDor(last.dor||lastScoreMax);setPage('chatbot');}} style={{background:'var(--danger)',borderColor:'var(--danger)',color:'#ffffff'}}>
+            <button className="button button-primary" onClick={()=>setPage('chatbot')} style={{background:'var(--danger)',borderColor:'var(--danger)',color:'#ffffff'}}>
               Abrir Chatbot Zelo para Cuidado da Dor ›
             </button>
             <a href="tel:4130000000" className="button button-secondary" style={{borderColor:'var(--danger)',color:'var(--danger)'}}>
@@ -620,7 +617,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
 
     {/* TELA DE AVALIAÇÃO ESAS (WIZARD DE 10 SINTOMAS) */}
     {page==='esas'&&<>
-      <PageHeading kicker="ESCALA ESAS" title="Avaliação de Sintomas" description="Escolha uma nota de 0 a 10 para cada sintoma. Notas 7 ou mais acionam o direcionamento imediato do Chatbot Zelo."/>
+      <PageHeading kicker="ESCALA ESAS" title="Avaliação de Sintomas" description="Escolha uma nota de 0 a 10 para cada sintoma. Nota 7 ou mais em Dor inicia a triagem do Chatbot Zelo."/>
       <div className="wizard-card">
         <div className="wizard-progress">
           <span>Sintoma {step+1} de {symptomRows.length} · {symptomRows[step].label}</span>
@@ -665,7 +662,8 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
     </>}
 
     {/* CHATBOT ZELO: DIRECIONAMENTO DE CUIDADO (IVC 0,95) */}
-    {page==='chatbot'&&<ChatbotZeloScreen usuario={usuario} dorInicial={chatbotDor} onConcluir={()=>setPage('inicio')} notice={notice} refresh={refresh}/>}
+    {page==='chatbot'&&ultimaDor>=7&&<ChatbotZeloScreen usuario={usuario} dorInicial={ultimaDor} onConcluir={()=>setPage('inicio')} notice={notice} refresh={refresh}/>}
+    {page==='chatbot'&&ultimaDor<7&&<section className="record-card"><PageHeading kicker="TRIAGEM DE DOR" title="Complete a avaliação ESAS" description="O Chatbot Zelo é iniciado quando a nota de Dor na avaliação ESAS é 7 ou mais."/><button className="button button-primary" onClick={()=>setPage('esas')}>Iniciar avaliação ESAS</button></section>}
 
     {/* MAPA DA DOR */}
     {page==='mapa'&&<>
@@ -728,10 +726,15 @@ function ChatbotZeloScreen({usuario,dorInicial,onConcluir,notice,refresh}:{usuar
   const [etapa,setEtapa]=useState(0);
   const [historicoEtapas,setHistoricoEtapas]=useState<number[]>([]);
   const [emergencia,setEmergencia]=useState(false);
-  const [carac,setCarac]=useState('somatica');
-  const [cronica,setCronica]=useState(true);
-  const [resgate,setResgate]=useState(false);
-  const [efetivo,setEfetivo]=useState(true);
+  const [carac,setCarac]=useState<string|null>(null);
+  const [cronica,setCronica]=useState<boolean|null>(null);
+  const [resgate,setResgate]=useState<boolean|null>(null);
+  const [efetivo,setEfetivo]=useState<boolean|null>(null);
+  const [emAcompanhamento,setEmAcompanhamento]=useState<boolean|null>(null);
+  const [temSintomaAcompanhante,setTemSintomaAcompanhante]=useState<boolean|null>(null);
+  const [sintomaAcompanhanteDesc,setSintomaAcompanhanteDesc]=useState('');
+  const [temFatorPiora,setTemFatorPiora]=useState<boolean|null>(null);
+  const [fatorPioraDesc,setFatorPioraDesc]=useState('');
   const [solicitarContato,setSolicitarContato]=useState(false);
   const [salvando,setSalvando]=useState(false);
   const [concluido,setConcluido]=useState(false);
@@ -742,36 +745,51 @@ function ChatbotZeloScreen({usuario,dorInicial,onConcluir,notice,refresh}:{usuar
   }
 
   function voltar(){
+    setEmergencia(false);
     if(historicoEtapas.length>0){
-      const prev=historicoEtapas[historicoEtapas.length-1];
+      const anterior=historicoEtapas[historicoEtapas.length-1];
       setHistoricoEtapas(old=>old.slice(0,-1));
-      setEtapa(prev);
+      setEtapa(anterior);
+    }else{
+      setEtapa(0);
     }
   }
 
   async function finalizarTriagem(pediuContato:boolean){
+    if(carac===null||cronica===null||resgate===null||efetivo===null||emAcompanhamento===null||temSintomaAcompanhante===null||temFatorPiora===null){
+      notice('error','Revise as respostas da triagem antes de concluir.');
+      return;
+    }
+    if((temSintomaAcompanhante&&!sintomaAcompanhanteDesc.trim())||(temFatorPiora&&!fatorPioraDesc.trim())){
+      notice('error','Descreva o sintoma associado e o fator de piora informados.');
+      return;
+    }
     setSalvando(true);
     setSolicitarContato(pediuContato);
     try{
       await api.registrarTriagem(usuario.id,{
-        intensidade_dor:Math.max(7,dorInicial||8),
+        intensidade_dor:dorInicial,
         caracteristica_dor:carac,
         mais_de_duas_semanas:cronica,
         tipo_dor:cronica?'cronica':'aguda',
         fez_dose_resgate:resgate,
         medicamentos_efetivos:efetivo,
-        em_acompanhamento:true,
-        tem_sintoma_acompanhante:false,
-        sintoma_acompanhante_desc:null,
-        tem_fator_piora:false,
-        fator_piora_desc:null,
+        em_acompanhamento:emAcompanhamento,
+        tem_sintoma_acompanhante:temSintomaAcompanhante,
+        sintoma_acompanhante_desc:temSintomaAcompanhante?sintomaAcompanhanteDesc.trim():null,
+        tem_fator_piora:temFatorPiora,
+        fator_piora_desc:temFatorPiora?fatorPioraDesc.trim():null,
         alerta_sinais_alarme_exibido:true,
         medidas_nao_farmacologicas_exibidas:true,
         solicitou_agendamento:pediuContato
       });
-      await refresh();
       setConcluido(true);
-      notice('success','Triagem de dor registrada no prontuário e enviada para a equipe do Hospice!');
+      try{
+        await refresh();
+        notice('success',pediuContato?'Triagem registrada. O pedido de contato foi incluído na Central de Alertas.':'Triagem registrada e incluída na Central de Alertas da equipe.');
+      }catch{
+        notice('error','A triagem foi registrada, mas não foi possível atualizar os dados exibidos.');
+      }
     }catch(err){
       notice('error',err instanceof Error?err.message:'Não foi possível salvar a triagem.');
     }finally{
@@ -791,163 +809,121 @@ function ChatbotZeloScreen({usuario,dorInicial,onConcluir,notice,refresh}:{usuar
     </div>
 
     <div className="chat-stream">
-      {/* Mensagem 0: Acolhimento Inicial */}
       <div className="chat-bubble chat-bubble-zelo">
         <strong>Enfermeira Virtual Zelo · Hospice Erasto Gaertner</strong>
-        Olá, {usuario.nome}. Você informou <b>Dor nota {dorInicial}/10</b> na escala ESAS. Já comunicamos a equipe de plantão do Hospice. Vamos fazer algumas perguntas rápidas para orientar o conforto e alívio no seu domicílio.
+        Olá, {usuario.nome}. Você informou <b>Dor nota {dorInicial}/10</b> na escala ESAS. Vou fazer algumas perguntas para orientar o conforto e registrar suas respostas para a equipe.
       </div>
 
-      {/* ETAPA 1: VERIFICAÇÃO DE EMERGÊNCIA */}
       {etapa>=1&&<div className="chat-bubble chat-bubble-zelo" style={{borderLeft:'4px solid var(--danger)'}}>
-        <strong style={{color:'var(--danger)'}}>⚠️ Triagem de Segurança e Sinais de Alarme</strong>
-        Antes de prosseguirmos, confira se está acontecendo alguma destas 3 situações agora:
+        <strong style={{color:'var(--danger)'}}>Triagem de segurança e sinais de alarme</strong>
+        <p>Está acontecendo alguma destas situações agora?</p>
         <ul style={{margin:'8px 0 4px',paddingLeft:'20px'}}>
-          <li>Teve alguma <b>queda recente</b> ou suspeita de fratura?</li>
-          <li>Apresenta <b>perda de movimentos ou sensibilidade</b> nas pernas ou pés?</li>
-          <li>Está com <b>sonolência profunda</b> ou difícil de acordar após ingerir Morfina?</li>
+          <li>Queda recente ou suspeita de fratura;</li>
+          <li>Perda de movimentos ou sensibilidade nas pernas ou pés;</li>
+          <li>Sonolência profunda ou dificuldade para acordar após ingerir morfina.</li>
         </ul>
       </div>}
+      {etapa>=2&&!emergencia&&<div className="chat-bubble chat-bubble-user">Não aconteceu nenhuma dessas situações.</div>}
 
-      {etapa>=2&&!emergencia&&<div className="chat-bubble chat-bubble-user">
-        Não aconteceu nenhuma dessas situações.
-        <small>Verificação de segurança confirmada</small>
-      </div>}
-
-      {/* ALERTA DE EMERGÊNCIA BLOQUEANTE */}
       {emergencia&&<div className="notice notice-error" style={{padding:'20px',borderRadius:'12px',flexDirection:'column',gap:'12px',alignItems:'flex-start'}}>
-        <h3 style={{margin:0,fontSize:'18px'}}>🚨 ATENÇÃO: Situação de Emergência Médica Detectada</h3>
-        <p style={{margin:0,fontSize:'15px',lineHeight:1.55}}>
-          Diante desses sinais de alarme, é fundamental entrar em contato imediatamente com o plantão do Hospice Erasto Gaertner ou dirigir-se ao pronto atendimento referenciado.
-        </p>
+        <h3 style={{margin:0,fontSize:'18px'}}>Atenção: situação de emergência médica</h3>
+        <p style={{margin:0,fontSize:'15px',lineHeight:1.55}}>Procure atendimento de urgência e entre em contato imediatamente com o plantão do Hospice.</p>
         <div className="button-row">
-          <a href="tel:4130000000" className="button button-primary" style={{background:'var(--danger)',borderColor:'var(--danger)',color:'#ffffff',fontSize:'16px',padding:'12px 22px'}}>
-            📞 Ligar Imediatamente para o Hospice: (41) 3000-0000
-          </a>
-          <button className="button button-secondary" onClick={()=>{setEmergencia(false);setEtapa(1);}}>Voltar e rever resposta</button>
-          <button className="button button-quiet" onClick={onConcluir}>Voltar ao Início</button>
+          <a href="tel:4130000000" className="button button-primary" style={{background:'var(--danger)',borderColor:'var(--danger)',color:'#ffffff',fontSize:'16px',padding:'12px 22px'}}>Ligar imediatamente para o Hospice: (41) 3000-0000</a>
+          <button className="button button-secondary" onClick={()=>setEmergencia(false)}>Voltar e rever resposta</button>
+          <button className="button button-quiet" onClick={onConcluir}>Voltar ao início</button>
         </div>
       </div>}
 
-      {/* ETAPA 2: SEMIOLOGIA DA DOR */}
-      {etapa>=2&&!emergencia&&<div className="chat-bubble chat-bubble-zelo">
-        <strong>Enfermeira Virtual Zelo</strong>
-        Entendido. Dentre as opções abaixo, como você descreve melhor a sensação dessa dor?
-      </div>}
-
-      {etapa>=3&&!emergencia&&<div className="chat-bubble chat-bubble-user">
-        Sensação descrita: {carac==='visceral'?'Cólica ou dor espalhada por dentro':carac==='neuropatica'?'Queimação, choque ou formigamento':carac==='somatica'?'Pontada, aperto ou sensação de facada':'Outra sensação'}
-      </div>}
-
-      {/* ETAPA 3: DURAÇÃO DA DOR */}
-      {etapa>=3&&!emergencia&&<div className="chat-bubble chat-bubble-zelo">
-        <strong>Enfermeira Virtual Zelo</strong>
-        Essa dor começou há mais de 2 semanas (dor contínua/crônica) ou começou há poucos dias/hoje (dor aguda)?
-      </div>}
-
-      {etapa>=4&&!emergencia&&<div className="chat-bubble chat-bubble-user">
-        {cronica?'Começou há mais de 2 semanas (Crônica)':'Começou há poucos dias ou hoje (Aguda)'}
-      </div>}
-
-      {/* ETAPA 4: MANEJO FARMACOLÓGICO E RESGATE */}
-      {etapa>=4&&!emergencia&&<div className="chat-bubble chat-bubble-zelo">
-        <strong>Enfermeira Virtual Zelo</strong>
-        Você já fez uso da <b>dose de resgate</b> (medicamento extra prescrito para alívio rápido da crise) hoje? E os remédios habituais estão conseguindo controlar a dor?
-      </div>}
-
-      {etapa>=5&&!emergencia&&<div className="chat-bubble chat-bubble-user">
-        Resgate tomado: {resgate?'Sim, já tomei a dose de resgate':'Ainda não tomei'}. Remédios fixos: {efetivo?'Estão ajudando':'Não estão aliviando adequadamente'}.
-      </div>}
-
-      {/* ETAPA 5: ORIENTAÇÕES DE CONFORTO */}
-      {etapa>=5&&!emergencia&&<div className="chat-bubble chat-bubble-zelo" style={{background:'#fcfdfd',borderLeft:'4px solid var(--green)'}}>
-        <strong>Enfermeira Virtual Zelo · Medidas de Conforto Não Farmacológicas</strong>
-        Enquanto a medicação age, adote estas medidas práticas validadas para diminuir a dor:
+      {etapa>=3&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Como você descreveria a sensação dessa dor?</div>}
+      {etapa>=4&&!emergencia&&<div className="chat-bubble chat-bubble-user">Sensação descrita: {carac==='visceral'?'cólica ou dor espalhada por dentro':carac==='neuropatica'?'queimação, choque ou formigamento':carac==='somatica'?'pontada, aperto ou facada':'nenhuma dessas opções'}.</div>}
+      {etapa>=4&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Essa dor começou há mais de duas semanas?</div>}
+      {etapa>=5&&!emergencia&&<div className="chat-bubble chat-bubble-user">{cronica?'Sim, há mais de duas semanas.':'Não, começou há poucos dias ou hoje.'}</div>}
+      {etapa>=5&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Há algum outro sintoma que acompanha a dor?</div>}
+      {etapa>=6&&!emergencia&&<div className="chat-bubble chat-bubble-user">{temSintomaAcompanhante?`Sim: ${sintomaAcompanhanteDesc}`:'Não há outro sintoma associado informado.'}</div>}
+      {etapa>=6&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Há algum fator ou atividade que aumenta ou piora a dor?</div>}
+      {etapa>=8&&!emergencia&&<div className="chat-bubble chat-bubble-user">{temFatorPiora?`Sim: ${fatorPioraDesc}`:'Nenhum fator de piora informado.'}</div>}
+      {etapa>=8&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Os medicamentos habituais estão sendo efetivos na maior parte do dia?</div>}
+      {etapa>=9&&!emergencia&&<div className="chat-bubble chat-bubble-user">{efetivo?'Sim, estão sendo efetivos.':'Não, não controlam a dor adequadamente.'}</div>}
+      {etapa>=9&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Você já está em acompanhamento com a equipe do Hospice?</div>}
+      {etapa>=10&&!emergencia&&<div className="chat-bubble chat-bubble-user">{emAcompanhamento?'Sim, estou em acompanhamento.':'Não estou em acompanhamento.'}</div>}
+      {etapa>=10&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Você já fez uso da dose de resgate prescrita para hoje?</div>}
+      {etapa>=11&&!emergencia&&<div className="chat-bubble chat-bubble-user">{resgate?'Sim, já usei a dose de resgate.':'Ainda não usei a dose de resgate.'}</div>}
+      {etapa>=11&&!emergencia&&<div className="chat-bubble chat-bubble-zelo" style={{background:'#fcfdfd',borderLeft:'4px solid var(--green)'}}>
+        <strong>Medidas de conforto e autocuidado</strong>
         <ul style={{margin:'8px 0',paddingLeft:'20px',lineHeight:1.6}}>
-          <li>🛋️ <b>Posicionamento do corpo:</b> Use travesseiros sob as pernas ou costas para aliviar pontos de pressão.</li>
-          <li>🌬️ <b>Respiração suave:</b> Puxe o ar devagar pelo nariz contando até 3 e solte suavemente pela boca.</li>
-          <li>🌿 <b>Ambiente calmo:</b> Diminua luzes diretas, reduza ruídos e coloque uma música suave para relaxar.</li>
-          <li>💧 <b>Hidratação e apoio:</b> Mantenha um familiar cuidador próximo para apoio e água à mão.</li>
+          <li>Use travesseiros para encontrar uma posição confortável e aliviar pontos de pressão.</li>
+          <li>Faça respirações suaves e lentas, sem forçar.</li>
+          <li>Mantenha o ambiente calmo e, se desejar, use música, leitura ou conversa tranquila como distração.</li>
+          <li>Peça apoio ao familiar cuidador. Use medicamentos somente conforme a prescrição recebida.</li>
         </ul>
-        {!resgate&&<p style={{margin:'6px 0 0',fontWeight:700,color:'var(--green)'}}>Dica clínica: Se o seu médico prescreveu medicação de resgate para dor, este é o momento de fazer uso conforme a receita.</p>}
       </div>}
-
-      {/* ETAPA 6: CONCLUSÃO E TRANSMISSÃO */}
+      {etapa>=12&&!emergencia&&<div className="chat-bubble chat-bubble-zelo"><strong>Enfermeira Virtual Zelo</strong>Deseja solicitar contato prioritário da equipe ou agendamento?</div>}
       {concluido&&<div className="chat-bubble chat-bubble-zelo" style={{background:'#eaf5ec',border:'1.5px solid #b9d8c4'}}>
-        <strong style={{color:'#1e6b47'}}>✓ Orientações Registradas com Sucesso!</strong>
-        Suas respostas foram salvas no prontuário do Hospice. A equipe multiprofissional foi notificada {solicitarContato?'com pedido de contato prioritário':'para monitoramento contínuo'}.
+        <strong>Triagem registrada com sucesso.</strong>
+        {solicitarContato?'Seu pedido de contato foi registrado na Central de Alertas da equipe.':'A triagem foi registrada e está disponível para a equipe.'}
         <div style={{marginTop:'14px'}} className="button-row">
-          <button className="button button-primary" onClick={onConcluir} style={{minHeight:'50px'}}>Concluir e Voltar ao Início</button>
+          <button className="button button-primary" onClick={onConcluir} style={{minHeight:'50px'}}>Concluir e voltar ao início</button>
           <a href="tel:4130000000" className="button button-secondary">Ligar para o Hospice: (41) 3000-0000</a>
         </div>
       </div>}
     </div>
 
-    {/* PAINEL DE CONTROLES E RESPOSTAS FECHADAS DO CHATBOT */}
-    {!concluido&&!emergencia&&(
-      <div className="chat-controls">
-        {etapa===0&&<div className="chat-actions-row">
-          <button className="button button-primary button-wide" onClick={()=>avancar(1)}>Iniciar Triagem e Orientações de Alívio ›</button>
-        </div>}
-
-        {etapa===1&&<div className="chat-options-grid">
-          <button type="button" className="chat-option-btn" onClick={()=>{setEmergencia(true);}} style={{borderColor:'#f5c2bc',background:'#fff9f8'}}>
-            ⚠️ Sim, alguma dessas 3 situações graves está acontecendo
-          </button>
-          <button type="button" className="chat-option-btn" onClick={()=>{setEmergencia(false);avancar(2);}}>
-            ✓ Não aconteceu nenhuma dessas situações (Continuar)
-          </button>
-        </div>}
-
-        {etapa===2&&<div className="chat-options-grid">
-          <button type="button" className="chat-option-btn" onClick={()=>{setCarac('somatica');avancar(3);}}>
-            👉 Parece uma pontada, aperto no corpo ou sensação de facada
-          </button>
-          <button type="button" className="chat-option-btn" onClick={()=>{setCarac('neuropatica');avancar(3);}}>
-            ⚡ Parece queimação, choque elétrico ou formigamento
-          </button>
-          <button type="button" className="chat-option-btn" onClick={()=>{setCarac('visceral');avancar(3);}}>
-            🌊 Parece uma cólica ou dor espalhada por dentro
-          </button>
-          <button type="button" className="chat-option-btn" onClick={()=>{setCarac('outra');avancar(3);}}>
-            ❓ Outra sensação / Não consigo definir exatamente
-          </button>
-        </div>}
-
-        {etapa===3&&<div className="chat-options-grid">
-          <button type="button" className="chat-option-btn" onClick={()=>{setCronica(true);avancar(4);}}>
-            📅 Sim, essa dor começou há mais de 2 semanas (Crônica)
-          </button>
-          <button type="button" className="chat-option-btn" onClick={()=>{setCronica(false);avancar(4);}}>
-            ⏱️ Não, começou há poucos dias ou hoje (Aguda)
-          </button>
-        </div>}
-
-        {etapa===4&&<div className="chat-options-grid">
-          <button type="button" className="chat-option-btn" onClick={()=>{setResgate(true);setEfetivo(false);avancar(5);}}>
-            💊 Já tomei a dose de resgate, mas a dor continua
-          </button>
-          <button type="button" className="chat-option-btn" onClick={()=>{setResgate(false);setEfetivo(false);avancar(5);}}>
-            ⏳ Ainda não tomei a dose de resgate
-          </button>
-          <button type="button" className="chat-option-btn" onClick={()=>{setResgate(true);setEfetivo(true);avancar(5);}}>
-            ✓ Tomei o resgate e estou começando a sentir alívio
-          </button>
-        </div>}
-
-        {etapa===5&&<div className="chat-options-grid">
-          <p style={{margin:'0 0 4px',fontWeight:700}}>Deseja solicitar contato prioritário da equipe do Hospice?</p>
-          <button type="button" className="button button-primary" onClick={()=>finalizarTriagem(true)} disabled={salvando} style={{minHeight:'50px'}}>
-            {salvando?'Salvando triagem…':'📞 Sim, solicitar contato prioritário da equipe'}
-          </button>
-          <button type="button" className="button button-secondary" onClick={()=>finalizarTriagem(false)} disabled={salvando} style={{minHeight:'50px'}}>
-            {salvando?'Salvando…':'✓ Não, vou aplicar as medidas de conforto e aguardar'}
-          </button>
-        </div>}
-
-        {etapa>0&&<div className="chat-actions-row">
-          <button type="button" className="button button-quiet" onClick={voltar}>↺ Corrigir / Voltar à pergunta anterior</button>
-        </div>}
-      </div>
-    )}
+    {!concluido&&!emergencia&&<div className="chat-controls">
+      {etapa===0&&<div className="chat-actions-row"><button className="button button-primary button-wide" onClick={()=>avancar(1)}>Iniciar triagem e orientações de alívio ›</button></div>}
+      {etapa===1&&<div className="chat-options-grid">
+        <button type="button" className="chat-option-btn" onClick={()=>setEmergencia(true)}>Sim, alguma dessas situações está acontecendo</button>
+        <button type="button" className="chat-option-btn" onClick={()=>avancar(2)}>Não aconteceu nenhuma dessas situações</button>
+      </div>}
+      {etapa===2&&<div className="chat-options-grid">
+        <button type="button" className="chat-option-btn" onClick={()=>{setCarac('somatica');avancar(3);}}>Pontada, aperto ou facada em um ponto definido (somática)</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setCarac('neuropatica');avancar(3);}}>Queimação, choque ou formigamento (neuropática)</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setCarac('visceral');avancar(3);}}>Cólica ou dor espalhada por dentro (visceral)</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setCarac('nenhuma');avancar(3);}}>Nenhuma dessas opções</button>
+      </div>}
+      {etapa===3&&<div className="chat-options-grid">
+        <button type="button" className="chat-option-btn" onClick={()=>{setCronica(true);avancar(4);}}>Sim, começou há mais de duas semanas</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setCronica(false);avancar(4);}}>Não, começou há poucos dias ou hoje</button>
+      </div>}
+      {etapa===4&&<div className="chat-options-grid">
+        <button type="button" className="chat-option-btn" onClick={()=>{setTemSintomaAcompanhante(true);avancar(5);}}>Sim, há outro sintoma</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setTemSintomaAcompanhante(false);setSintomaAcompanhanteDesc('');avancar(6);}}>Não há outro sintoma</button>
+      </div>}
+      {etapa===5&&<form className="chat-options-grid" onSubmit={e=>{e.preventDefault();if(sintomaAcompanhanteDesc.trim())avancar(6);}}>
+        <label>Qual sintoma acompanha a dor?<textarea value={sintomaAcompanhanteDesc} onChange={e=>setSintomaAcompanhanteDesc(e.target.value)} maxLength={200} required /></label>
+        <button type="submit" className="button button-primary">Continuar</button>
+      </form>}
+      {etapa===6&&<div className="chat-options-grid">
+        <button type="button" className="chat-option-btn" onClick={()=>{setTemFatorPiora(true);avancar(7);}}>Sim, há algo que piora a dor</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setTemFatorPiora(false);setFatorPioraDesc('');avancar(8);}}>Não identifiquei fator de piora</button>
+      </div>}
+      {etapa===7&&<form className="chat-options-grid" onSubmit={e=>{e.preventDefault();if(fatorPioraDesc.trim())avancar(8);}}>
+        <label>O que aumenta ou piora a dor?<textarea value={fatorPioraDesc} onChange={e=>setFatorPioraDesc(e.target.value)} maxLength={200} required /></label>
+        <button type="submit" className="button button-primary">Continuar</button>
+      </form>}
+      {etapa===8&&<div className="chat-options-grid">
+        <p style={{margin:'0 0 4px',fontWeight:700}}>Os medicamentos habituais estão sendo efetivos na maior parte do dia?</p>
+        <button type="button" className="chat-option-btn" onClick={()=>{setEfetivo(true);avancar(9);}}>Sim, estão sendo efetivos</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setEfetivo(false);avancar(9);}}>Não estão controlando a dor adequadamente</button>
+      </div>}
+      {etapa===9&&<div className="chat-options-grid">
+        <p style={{margin:'0 0 4px',fontWeight:700}}>Você já está em acompanhamento com a equipe do Hospice?</p>
+        <button type="button" className="chat-option-btn" onClick={()=>{setEmAcompanhamento(true);avancar(10);}}>Sim, estou em acompanhamento</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setEmAcompanhamento(false);avancar(10);}}>Não estou em acompanhamento</button>
+      </div>}
+      {etapa===10&&<div className="chat-options-grid">
+        <p style={{margin:'0 0 4px',fontWeight:700}}>Você já fez uso da dose de resgate prescrita para hoje?</p>
+        <button type="button" className="chat-option-btn" onClick={()=>{setResgate(true);avancar(11);}}>Sim, já usei a dose de resgate</button>
+        <button type="button" className="chat-option-btn" onClick={()=>{setResgate(false);avancar(11);}}>Ainda não usei a dose de resgate</button>
+      </div>}
+      {etapa===11&&<div className="chat-options-grid">
+        <button type="button" className="button button-primary" onClick={()=>avancar(12)}>Entendi, continuar</button>
+      </div>}
+      {etapa===12&&<div className="chat-options-grid">
+        <button type="button" className="button button-primary" onClick={()=>finalizarTriagem(true)} disabled={salvando}>{salvando?'Salvando triagem…':'Sim, solicitar contato prioritário'}</button>
+        <button type="button" className="button button-secondary" onClick={()=>finalizarTriagem(false)} disabled={salvando}>{salvando?'Salvando…':'Não, vou aguardar e seguir as orientações'}</button>
+      </div>}
+      {etapa>0&&<div className="chat-actions-row"><button type="button" className="button button-quiet" onClick={voltar}>↺ Corrigir / voltar à pergunta anterior</button></div>}
+    </div>}
   </div>;
 }
