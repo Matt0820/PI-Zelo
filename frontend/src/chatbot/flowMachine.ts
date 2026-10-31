@@ -1,9 +1,22 @@
+/**
+ * Implementa uma segunda máquina de estado de triagem, separada do fluxo ativo em features/chatbot.
+ */
+
 import { ChatbotAnswers, ChatbotNodeId, chatbotScript, emergencyGuidance, welcomeMessage } from './script';
 
+/**
+ * Mensagem serializada exibida na conversa legada.
+ */
 export type ChatMessage = { id: string; role: 'assistant' | 'user'; text: string };
+/**
+ * Etapas possíveis da máquina de fluxo legada.
+ */
 export type FlowPhase = 'welcome' | 'active' | 'emergency' | 'readyToSubmit';
 type FlowSnapshot = Pick<ChatbotFlowState, 'phase' | 'nodeId' | 'messages' | 'answers'>;
 
+/**
+ * Respostas, histórico e nó atual da conversa legada.
+ */
 export type ChatbotFlowState = {
   phase: FlowPhase;
   nodeId: ChatbotNodeId;
@@ -33,6 +46,9 @@ const message = (role: ChatMessage['role'], text: string, index: number): ChatMe
   text,
 });
 
+/**
+ * Cria um estado vazio para um usuário e uma nota inicial de dor.
+ */
 export function createInitialFlow(name: string, pain: number): ChatbotFlowState {
   return {
     phase: 'welcome',
@@ -62,11 +78,17 @@ function enterNode(state: ChatbotFlowState, nodeId: ChatbotNodeId, messages: Cha
   };
 }
 
+/**
+ * Inicia o fluxo e acrescenta a primeira pergunta.
+ */
 export function startFlow(state: ChatbotFlowState): ChatbotFlowState {
   if (state.phase !== 'welcome') return { ...state, error: 'A triagem já foi iniciada.' };
   return enterNode(state, 'emergency', state.messages, state.answers, [...state.history, checkpoint(state)]);
 }
 
+/**
+ * Aplica uma opção e transita para o próximo nó.
+ */
 export function chooseFlowOption(state: ChatbotFlowState, optionId: string): ChatbotFlowState {
   if (state.phase !== 'active') return { ...state, error: 'Esta resposta não está disponível nesta etapa.' };
   const node = chatbotScript[state.nodeId];
@@ -92,6 +114,9 @@ export function chooseFlowOption(state: ChatbotFlowState, optionId: string): Cha
   return enterNode(state, option.next, messages, answers, history);
 }
 
+/**
+ * Valida e registra a resposta aberta do nó atual.
+ */
 export function submitFlowText(state: ChatbotFlowState, rawValue: string): ChatbotFlowState {
   if (state.phase !== 'active') return { ...state, error: 'O campo de resposta não está disponível nesta etapa.' };
   const node = chatbotScript[state.nodeId];
@@ -106,6 +131,9 @@ export function submitFlowText(state: ChatbotFlowState, rawValue: string): Chatb
   return enterNode(state, node.next, messages, answers, [...state.history, checkpoint(answeredState)]);
 }
 
+/**
+ * Avança de uma mensagem informativa para o próximo nó.
+ */
 export function continueFlow(state: ChatbotFlowState): ChatbotFlowState {
   if (state.phase !== 'active') return { ...state, error: 'Não há uma orientação para avançar nesta etapa.' };
   const node = chatbotScript[state.nodeId];
@@ -114,16 +142,25 @@ export function continueFlow(state: ChatbotFlowState): ChatbotFlowState {
   return enterNode(state, node.next, messages, state.answers, [...state.history, checkpoint(state)]);
 }
 
+/**
+ * Reverte a última etapa e restaura estado anterior.
+ */
 export function goBackFlow(state: ChatbotFlowState): ChatbotFlowState {
   if (state.history.length === 0) return { ...state, phase: 'welcome', error: null };
   const previous = state.history[state.history.length - 1];
   return { ...state, ...previous, history: state.history.slice(0, -1), error: null };
 }
 
+/**
+ * Descarta respostas e reinicia a máquina legada.
+ */
 export function restartFlow(name: string, pain: number): ChatbotFlowState {
   return createInitialFlow(name, pain);
 }
 
+/**
+ * Converte as respostas legadas para o contrato enviado à API.
+ */
 export function toPainTriagePayload(answers: ChatbotAnswers, pain: number) {
   if (
     answers.emergencySigns !== false || answers.painCharacteristic === null || answers.moreThanTwoWeeks === null ||

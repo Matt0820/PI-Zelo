@@ -1,3 +1,7 @@
+/**
+ * Organiza as informações clínicas e os registros associados ao paciente selecionado.
+ */
+
 import React from 'react';
 import { Usuario, ESAS, Triagem, LocalDor, Medicacao, Orientacao, Evolucao } from '../../api';
 import { Button } from '../../components/Button';
@@ -7,6 +11,9 @@ import { DataCell } from '../../components/DataCell';
 import { Icon } from '../../components/ui';
 import { TeamModalType } from './TeamModal';
 
+/**
+ * Paciente, registros relacionados e operações de prontuário.
+ */
 export interface PatientRecordProps {
   patient: Usuario;
   details: {
@@ -37,6 +44,9 @@ const symptomNames: Array<{ key: keyof Pick<ESAS, 'dor' | 'cansaco' | 'nausea' |
   { key: 'constipacao', label: 'Constipação' }
 ];
 
+/**
+ * Agrupa o histórico longitudinal e ações assistenciais do paciente selecionado.
+ */
 export function PatientRecord({
   patient,
   details,

@@ -1,3 +1,7 @@
+/**
+ * Define formulários modais usados pela equipe para atualizar dados e condutas.
+ */
+
 import React, { FormEvent, useState } from 'react';
 import { Usuario, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -5,8 +9,14 @@ import { ModalDialog } from '../../components/ModalDialog';
 import { NoticeFeedback } from '../../components/NoticeFeedback';
 import { Icon } from '../../components/ui';
 
+/**
+ * Tipos de formulário modal que a equipe pode abrir.
+ */
 export type TeamModalType = 'paciente' | 'orientacao' | 'diagnostico' | 'agendamento' | 'medicacao';
 
+/**
+ * Tipo do modal, paciente associado e callbacks de gravação/fechamento.
+ */
 export interface TeamModalProps {
   type: TeamModalType;
   patient: Usuario | null;
@@ -15,6 +25,9 @@ export interface TeamModalProps {
   done: (m: string) => void;
 }
 
+/**
+ * Renderiza o formulário modal correspondente à ação assistencial.
+ */
 export function TeamModal({
   type,
   patient,

@@ -38,6 +38,9 @@ const STORAGE_KEYS = {
   perfil: '@zelo/perfil',
 };
 
+/**
+ * Coordena autenticação, restauração de sessão e navegação entre telas do Expo.
+ */
 export default function App() {
   // Estado de navegação: controla qual tela deve ser renderizada.
   const [pagina, setPagina] = useState<'registro' | 'login' | 'legal' | 'home' | 'esas' | 'triagem-dor' | 'medicacoes' | 'orientacoes' | 'mapa-dor' | 'configuracoes'>('registro');

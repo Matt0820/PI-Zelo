@@ -26,6 +26,9 @@ const prioridadeTexto: Record<Orientacao['prioridade'], string> = {
   alta: 'Alta',
 };
 
+/**
+ * Exibe orientações da API em formato de leitura mobile.
+ */
 export default function OrientacoesScreen({ orientacoes, onVoltar }: OrientacoesScreenProps) {
   const { cores } = useVisual();
   const estilos = criarEstilos(cores);

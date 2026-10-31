@@ -1,9 +1,16 @@
+/**
+ * Permite escolher modos visuais, escala tipográfica e redução de movimento.
+ */
+
 import React from 'react';
 import { useAccessibility, ModoVisual } from '../../context/AccessibilityContext';
 import { PageHeading } from '../../components/PageHeading';
 import { Button } from '../../components/Button';
 import { Icon } from '../../components/ui';
 
+/**
+ * Permite ajustar preferências visuais e tipográficas sem sair do portal.
+ */
 export function AccessibilityPage(): React.JSX.Element {
   const {
     modoVisual,

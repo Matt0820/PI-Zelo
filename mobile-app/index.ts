@@ -1,3 +1,7 @@
+/**
+ * Registra a entrada principal do aplicativo Expo.
+ */
+
 import { registerRootComponent } from 'expo';
 
 import App from './App';

@@ -6,10 +6,22 @@
  */
 
 export type GravidadeSintoma = 'leve' | 'moderada' | 'grave';
+/**
+ * Estados de medicação apresentados pelo app.
+ */
 export type StatusMedicacao = 'agendada' | 'tomada' | 'atrasada';
+/**
+ * Categorias visuais de orientação.
+ */
 export type CategoriaOrientacao = 'cuidados' | 'sintoma' | 'medicacao';
+/**
+ * Prioridades visuais usadas nos cards.
+ */
 export type PrioridadeOrientacao = 'baixa' | 'media' | 'alta';
 
+/**
+ * Registro local de sintoma genérico.
+ */
 export type Sintoma = {
   id: string;
   nome: string;
@@ -19,6 +31,9 @@ export type Sintoma = {
   atualizadoEm: string;
 };
 
+/**
+ * Registro ESAS adaptado para a interface mobile.
+ */
 export type ESASAssessment = {
   id: string;
   dor: number;         // 0 a 10
@@ -36,6 +51,9 @@ export type ESASAssessment = {
   dataRegistro: string;
 };
 
+/**
+ * Respostas que o app envia ao endpoint de triagem.
+ */
 export type PainTriageData = {
   intensidadeDor: number;
   caracteristica: string;
@@ -50,6 +68,9 @@ export type PainTriageData = {
   solicitouAgendamento: boolean;
 };
 
+/**
+ * Ocorrência adaptada para o mapa mobile.
+ */
 export type LocalDor = {
   id: string;
   regiaoAnatomica: string;
@@ -60,6 +81,9 @@ export type LocalDor = {
   criadoEm: string;
 };
 
+/**
+ * Medicação exibida e manipulada pelas telas mobile.
+ */
 export type Medicacao = {
   id: string;
   nome: string;
@@ -71,6 +95,9 @@ export type Medicacao = {
   ehDoseResgate?: boolean;
 };
 
+/**
+ * Orientação retornada à área do paciente.
+ */
 export type Orientacao = {
   id: string;
   titulo: string;

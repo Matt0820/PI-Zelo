@@ -1,8 +1,15 @@
+/**
+ * Conduz a avaliação ESAS por etapas, guarda rascunho local e oferece revisão antes do envio.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { Usuario, ESAS, api } from '../../api';
 import { Button } from '../../components/Button';
 import { PageHeading } from '../../components/PageHeading';
 
+/**
+ * Usuário, histórico, atualização e callbacks para saída normal ou início de triagem após dor grave.
+ */
 export interface ESASWizardProps {
   usuario: Usuario;
   ultimasAvaliacoes: ESAS[];
@@ -12,6 +19,9 @@ export interface ESASWizardProps {
   onConcluirLeve: () => void;
 }
 
+/**
+ * Lista dos nove escores centrais exibidos pelo formulário guiado.
+ */
 export const ESAS_SYMPTOMS: Array<{
   key: keyof Pick<
     ESAS,
@@ -85,6 +95,9 @@ export const ESAS_SYMPTOMS: Array<{
   }
 ];
 
+/**
+ * Apresenta um sintoma por etapa, mantém rascunho local e exige revisão antes de enviar; dor ≥ 7 inicia o fluxo de triagem.
+ */
 export function ESASWizard({
   usuario,
   ultimasAvaliacoes,

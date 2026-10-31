@@ -1,3 +1,7 @@
+/**
+ * Apresenta o resumo do cuidado e atalhos para os fluxos do paciente.
+ */
+
 import React, { useState } from 'react';
 import { Usuario, ESAS, Medicacao, Orientacao, LocalDor, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -6,6 +10,9 @@ import { PageHeading } from '../../components/PageHeading';
 import { EmptyState } from '../../components/EmptyState';
 import { ModalDialog } from '../../components/ModalDialog';
 
+/**
+ * Dados de resumo e operações de navegação/atualização.
+ */
 export interface PatientHomeProps {
   usuario: Usuario;
   esas: ESAS[];
@@ -18,6 +25,9 @@ export interface PatientHomeProps {
   notice: (kind: 'success' | 'error', text: string) => void;
 }
 
+/**
+ * Apresenta o resumo pessoal e os atalhos para cuidado.
+ */
 export function PatientHome({
   usuario,
   esas,

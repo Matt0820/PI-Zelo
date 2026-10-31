@@ -1,3 +1,7 @@
+/**
+ * Declara regiões selecionáveis do mapa corporal e os tipos de ocorrência apresentados na tela.
+ */
+
 export interface AnatomicalRegion {
   id: string;
   name: string;
@@ -6,6 +10,9 @@ export interface AnatomicalRegion {
   description: string;
 }
 
+/**
+ * Regiões do mapa corporal usadas para interação por SVG e alternativa de seleção.
+ */
 export const ANATOMICAL_REGIONS: AnatomicalRegion[] = [
   // FRENTE (ANTERIOR)
   { id: 'cabeca_frente', name: 'Cabeça / Face', view: 'frente', category: 'cabeca', description: 'Testa, olhos, face e mandíbula' },
@@ -51,8 +58,14 @@ export const ANATOMICAL_REGIONS: AnatomicalRegion[] = [
 
 import type { IconName } from '../../components/ui';
 
+/**
+ * Tipos de ocorrência que o paciente pode registrar.
+ */
 export type OccurrenceType = 'dor' | 'edema' | 'lesao';
 
+/**
+ * Rótulo, ícone, descrição e cores de um tipo de ocorrência.
+ */
 export interface OccurrenceConfig {
   type: OccurrenceType;
   label: string;
@@ -62,6 +75,9 @@ export interface OccurrenceConfig {
   description: string;
 }
 
+/**
+ * Metadados visuais dos tipos de ocorrência do mapa.
+ */
 export const OCCURRENCE_TYPES: Record<OccurrenceType, OccurrenceConfig> = {
   dor: {
     type: 'dor',

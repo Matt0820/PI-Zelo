@@ -1,6 +1,13 @@
+/**
+ * Apresenta uma mensagem acessível quando uma lista ou área não tem registros.
+ */
+
 import React, { ReactNode } from 'react';
 import { Icon } from './ui';
 
+/**
+ * Texto e ação opcionais exibidos quando não há dados.
+ */
 export interface EmptyStateProps {
   title: string;
   text: string;
@@ -8,6 +15,9 @@ export interface EmptyStateProps {
   action?: ReactNode;
 }
 
+/**
+ * Informa de forma explícita que a área está vazia.
+ */
 export function EmptyState({
   title,
   text,

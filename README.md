@@ -1,39 +1,41 @@
 # Zelo
 
-Plataforma de acompanhamento em cuidados paliativos com site React/Vite, aplicativo Expo e uma API FastAPI compartilhada. O backend é a fonte única para pacientes, avaliações ESAS, triagens, mapa da dor, medicações, orientações, alertas e evoluções clínicas.
+**Objetivo:** apresentar o projeto, iniciar o ambiente local e encaminhar cada pessoa à documentação técnica específica.
 
-## Componentes
+Zelo é um protótipo para acompanhamento domiciliar em cuidados paliativos. O repositório contém uma API FastAPI compartilhada, um portal web React/Vite e um aplicativo Expo/React Native. O conteúdo clínico e os registros persistidos ficam no backend; cada cliente consome a mesma API.
 
-- `backend/`: API FastAPI e persistência configurada pelo projeto.
-- `frontend/`: portal React e TypeScript compilado com Vite, com jornadas para equipe e paciente.
-- `mobile-app/`: aplicativo Expo/React Native que consome os mesmos endpoints do portal.
+## Stack e pastas principais
 
-## Iniciar
+- `backend/`: API FastAPI, modelos SQLAlchemy, autenticação e testes.
+- `frontend/`: portal web para paciente/cuidador e equipe, implementado em `src/` com React, TypeScript e Vite.
+- `mobile-app/`: cliente Expo/React Native para paciente e cuidador.
+- `iniciar_zelo.sh` e `iniciar_zelo.bat`: inicializadores locais para Linux/macOS e Windows.
+- `frontend/pages/`, `frontend/paciente/`, `frontend/assistencial/`, `frontend/styles/` e `frontend/scripts/`: telas e assets HTML legados; a build Vite parte de `frontend/index.html` e usa a SPA em `frontend/src/`.
 
-Na raiz do projeto, use o inicializador do seu sistema:
+## Início rápido em cinco passos
 
-```sh
-./iniciar_zelo.sh
-```
+1. Tenha Python com suporte a `venv`, Node.js/npm e um terminal. Docker só é necessário se optar pelo MySQL de `backend/docker-compose.yml`.
+2. Opcionalmente copie `backend/.env.example` para `backend/.env` e ajuste as variáveis descritas em [Como rodar](docs/COMO-RODAR.md). Sem configuração, o backend usa SQLite local.
+3. No Linux/macOS, execute `./iniciar_zelo.sh` na raiz. No Windows, execute `iniciar_zelo.bat`. O script verifica dependências ausentes, inicia a API, o site e o Expo; a primeira execução pode instalar pacotes.
+4. Abra o site em `http://localhost:5173` e a documentação da API em `http://localhost:8000/docs`.
+5. Para testar no celular, use o Expo Go, mantenha celular e computador na mesma rede e permita a porta 8000 no firewall. Consulte [Como rodar](docs/COMO-RODAR.md) se usar emulador ou iniciar os serviços separadamente.
 
-No Windows, execute `iniciar_zelo.bat`. Os inicializadores instalam as dependências ausentes e abrem a API, o site Vite e o Expo. Site: `http://localhost:5173`. Swagger: `http://localhost:8000/docs`. No Windows, os serviços ficam em janelas separadas; feche as três para encerrar tudo.
-
-Para abrir o Expo em um celular físico, permita a porta 8000 no firewall e mantenha o computador e o celular na mesma rede. Os scripts tentam detectar o IP local e configurá-lo no Expo; também é possível definir `EXPO_PUBLIC_API_URL` manualmente. Emuladores podem exigir endereços próprios, como `http://10.0.2.2:8000` no Android.
-
-Para iniciar apenas o site: `cd frontend && npm ci && npm run dev`. O Vite encaminha `/api` ao backend em `http://127.0.0.1:8000`.
-
-Para compilar o site: `cd frontend && npm run build`. O FastAPI serve a build em `/frontend/`.
-
-## Fluxos Web
-
-A equipe consulta pacientes, avaliações e locais de dor, acompanha alertas, envia orientações e registra diagnósticos, justificativas e agendamentos. O paciente pode preencher a avaliação ESAS, registrar locais de dor e consultar medicações e orientações. As orientações destinadas ao paciente também ficam disponíveis no app.
+> **Verificação desta documentação:** os inicializadores e a instalação em clone limpo não foram executados nesta tarefa. Confira [Relatório de documentação](docs/RELATORIO-DOCUMENTACAO.md) para os comandos de verificação que foram executados e os limites encontrados.
 
 ## Documentação
 
-- [Site React/Vite](frontend/README.md)
-- [API e configuração do backend](backend/README.md)
-- [Aplicativo mobile](mobile-app/README.md)
+- [Como rodar](docs/COMO-RODAR.md): instalação, variáveis, banco, comandos e problemas comuns.
+- [Arquitetura](docs/ARQUITETURA.md): fluxo browser/app → API → banco e responsabilidade das pastas.
+- [Backend](docs/BACKEND.md): autenticação, permissões, endpoints, modelos e regras clínicas implementadas.
+- [Frontend web](docs/FRONTEND.md): páginas, estado, componentes, estilos e pontos legados.
+- [Acessibilidade](docs/ACESSIBILIDADE.md): modos disponíveis e como verificar cada um.
+- [Chatbot](docs/CHATBOT.md): árvore ativa, formato dos nós e fluxo mobile.
+- [Como contribuir](docs/COMO-CONTRIBUIR.md): roteiro para mudanças comuns e revisão.
+- [Glossário](docs/GLOSSARIO.md): termos usados no sistema.
+- [Pendências](docs/PENDENCIAS.md): riscos, dívidas e pontos que precisam de validação.
+- [Propostas de melhoria](docs/PROPOSTAS-DE-MELHORIA.md): sugestões que exigiriam mudança de código.
+- [Relatório desta tarefa](docs/RELATORIO-DOCUMENTACAO.md): baseline, escopo e resultado das verificações.
 
-## Nota de implantação
+## Limites de uso
 
-Os endpoints usados pelos fluxos assistenciais existentes não têm autorização de perfil no servidor. A interface distingue os papéis no login, mas isso não substitui autenticação e autorização de API. Antes de usar com dados reais, a API precisa aplicar controle de acesso por função e por paciente.
+Este repositório não deve ser tratado como sistema clínico de produção sem uma avaliação de segurança, privacidade, conteúdo clínico, infraestrutura e operação. O artigo e o catálogo de telas incluem requisitos e alegações de validação que não são comprovados apenas pela leitura do código. O estado observado da implementação está descrito nos documentos técnicos e as lacunas estão em [Pendências](docs/PENDENCIAS.md).

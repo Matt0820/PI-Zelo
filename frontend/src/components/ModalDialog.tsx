@@ -1,5 +1,12 @@
+/**
+ * Fornece a estrutura comum de diálogo modal usada pelo portal.
+ */
+
 import React, { useEffect, useRef, ReactNode } from 'react';
 
+/**
+ * Título, conteúdo e callback de fechamento do diálogo.
+ */
 export interface ModalDialogProps {
   title: string;
   kicker?: string;
@@ -9,6 +16,9 @@ export interface ModalDialogProps {
   size?: 'normal' | 'large';
 }
 
+/**
+ * Apresenta um diálogo com semântica modal e controle de fechamento.
+ */
 export function ModalDialog({
   title,
   kicker,

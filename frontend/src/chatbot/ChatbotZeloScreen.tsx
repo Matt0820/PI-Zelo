@@ -1,3 +1,7 @@
+/**
+ * Contém uma tela de chatbot independente da navegação SPA atualmente conectada.
+ */
+
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Usuario, api } from '../api';
 import {
@@ -22,6 +26,9 @@ type Props = {
   refresh: () => Promise<void>;
 };
 
+/**
+ * Tela ligada à máquina de fluxo legada; não é a tela importada pela navegação atual.
+ */
 export default function ChatbotZeloScreen({ usuario, dorInicial, onConcluir, notice, refresh }: Props) {
   const [flow, setFlow] = useState<ChatbotFlowState>(() => createInitialFlow(usuario.nome, dorInicial));
   const [respostaTexto, setRespostaTexto] = useState('');

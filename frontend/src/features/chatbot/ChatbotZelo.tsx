@@ -1,3 +1,7 @@
+/**
+ * Executa o fluxo de triagem ativo no portal e registra respostas concluídas na API.
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Usuario, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -13,6 +17,9 @@ import {
   CHATBOT_SCRIPT_TREE
 } from './chatbot-scripts';
 
+/**
+ * Dados do usuário, intensidade inicial e callbacks de conclusão/atualização.
+ */
 export interface ChatbotZeloProps {
   usuario: Usuario;
   dorInicial?: number;
@@ -21,6 +28,9 @@ export interface ChatbotZeloProps {
   refresh?: () => Promise<void>;
 }
 
+/**
+ * Executa a árvore ativa, permite corrigir respostas e envia a triagem concluída.
+ */
 export function ChatbotZelo({
   usuario,
   dorInicial = 8,

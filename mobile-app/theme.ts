@@ -1,4 +1,7 @@
 /** Paleta e medidas derivadas do design system do site do paciente. */
+/**
+ * Tokens da paleta clara usada como base visual.
+ */
 export const cores = {
   primaria: '#1B5E4A',
   primariaHover: '#124032',
@@ -26,6 +29,9 @@ export const cores = {
   escalaGrave: '#C0392B',
 } as const;
 
+/**
+ * Dimensões e espaçamentos compartilhados no tema.
+ */
 export const medidas = {
   alvoToque: 48,
   botaoIdoso: 56,

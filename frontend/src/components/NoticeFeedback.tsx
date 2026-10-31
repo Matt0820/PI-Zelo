@@ -1,12 +1,22 @@
+/**
+ * Apresenta feedback de sucesso, erro ou aviso com semântica de status.
+ */
+
 import React from 'react';
 import { Icon, type IconName } from './ui';
 
+/**
+ * Tipo de mensagem, conteúdo e ação opcional para dispensá-la.
+ */
 export interface NoticeFeedbackProps {
   kind: 'success' | 'error' | 'warning' | 'info';
   message: string;
   onDismiss?: () => void;
 }
 
+/**
+ * Renderiza feedback com papel de status/alerta conforme a gravidade.
+ */
 export function NoticeFeedback({
   kind,
   message,

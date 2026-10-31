@@ -1,11 +1,21 @@
+/**
+ * Coleta os dados de cadastro do paciente e encaminha os termos ou o login.
+ */
+
 import { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useVisual } from '../visual';
 
+/**
+ * Campos controlados pela jornada de cadastro do app.
+ */
 export type DadosCadastro = { nome:string; email:string; senha:string; prontuario:string; idade:string; sexo:string; cpf:string; telefone:string; cuidador_principal:string; parentesco_cuidador:string; diagnostico_oncologico:string; pps_score:string; comorbidades:string; alergias:string; proxima_consulta:string; tratamento_modificador:string };
 const vazio:DadosCadastro={nome:'',email:'',senha:'',prontuario:'',idade:'',sexo:'',cpf:'',telefone:'',cuidador_principal:'',parentesco_cuidador:'',diagnostico_oncologico:'',pps_score:'',comorbidades:'',alergias:'',proxima_consulta:'',tratamento_modificador:''};
 type Props={onCriar:(dados:DadosCadastro)=>Promise<void>;onLogin:()=>void;onLegal:(d:'termos'|'privacidade')=>void};
+/**
+ * Renderiza os passos de identificação e os links legais.
+ */
 export default function Cadastro({onCriar,onLogin,onLegal}:Props){
  const {cores}=useVisual(); const [dados,setDados]=useState(vazio);const [etapa,setEtapa]=useState(0);const [enviando,setEnviando]=useState(false);const [responsavelProprio,setResponsavelProprio]=useState(false);
  const mudar=(k:keyof DadosCadastro,v:string)=>setDados(d=>({...d,[k]:v}));

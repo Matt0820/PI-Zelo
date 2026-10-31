@@ -102,8 +102,14 @@ async function requisicao<T>(path: string, options: RequestInit = {}): Promise<T
   return body as T;
 }
 
+/**
+ * Dados enviados ao criar a conta de paciente.
+ */
 export type DadosUsuario = { nome:string; email:string; senha:string; perfil:'paciente'|'cuidador'; prontuario:string|null; idade:number|null; sexo:string|null; cpf:string|null; telefone:string|null; cuidador_principal:string|null; parentesco_cuidador:string|null; diagnostico_oncologico:string|null; pps_score:number|null; comorbidades:string|null; alergias:string|null; proxima_consulta:string|null; tratamento_modificador:string|null };
 
+/**
+ * Cria uma conta pela API e devolve o perfil retornado.
+ */
 export function criarUsuario(dados: DadosUsuario) {
   return requisicao<UsuarioApi>('/api/users', {
     method: 'POST',
@@ -111,6 +117,9 @@ export function criarUsuario(dados: DadosUsuario) {
   });
 }
 
+/**
+ * Autentica o usuário na API.
+ */
 export function entrar(email: string, senha: string) {
   return requisicao<UsuarioApi>('/api/auth/login', {
     method: 'POST',
@@ -118,6 +127,9 @@ export function entrar(email: string, senha: string) {
   });
 }
 
+/**
+ * Consulta sintomas genéricos do usuário.
+ */
 export async function buscarSintomas(userId: number): Promise<Sintoma[]> {
   const registros = await requisicao<SintomaApi[]>(`/api/users/${userId}/symptoms`);
   return registros.map((item) => ({
@@ -130,6 +142,9 @@ export async function buscarSintomas(userId: number): Promise<Sintoma[]> {
   }));
 }
 
+/**
+ * Registra um sintoma genérico.
+ */
 export async function criarSintoma(userId: number, dados: Omit<Sintoma, 'id' | 'atualizadoEm'>): Promise<Sintoma> {
   const item = await requisicao<SintomaApi>(`/api/users/${userId}/symptoms`, {
     method: 'POST',
@@ -145,6 +160,9 @@ export async function criarSintoma(userId: number, dados: Omit<Sintoma, 'id' | '
   };
 }
 
+/**
+ * Consulta avaliações ESAS em ordem definida pela API.
+ */
 export async function buscarESAS(userId: number): Promise<ESASAssessment[]> {
   const registros = await requisicao<ESASApi[]>(`/api/users/${userId}/esas`);
   return registros.map((item) => ({
@@ -165,6 +183,9 @@ export async function buscarESAS(userId: number): Promise<ESASAssessment[]> {
   }));
 }
 
+/**
+ * Envia uma avaliação ESAS para persistência.
+ */
 export async function registrarESAS(
   userId: number,
   dados: Omit<ESASAssessment, 'id' | 'dataRegistro' | 'acionouTriagem'>,
@@ -191,6 +212,9 @@ export async function registrarESAS(
   };
 }
 
+/**
+ * Envia as respostas estruturadas de triagem.
+ */
 export async function registrarTriagemDor(userId: number, dados: PainTriageData): Promise<void> {
   await requisicao(`/api/users/${userId}/triagem-dor`, {
     method: 'POST',
@@ -212,6 +236,9 @@ export async function registrarTriagemDor(userId: number, dados: PainTriageData)
   });
 }
 
+/**
+ * Consulta medicamentos do paciente.
+ */
 export async function buscarMedicacoes(userId: number): Promise<Medicacao[]> {
   const registros = await requisicao<MedicacaoApi[]>(`/api/users/${userId}/medications`);
   return registros.map((item) => ({
@@ -226,6 +253,9 @@ export async function buscarMedicacoes(userId: number): Promise<Medicacao[]> {
   }));
 }
 
+/**
+ * Registra medicamento pelo endpoint da API.
+ */
 export async function criarMedicacao(userId: number, dados: Omit<Medicacao, 'id'>): Promise<Medicacao> {
   const item = await requisicao<MedicacaoApi>(`/api/users/${userId}/medications`, {
     method: 'POST',
@@ -251,6 +281,9 @@ export async function criarMedicacao(userId: number, dados: Omit<Medicacao, 'id'
   };
 }
 
+/**
+ * Consulta orientações destinadas ao paciente.
+ */
 export async function buscarOrientacoes(userId: number): Promise<Orientacao[]> {
   const registros = await requisicao<OrientacaoApi[]>(`/api/users/${userId}/orientations`);
   return registros.map((item) => ({
@@ -263,11 +296,17 @@ export async function buscarOrientacoes(userId: number): Promise<Orientacao[]> {
   }));
 }
 
+/**
+ * Consulta ocorrências do mapa corporal.
+ */
 export async function buscarLocaisDor(userId:number):Promise<LocalDor[]> {
   const rows=await requisicao<LocalDorApi[]>(`/api/users/${userId}/locais-dor`);
   return rows.map(row=>({id:String(row.id),regiaoAnatomica:row.regiao_anatomica,tipoOcorrencia:row.tipo_ocorrencia,intensidade:row.intensidade,observacao:row.observacao||'',medicamentoAssociado:row.medicamento_associado||'',criadoEm:row.criado_em}));
 }
 
+/**
+ * Registra região, intensidade e tipo de ocorrência.
+ */
 export async function registrarLocalDor(userId:number,dados:Omit<LocalDor,'id'|'criadoEm'>):Promise<LocalDor> {
   const row=await requisicao<LocalDorApi>(`/api/users/${userId}/locais-dor`,{method:'POST',body:JSON.stringify({regiao_anatomica:dados.regiaoAnatomica,tipo_ocorrencia:dados.tipoOcorrencia,intensidade:dados.intensidade,observacao:dados.observacao||null,medicamento_associado:dados.medicamentoAssociado||null})});
   return {id:String(row.id),regiaoAnatomica:row.regiao_anatomica,tipoOcorrencia:row.tipo_ocorrencia,intensidade:row.intensidade,observacao:row.observacao||'',medicamentoAssociado:row.medicamento_associado||'',criadoEm:row.criado_em};
