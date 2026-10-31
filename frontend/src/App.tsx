@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import logo from '../images/logo-zelo-verde.png';
 import { AccessibilityBar, Button, ModalDialog, NoticeFeedback, PageHeading, MetricCard, EmptyState, DataCell } from './components';
 import { ChatbotZelo } from './features/chatbot';
+import { PainBodyMap } from './features/patient';
 import { useAccessibility, ModoVisual } from './context/AccessibilityContext';
 import { Alerta, api, ESAS, Evolucao, LocalDor, Medicacao, Orientacao, Triagem, Usuario } from './api';
 
@@ -342,10 +343,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
   const [loading,setLoading]=useState(false);
   const [step,setStep]=useState(0);
   const [scores,setScores]=useState<Record<string,number|null>>(()=>Object.fromEntries(symptomRows.map(s=>[s.key,null])));
-  const [mapRegion,setMapRegion]=useState('');
-  const [mapType,setMapType]=useState('dor');
-  const [mapScore,setMapScore]=useState(5);
-  const [mapNote,setMapNote]=useState('');
+
   const [chatbotDor,setChatbotDor]=useState<number>(8);
   const [medAba,setMedAba]=useState<'hoje'|'receitas'>('hoje');
   const [modalResgate,setModalResgate]=useState(false);
@@ -444,22 +442,6 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
       }
     }catch(e){
       notice('error',(e as Error).message);
-    }finally{
-      setLoading(false);
-    }
-  }
-
-  async function enviarMapa(e:FormEvent){
-    e.preventDefault();
-    setLoading(true);
-    try{
-      await api.registrarMapaDor(usuario.id,{regiao_anatomica:mapRegion,tipo_ocorrencia:mapType,intensidade:mapScore,observacao:mapNote||null});
-      await refresh();
-      setMapRegion('');
-      setMapNote('');
-      notice('success','Local e intensidade registrados no mapa de dor.');
-    }catch(err){
-      notice('error',(err as Error).message);
     }finally{
       setLoading(false);
     }
@@ -672,19 +654,8 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
     {/* CHATBOT ZELO: DIRECIONAMENTO DE CUIDADO (IVC 0,95) */}
     {page==='chatbot'&&<ChatbotZelo usuario={usuario} dorInicial={chatbotDor} onConcluir={()=>setPage('inicio')} notice={(k, t) => notice(k === 'error' ? 'error' : 'success', t)} refresh={refresh}/>}
 
-    {/* MAPA DA DOR */}
-    {page==='mapa'&&<>
-      <PageHeading kicker="MAPA CORPORAL" title="Registrar Local de Dor ou Lesão" description="Informe a região anatômica e a intensidade para avaliação da equipe."/>
-      <form className="record-card form-stack map-form" onSubmit={enviarMapa}>
-        <label>Região do corpo<select required value={mapRegion} onChange={e=>setMapRegion(e.target.value)}><option value="">Selecione uma região</option>{['Cabeça','Pescoço','Ombro direito','Ombro esquerdo','Tórax anterior','Abdômen superior','Abdômen inferior','Costas superior','Região lombar / Sacra','Quadril','Braço direito','Braço esquerdo','Perna direita','Perna esquerda','Outra região'].map(r=><option key={r}>{r}</option>)}</select></label>
-        <label>Tipo de ocorrência<select value={mapType} onChange={e=>setMapType(e.target.value)}><option value="dor">Dor</option><option value="edema">Inchaço (Edema)</option><option value="lesao">Ferida ou Lesão na pele</option></select></label>
-        <label>Intensidade: {mapScore}/10<input type="range" min="0" max="10" value={mapScore} onChange={e=>setMapScore(Number(e.target.value))}/></label>
-        <label>Observação e cuidados<textarea rows={3} value={mapNote} onChange={e=>setMapNote(e.target.value)} placeholder="Descreva se piora ao movimentar, se tomou remédio ou se há vermelhidão..."/></label>
-        <button className="button button-primary" disabled={loading}>{loading?'Enviando…':'Gravar no Mapa do Corpo'}</button>
-      </form>
-      <h2 className="section-heading">Registros corporais anteriores</h2>
-      {data.dor.length?data.dor.map(d=><div className="history-item" key={d.id}><b>{d.regiao_anatomica} · {d.tipo_ocorrencia} · {d.intensidade}/10</b><span>{date(d.criado_em)}</span>{d.observacao&&<p>{d.observacao}</p>}</div>):<Empty title="Nenhum local registrado" text="Seus apontamentos no mapa corporal aparecerão aqui."/>}
-    </>}
+    {/* MAPA ANATÔMICO CORPORAL INTERATIVO (SILHUETA VETORIAL SVG) */}
+    {page==='mapa'&&<PainBodyMap usuario={usuario} locaisDor={data.dor} refresh={refresh} notice={notice} onConcluir={()=>setPage('inicio')} />}
 
     {/* ORIENTAÇÕES DA EQUIPE */}
     {page==='orientacoes'&&<>

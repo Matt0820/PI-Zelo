@@ -371,3 +371,121 @@ html.reduce-motion * {
 .empty-action {
   margin-top: 14px;
 }
+
+
+/* Estilização da Silhueta Anatômica Vetorial SVG (Mapa Corporal) */
+.pain-map-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.pain-map-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 460px) minmax(340px, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .pain-map-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.body-silhouette-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.svg-silhouette-wrapper {
+  background: var(--canvas);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 420px;
+}
+.body-svg-canvas {
+  width: 100%;
+  max-width: 290px;
+  height: auto;
+  max-height: 480px;
+  display: block;
+}
+.svg-body-part {
+  fill: #e8e3dc;
+  stroke: #736b63;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.svg-body-part:hover {
+  fill: #d5eee2;
+  stroke: var(--green);
+  stroke-width: 2.5;
+}
+.svg-body-part:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 2px;
+  stroke: var(--green);
+}
+.svg-body-part.selected {
+  fill: #ffd54f !important;
+  stroke: #b45309 !important;
+  stroke-width: 3 !important;
+}
+
+/* Modo Alto Contraste para a Silhueta SVG */
+html.theme-high-contrast .svg-silhouette-wrapper {
+  background: #000000;
+  border-color: #ffffff;
+}
+html.theme-high-contrast .svg-body-part {
+  fill: #181818;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+html.theme-high-contrast .svg-body-part:hover {
+  fill: #333300;
+  stroke: #ffff00;
+}
+html.theme-high-contrast .svg-body-part.selected {
+  fill: #ffff00 !important;
+  stroke: #ffffff !important;
+  stroke-width: 3.5 !important;
+}
+
+.occurrence-pills-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.occurrence-pill {
+  flex: 1;
+  min-width: 120px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.occurrence-pill:hover {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+.occurrence-pill.selected {
+  border-color: var(--green);
+  background: var(--green);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(27,94,74,.2);
+}
