@@ -460,8 +460,8 @@ html.reduce-motion * {
 }
 .svg-body-part.selected {
   fill: rgba(255, 193, 7, .6) !important;
-  stroke: #9c5700 !important;
-  stroke-width: 8 !important;
+  stroke: transparent !important;
+  stroke-width: 24 !important;
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
 .rating-row.rating-row-three { grid-template-columns: repeat(3, minmax(56px, 1fr)); }
@@ -488,8 +488,8 @@ html.theme-high-contrast .svg-body-part:hover {
 }
 html.theme-high-contrast .svg-body-part.selected {
   fill: rgba(255, 255, 0, .58) !important;
-  stroke: #ffff00 !important;
-  stroke-width: 7 !important;
+  stroke: transparent !important;
+  stroke-width: 24 !important;
 }
 html.theme-high-contrast .svg-body-part:focus-visible {
   fill: rgba(255, 255, 0, .25);
@@ -844,8 +844,8 @@ html.theme-escuro .svg-body-part.selected,
 :root[data-visual="escuro"] .svg-body-part.selected,
 html.theme-dark .svg-body-part.selected {
   fill: rgba(255, 193, 7, .6) !important;
-  stroke: #9c5700 !important;
-  stroke-width: 8 !important;
+  stroke: transparent !important;
+  stroke-width: 24 !important;
 }
 html.theme-escuro .svg-body-part:focus-visible,
 :root[data-visual="escuro"] .svg-body-part:focus-visible,
