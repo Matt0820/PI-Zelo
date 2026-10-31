@@ -460,7 +460,7 @@ html.reduce-motion * {
 }
 .svg-body-part.selected {
   fill: rgba(255, 193, 7, .6) !important;
-  stroke: transparent !important;
+  stroke: rgba(255, 193, 7, .6) !important;
   stroke-width: 24 !important;
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
@@ -488,7 +488,7 @@ html.theme-high-contrast .svg-body-part:hover {
 }
 html.theme-high-contrast .svg-body-part.selected {
   fill: rgba(255, 255, 0, .58) !important;
-  stroke: transparent !important;
+  stroke: rgba(255, 255, 0, .58) !important;
   stroke-width: 24 !important;
 }
 html.theme-high-contrast .svg-body-part:focus-visible {
@@ -844,7 +844,7 @@ html.theme-escuro .svg-body-part.selected,
 :root[data-visual="escuro"] .svg-body-part.selected,
 html.theme-dark .svg-body-part.selected {
   fill: rgba(255, 193, 7, .6) !important;
-  stroke: transparent !important;
+  stroke: rgba(255, 193, 7, .6) !important;
   stroke-width: 24 !important;
 }
 html.theme-escuro .svg-body-part:focus-visible,
