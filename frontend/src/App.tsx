@@ -280,7 +280,7 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
             <label style={{marginBottom:'6px',display:'block',fontWeight:600}}>Atalhos Rápidos de Cuidados Paliativos (Hospice HEG / RENAME):</label>
             <div style={{display:'flex',gap:'6px',flexWrap:'wrap',marginBottom:'12px'}}>
               {atalhosHospice.map(a=>(
-                <button key={a.nome} type="button" className="button button-quiet" style={{fontSize:'0.78125rem',padding:'6px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:'6px'}} onClick={()=>aplicarAtalho(a)}>
+                <button key={a.nome} type="button" className="button button-quiet medication-shortcut" onClick={()=>aplicarAtalho(a)}>
                   + {a.nome}
                 </button>
               ))}
@@ -471,7 +471,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
           </div>
           <button className="button button-secondary" onClick={()=>setPage('orientacoes')}>Ver todos os avisos ({data.orientacoes.length})</button>
         </div>
-        {data.orientacoes.length===0?<Empty title="Nenhum aviso novo no momento" text="Sua equipe médica e de enfermagem acompanha seus registros continuamente. Quando enviarem orientações, elas aparecerão aqui."/>:<div className="remedy-schedule-list">{data.orientacoes.slice(0,3).map(o=><div key={o.id} className="history-item" style={{background:'#fcfbf8',padding:'14px 16px',borderRadius:'10px',border:'1px solid var(--border)'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px',flexWrap:'wrap'}}><b style={{color:'var(--green)',fontSize:'1rem'}}>🩺 {o.titulo}</b><span className={`pill ${o.prioridade==='alta'?'severity-high':''}`}>Prioridade {o.prioridade} · {date(o.atualizada_em)}</span></div><p style={{margin:'6px 0 0',fontSize:'0.9375rem',color:'var(--ink)',lineHeight:1.55}}>{o.descricao}</p></div>)}</div>}
+        {data.orientacoes.length===0?<Empty title="Nenhum aviso novo no momento" text="Sua equipe médica e de enfermagem acompanha seus registros continuamente. Quando enviarem orientações, elas aparecerão aqui."/>:<div className="remedy-schedule-list">{data.orientacoes.slice(0,3).map(o=><div key={o.id} className="history-item orientation-preview"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px',flexWrap:'wrap'}}><b style={{color:'var(--green)',fontSize:'1rem'}}>🩺 {o.titulo}</b><span className={`pill ${o.prioridade==='alta'?'severity-high':''}`}>Prioridade {o.prioridade} · {date(o.atualizada_em)}</span></div><p style={{margin:'6px 0 0',fontSize:'0.9375rem',color:'var(--ink)',lineHeight:1.55}}>{o.descricao}</p></div>)}</div>}
       </article>
 
       {/* 2. SEÇÃO DE ALERTA DE REMÉDIOS E HORÁRIOS */}
@@ -492,7 +492,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
             </div>
             <div className="button-row" style={{marginTop:'6px'}}>
               {proximoRemedio.status==='tomada'?(
-                <span className="pill" style={{background:'#eaf5ec',color:'#1e6b47',fontSize:'0.875rem',padding:'8px 14px'}}>✓ Esta dose já foi confirmada hoje</span>
+                <span className="pill status-pill status-pill-success">✓ Esta dose já foi confirmada hoje</span>
               ):(
                 <button className="button button-primary" onClick={()=>tomarRemedio(proximoRemedio)} disabled={loading}>
                   {loading?'Confirmando…':`✓ Confirmar que já tomei ${proximoRemedio.nome}`}
@@ -521,7 +521,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
             </div>
           </div>
           <div className="button-row">
-            <button className="button button-primary" onClick={()=>setPage('chatbot')} style={{background:'var(--danger)',borderColor:'var(--danger)',color:'#ffffff'}}>
+            <button className="button button-primary button-danger" onClick={()=>setPage('chatbot')}>
               Abrir Chatbot Zelo para Cuidado da Dor ›
             </button>
             <a href="tel:4130000000" className="button button-secondary" style={{borderColor:'var(--danger)',color:'var(--danger)'}}>
@@ -590,7 +590,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
                 <span className="remedy-time-badge" style={{fontSize:'1rem',padding:'4px 10px'}}>⏰ {m.horario||'Horário flexível'}</span>
                 <b>{m.nome}</b> · <span style={{color:'var(--ink)',fontWeight:700}}>{m.dose}</span>
                 {m.eh_dose_resgate&&<span className="pill" style={{background:'var(--danger-soft)',color:'var(--danger)'}}>⚡ Resgate</span>}
-                {m.status==='tomada'?<span className="pill" style={{background:'#eaf5ec',color:'#1e6b47'}}>✓ Dose tomada hoje</span>:<span className="pill" style={{background:'#fef3c7',color:'#92400e'}}>⏳ Pendente</span>}
+                {m.status==='tomada'?<span className="pill status-pill status-pill-success">✓ Dose tomada hoje</span>:<span className="pill status-pill status-pill-pending">⏳ Pendente</span>}
               </div>
               <span>Frequência: {m.frequencia||'Conforme prescrição'} {m.medico_prescritor?`· Prescritor: ${m.medico_prescritor}`:''}</span>
               {m.observacao&&<p>📋 <b>Orientações de uso:</b> {m.observacao}</p>}
@@ -704,7 +704,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
           </label>
           <div className="modal-actions">
             <button type="button" className="button button-secondary" onClick={()=>setModalResgate(false)}>Cancelar</button>
-            <button type="submit" className="button button-primary" style={{background:'var(--danger)',borderColor:'var(--danger)',color:'#ffffff'}} disabled={loading}>
+            <button type="submit" className="button button-primary button-danger" disabled={loading}>
               {loading?'Salvando…':'Confirmar Dose de Resgate'}
             </button>
           </div>
