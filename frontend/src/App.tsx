@@ -278,18 +278,25 @@ export default function App(): React.JSX.Element {
               ]
           ).map(item => {
             const isActive = isTeam ? equipePagina === item.id : paginaPaciente === item.id;
+            const notificationCount = !isTeam && item.id === 'orientacoes'
+              ? patientData.orientacoes.length
+              : 0;
             return (
               <button
                 className={`nav-item ${isActive ? 'active' : ''}`}
                 key={item.id}
                 aria-current={isActive ? 'page' : undefined}
+                aria-label={notificationCount > 0 ? `${item.name}, ${notificationCount} notificações` : undefined}
                 onClick={() => {
                   item.action();
                   setMenuAberto(false);
                 }}
               >
                 <span className="nav-icon" aria-hidden="true"><Icon name={item.icon} size={18}/></span>
-                {item.name}
+                <span className="nav-label">{item.name}</span>
+                {notificationCount > 0 && (
+                  <span className="nav-notification-badge" aria-hidden="true">{notificationCount}</span>
+                )}
               </button>
             );
           })}
