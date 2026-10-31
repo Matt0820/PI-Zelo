@@ -24,6 +24,7 @@ const ZeloA11y = {
     fontSize: 'normal', // 'normal', 'large', 'xlarge'
     highContrast: false,
     darkMode: false,
+    colorScheme: 'system',
     reducedMotion: false,
   },
 
@@ -34,6 +35,7 @@ const ZeloA11y = {
     this.applyPreferences();
     this.renderA11yBar();
     this.bindKeyboardShortcuts();
+    this.bindPreferenceSync();
     this.updateUI();
   },
 
@@ -63,9 +65,23 @@ const ZeloA11y = {
 
   loadPreferences() {
     try {
-      const saved = localStorage.getItem('zelo_a11y_prefs');
-      if (saved) {
-        this.state = { ...this.state, ...JSON.parse(saved) };
+      const shared = localStorage.getItem('@zelo/web/accessibility');
+      if (shared) {
+        const preferences = JSON.parse(shared);
+        if (['normal', 'large', 'xlarge'].includes(preferences.fontSize)) this.state.fontSize = preferences.fontSize;
+        if (['system', 'light', 'dark'].includes(preferences.colorScheme)) this.state.colorScheme = preferences.colorScheme;
+        this.state.highContrast = Boolean(preferences.highContrast);
+      } else {
+        const saved = localStorage.getItem('zelo_a11y_prefs');
+        if (saved) {
+          this.state = { ...this.state, ...JSON.parse(saved) };
+          this.state.colorScheme = this.state.darkMode ? 'dark' : 'system';
+        } else {
+          const oldVisual = localStorage.getItem('@zelo/web/visual');
+          if (oldVisual === 'escuro') this.state.colorScheme = 'dark';
+          if (oldVisual === 'claro') this.state.colorScheme = 'light';
+          if (oldVisual === 'alto-contraste') this.state.highContrast = true;
+        }
       }
       // Suporte a parametros de URL para testes e acesso direto
       const params = new URLSearchParams(window.location.search);
@@ -83,6 +99,11 @@ const ZeloA11y = {
   savePreferences() {
     try {
       localStorage.setItem('zelo_a11y_prefs', JSON.stringify(this.state));
+      localStorage.setItem('@zelo/web/accessibility', JSON.stringify({
+        fontSize: this.state.fontSize,
+        colorScheme: this.state.colorScheme,
+        highContrast: this.state.highContrast,
+      }));
     } catch (e) {
       console.warn('Erro ao salvar preferencias de acessibilidade:', e);
     }
@@ -92,6 +113,14 @@ const ZeloA11y = {
     const root = document.documentElement;
     const body = document.body;
     if (!root || !body) return;
+
+    if (this.state.colorScheme === 'system') {
+      this.state.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } else {
+      this.state.darkMode = this.state.colorScheme === 'dark';
+    }
+    root.dataset.theme = this.state.darkMode ? 'dark' : 'light';
+    root.dataset.fontScale = this.state.fontSize;
 
     // Escala de fontes na raiz e no body
     root.classList.remove('font-large', 'font-xlarge');
@@ -179,7 +208,8 @@ const ZeloA11y = {
   },
 
   toggleDarkMode() {
-    this.state.darkMode = !this.state.darkMode;
+    this.state.colorScheme = this.state.darkMode ? 'light' : 'dark';
+    this.state.darkMode = this.state.colorScheme === 'dark';
     if (this.state.darkMode) this.state.highContrast = false;
     this.applyPreferences();
     this.savePreferences();
@@ -191,6 +221,23 @@ const ZeloA11y = {
     this.applyPreferences();
     this.savePreferences();
     this.announceToScreenReader(this.state.reducedMotion ? 'Reducao de movimento ativada' : 'Animacoes normais');
+  },
+
+  bindPreferenceSync() {
+    if (this.preferenceSyncBound) return;
+    this.preferenceSyncBound = true;
+    window.addEventListener('storage', event => {
+      if (event.key !== '@zelo/web/accessibility') return;
+      this.loadPreferences();
+      this.applyPreferences();
+      this.updateUI();
+    });
+    const colorPreference = window.matchMedia('(prefers-color-scheme: dark)');
+    const updateSystemTheme = () => {
+      if (this.state.colorScheme === 'system') this.applyPreferences();
+    };
+    if (colorPreference.addEventListener) colorPreference.addEventListener('change', updateSystemTheme);
+    else colorPreference.addListener(updateSystemTheme);
   },
 
   updateUI() {

@@ -2,12 +2,11 @@ import { FormEvent, useEffect, useMemo, useState, type ReactNode } from 'react';
 import logo from '../images/logo-zelo-verde.png';
 import { Alerta, api, ESAS, Evolucao, LocalDor, Medicacao, Orientacao, Triagem, Usuario } from './api';
 import ChatbotZeloScreen from './chatbot/ChatbotZeloScreen';
+import { AccessibilityProvider, useAccessibilityPreferences } from './accessibility/AccessibilityContext';
 
 type Notice={kind:'success'|'error';text:string};
 type TeamPage='painel'|'pacientes'|'alertas';
 type PatientPage='inicio'|'esas'|'chatbot'|'mapa'|'medicacoes'|'orientacoes';
-type VisualMode='claro'|'escuro'|'alto-contraste'|'protanopia'|'deuteranopia'|'tritanopia';
-const visualModes:Array<{value:VisualMode;label:string}>=[{value:'claro',label:'Claro'},{value:'escuro',label:'Escuro'},{value:'alto-contraste',label:'Alto contraste'},{value:'protanopia',label:'Daltonismo · protanopia'},{value:'deuteranopia',label:'Daltonismo · deuteranopia'},{value:'tritanopia',label:'Daltonismo · tritanopia'}];
 const sessionKey='@zelo/web/session';
 const symptomRows:Array<{key:keyof Pick<ESAS,'dor'|'cansaco'|'nausea'|'depressao'|'ansiedade'|'sonolencia'|'apetite'|'mal_estar'|'falta_de_ar'|'constipacao'>;label:string}>= [
  {key:'dor',label:'Dor'}, {key:'cansaco',label:'Cansaço'}, {key:'nausea',label:'Náusea'}, {key:'depressao',label:'Tristeza'}, {key:'ansiedade',label:'Ansiedade'}, {key:'sonolencia',label:'Sonolência'}, {key:'apetite',label:'Falta de apetite'}, {key:'mal_estar',label:'Mal-estar'}, {key:'falta_de_ar',label:'Falta de ar'}, {key:'constipacao',label:'Constipação'},
@@ -15,6 +14,11 @@ const symptomRows:Array<{key:keyof Pick<ESAS,'dor'|'cansaco'|'nausea'|'depressao
 const date=(value:string)=>new Date(value).toLocaleString('pt-BR',{dateStyle:'medium',timeStyle:'short'});
 
 export default function App(){
+ return <AccessibilityProvider><AppContent/></AccessibilityProvider>;
+}
+
+function AppContent(){
+ const {preferences,storageAvailable,setFontSize,setColorScheme,setHighContrast}=useAccessibilityPreferences();
  const [usuario,setUsuario]=useState<Usuario|null>(()=>{try{const saved=localStorage.getItem(sessionKey);return saved?JSON.parse(saved) as Usuario:null;}catch{return null;}});
  useEffect(()=>{const expired=()=>{try{localStorage.removeItem(sessionKey);}catch{}setUsuario(null);setSelecionado(null);};window.addEventListener('zelo:auth-expired',expired);return()=>window.removeEventListener('zelo:auth-expired',expired);},[]);
  const [notice,setNotice]=useState<Notice|null>(null);
@@ -28,8 +32,6 @@ export default function App(){
  const [detalhes,setDetalhes]=useState<{esas:ESAS[];triagens:Triagem[];dor:LocalDor[];medicacoes:Medicacao[];orientacoes:Orientacao[];evolucoes:Evolucao[]}>({esas:[],triagens:[],dor:[],medicacoes:[],orientacoes:[],evolucoes:[]});
  const [modal,setModal]=useState<'paciente'|'orientacao'|'diagnostico'|'agendamento'|'medicacao'|null>(null);
  const [menuAberto,setMenuAberto]=useState(false);
- const [visual,setVisual]=useState<VisualMode>(()=>{const saved=localStorage.getItem('@zelo/web/visual');return visualModes.some(x=>x.value===saved)?saved as VisualMode:'claro';});
- useEffect(()=>{document.documentElement.dataset.visual=visual;localStorage.setItem('@zelo/web/visual',visual);},[visual]);
  const [patientData,setPatientData]=useState<{esas:ESAS[];medicacoes:Medicacao[];orientacoes:Orientacao[];dor:LocalDor[]}>({esas:[],medicacoes:[],orientacoes:[],dor:[]});
  const isTeam=usuario?.perfil==='assistencial'||usuario?.perfil==='admin';
  const show=(kind:Notice['kind'],text:string)=>{setNotice({kind,text});window.setTimeout(()=>setNotice(null),5000);};
@@ -59,7 +61,14 @@ export default function App(){
       {id:'orientacoes',name:'Avisos da equipe',icon:'i',action:()=>setPaginaPaciente('orientacoes')},
     ]).map(item=><button className="nav-item" key={item.id} onClick={()=>{item.action();setMenuAberto(false);}}><span className="nav-icon">{item.icon}</span>{item.name}</button>)}
     {isTeam&&<div className="sidebar-note">Use os comandos “Enviar” para registrar cada ação no prontuário do paciente.</div>}
-    <label className="sidebar-appearance">Aparência do site<select value={visual} onChange={e=>setVisual(e.target.value as VisualMode)}>{visualModes.map(mode=><option key={mode.value} value={mode.value}>{mode.label}</option>)}</select></label>
+    <fieldset className="sidebar-accessibility">
+      <legend>Acessibilidade</legend>
+      <label>Tamanho do texto<select value={preferences.fontSize} onChange={e=>setFontSize(e.target.value as 'normal'|'large'|'xlarge')}><option value="normal">Padrão (16 px)</option><option value="large">Grande (+18% · 19 px)</option><option value="xlarge">Muito grande (+37% · 22 px)</option></select></label>
+      <label>Esquema de cores<select value={preferences.colorScheme} onChange={e=>setColorScheme(e.target.value as 'system'|'light'|'dark')}><option value="system">Seguir sistema</option><option value="light">Claro</option><option value="dark">Escuro</option></select></label>
+      <label className="sidebar-a11y-toggle"><input type="checkbox" checked={preferences.highContrast} onChange={e=>setHighContrast(e.target.checked)}/>Alto contraste</label>
+      {preferences.highContrast&&<small role="status">Alto contraste ativado · fundo preto, texto amarelo e branco.</small>}
+      {!storageAvailable&&<small role="status">Preferências ativas nesta sessão, mas o navegador não permitiu salvá-las.</small>}
+    </fieldset>
     <button className="nav-item nav-logout" onClick={sair}><span className="nav-icon">↪</span>Sair da conta</button>
    </aside>
    {menuAberto&&<button aria-label="Fechar menu" className="sidebar-scrim" onClick={()=>setMenuAberto(false)} />}
@@ -113,7 +122,7 @@ function PatientRecord({patient,details,openModal,back,busy,notice,refresh}:{pat
  <article className="record-card"><h2>Triagens de dor</h2>{details.triagens.length?details.triagens.slice(0,4).map(t=><div className="history-item" key={t.id}><b>Dor {t.intensidade_dor}/10 · {t.caracteristica_dor}</b><span>{t.tipo_dor} · {date(t.data_triagem)}</span><p>Resgate: {t.fez_dose_resgate?'sim':'não'} · Medicações efetivas: {t.medicamentos_efetivos?'sim':'não'}{t.solicitou_agendamento?' · Pediu contato/agendamento':''}</p></div>):<Empty title="Sem triagens" text="Não há triagem de dor registrada para este paciente."/>}</article>
  <article className="record-card"><h2>Orientações enviadas</h2>{details.orientacoes.length?details.orientacoes.slice(0,5).map(o=><div className="history-item" key={o.id}><b>{o.titulo}</b><span>{o.categoria} · {o.prioridade} · {date(o.atualizada_em)}</span><p>{o.descricao}</p></div>):<Empty title="Sem orientações" text="Envie uma orientação para ela aparecer também no app do paciente."/>}</article>
  <article className="record-card record-wide"><h2>Evoluções clínicas</h2>{details.evolucoes.length?details.evolucoes.slice(0,8).map(e=><div className="history-item" key={e.id}><b>{e.tipo_evolucao}</b><span>{e.profissional_nome} · {date(e.criado_em)}</span><p>{e.conteudo}</p>{e.conduta_plano&&<small>Plano: {e.conduta_plano}</small>}</div>):<Empty title="Sem evoluções" text="Diagnósticos, justificativas e agendamentos enviados pela equipe serão registrados aqui."/>}</article>
- <article className="record-card"><div className="section-title" style={{marginTop:0}}><div><h2>Medicações e Prescrições</h2><p>Receitas ativas vinculadas ao paciente.</p></div><button className="button button-primary" onClick={()=>openModal('medicacao')}>+ Prescrever</button></div>{details.medicacoes.length?details.medicacoes.map(m=><div className="history-item" key={m.id} style={{padding:'10px 0'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px',flexWrap:'wrap'}}><b>💊 {m.nome} · {m.dose}</b><span className="pill">{m.horario} ({m.frequencia})</span></div>{m.observacao&&<p style={{margin:'4px 0 0',fontSize:'13px'}}>📋 Orientações: {m.observacao}</p>}{m.eh_dose_resgate&&<small style={{color:'var(--danger)',fontWeight:700}}>⚡ Dose de resgate autorizada</small>}</div>):<Empty title="Sem medicações" text="Prescreva a primeira medicação para o paciente."/>}</article></div>
+ <article className="record-card"><div className="section-title" style={{marginTop:0}}><div><h2>Medicações e Prescrições</h2><p>Receitas ativas vinculadas ao paciente.</p></div><button className="button button-primary" onClick={()=>openModal('medicacao')}>+ Prescrever</button></div>{details.medicacoes.length?details.medicacoes.map(m=><div className="history-item" key={m.id} style={{padding:'10px 0'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px',flexWrap:'wrap'}}><b>💊 {m.nome} · {m.dose}</b><span className="pill">{m.horario} ({m.frequencia})</span></div>{m.observacao&&<p style={{margin:'4px 0 0',fontSize:'0.8125rem'}}>📋 Orientações: {m.observacao}</p>}{m.eh_dose_resgate&&<small style={{color:'var(--danger)',fontWeight:700}}>⚡ Dose de resgate autorizada</small>}</div>):<Empty title="Sem medicações" text="Prescreva a primeira medicação para o paciente."/>}</article></div>
  <button className="button button-quiet" onClick={()=>refresh().then(()=>notice('success','Prontuário atualizado.'))}>Atualizar dados do prontuário</button></section>;
 }
 function Data({label,value}:{label:string;value:string|number|null|undefined}){return <div className="data-cell"><dt>{label}</dt><dd>{value||'Não informado'}</dd></div>}
@@ -279,7 +288,7 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
             <label style={{marginBottom:'6px',display:'block',fontWeight:600}}>Atalhos Rápidos de Cuidados Paliativos (Hospice HEG / RENAME):</label>
             <div style={{display:'flex',gap:'6px',flexWrap:'wrap',marginBottom:'12px'}}>
               {atalhosHospice.map(a=>(
-                <button key={a.nome} type="button" className="button button-quiet" style={{fontSize:'12.5px',padding:'6px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:'6px'}} onClick={()=>aplicarAtalho(a)}>
+                <button key={a.nome} type="button" className="button button-quiet" style={{fontSize:'0.78125rem',padding:'6px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:'6px'}} onClick={()=>aplicarAtalho(a)}>
                   + {a.nome}
                 </button>
               ))}
@@ -310,7 +319,7 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
             </label>
             <label style={{display:'flex',alignItems:'center',gap:'8px',cursor:'pointer',marginTop:'24px'}}>
               <input type="checkbox" name="eh_dose_resgate" checked={medResgate} onChange={e=>setMedResgate(e.target.checked)} style={{width:'18px',height:'18px'}} />
-              <span style={{fontSize:'14px',fontWeight:600,color:'var(--danger)'}}>⚡ É Dose de Resgate (Crise de Dor)</span>
+              <span style={{fontSize:'0.875rem',fontWeight:600,color:'var(--danger)'}}>⚡ É Dose de Resgate (Crise de Dor)</span>
             </label>
           </div>
 
@@ -471,7 +480,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
           </div>
           <button className="button button-secondary" onClick={()=>setPage('orientacoes')}>Ver todos os avisos ({data.orientacoes.length})</button>
         </div>
-        {data.orientacoes.length===0?<Empty title="Nenhum aviso novo no momento" text="Sua equipe médica e de enfermagem acompanha seus registros continuamente. Quando enviarem orientações, elas aparecerão aqui."/>:<div className="remedy-schedule-list">{data.orientacoes.slice(0,3).map(o=><div key={o.id} className="history-item" style={{background:'#fcfbf8',padding:'14px 16px',borderRadius:'10px',border:'1px solid var(--border)'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px',flexWrap:'wrap'}}><b style={{color:'var(--green)',fontSize:'16px'}}>🩺 {o.titulo}</b><span className={`pill ${o.prioridade==='alta'?'severity-high':''}`}>Prioridade {o.prioridade} · {date(o.atualizada_em)}</span></div><p style={{margin:'6px 0 0',fontSize:'15px',color:'var(--ink)',lineHeight:1.55}}>{o.descricao}</p></div>)}</div>}
+        {data.orientacoes.length===0?<Empty title="Nenhum aviso novo no momento" text="Sua equipe médica e de enfermagem acompanha seus registros continuamente. Quando enviarem orientações, elas aparecerão aqui."/>:<div className="remedy-schedule-list">{data.orientacoes.slice(0,3).map(o=><div key={o.id} className="history-item" style={{background:'#fcfbf8',padding:'14px 16px',borderRadius:'10px',border:'1px solid var(--border)'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px',flexWrap:'wrap'}}><b style={{color:'var(--green)',fontSize:'1rem'}}>🩺 {o.titulo}</b><span className={`pill ${o.prioridade==='alta'?'severity-high':''}`}>Prioridade {o.prioridade} · {date(o.atualizada_em)}</span></div><p style={{margin:'6px 0 0',fontSize:'0.9375rem',color:'var(--ink)',lineHeight:1.55}}>{o.descricao}</p></div>)}</div>}
       </article>
 
       {/* 2. SEÇÃO DE ALERTA DE REMÉDIOS E HORÁRIOS */}
@@ -479,20 +488,20 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
         <div className="remedy-alert-top">
           <div>
             <span className="eyebrow" style={{color:'var(--green)'}}>LEMBRETE E ALERTA DE MEDICAÇÃO</span>
-            <h2 style={{margin:'4px 0',fontSize:'22px',color:'var(--ink)'}}>Próximo Remédio Programado</h2>
+            <h2 style={{margin:'4px 0',fontSize:'1.375rem',color:'var(--ink)'}}>Próximo Remédio Programado</h2>
           </div>
           {proximoRemedio&&<span className="remedy-time-badge">⏰ {proximoRemedio.horario||'Horário flexível'}</span>}
         </div>
         {proximoRemedio?(
           <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
-            <div style={{fontSize:'16px',lineHeight:1.5}}>
+            <div style={{fontSize:'1rem',lineHeight:1.5}}>
               <strong>{proximoRemedio.nome}</strong> · {proximoRemedio.dose} · ({proximoRemedio.frequencia})
               {proximoRemedio.eh_dose_resgate&&<span className="pill" style={{marginLeft:'8px',background:'var(--danger-soft)',color:'var(--danger)'}}>⚡ Resgate</span>}
-              {proximoRemedio.observacao&&<p style={{margin:'6px 0 0',fontSize:'14px',color:'var(--muted)',background:'var(--paper)',padding:'8px 12px',borderRadius:'8px',border:'1px solid var(--border)'}}>📋 <b>Orientação de uso:</b> {proximoRemedio.observacao}</p>}
+              {proximoRemedio.observacao&&<p style={{margin:'6px 0 0',fontSize:'0.875rem',color:'var(--muted)',background:'var(--paper)',padding:'8px 12px',borderRadius:'8px',border:'1px solid var(--border)'}}>📋 <b>Orientação de uso:</b> {proximoRemedio.observacao}</p>}
             </div>
             <div className="button-row" style={{marginTop:'6px'}}>
               {proximoRemedio.status==='tomada'?(
-                <span className="pill" style={{background:'#eaf5ec',color:'#1e6b47',fontSize:'14px',padding:'8px 14px'}}>✓ Esta dose já foi confirmada hoje</span>
+                <span className="pill" style={{background:'#eaf5ec',color:'#1e6b47',fontSize:'0.875rem',padding:'8px 14px'}}>✓ Esta dose já foi confirmada hoje</span>
               ):(
                 <button className="button button-primary" onClick={()=>tomarRemedio(proximoRemedio)} disabled={loading}>
                   {loading?'Confirmando…':`✓ Confirmar que já tomei ${proximoRemedio.nome}`}
@@ -514,10 +523,10 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
       {temGraveRecente&&(
         <div className="notice notice-error" style={{padding:'18px 20px',borderRadius:'12px',marginBottom:'22px',flexDirection:'column',alignItems:'flex-start',gap:'10px'}}>
           <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-            <span style={{fontSize:'22px'}}>⚠️</span>
+            <span style={{fontSize:'1.375rem'}}>⚠️</span>
             <div>
-              <strong style={{fontSize:'16px'}}>Aviso Clínico: Sua última avaliação registrou dor intensa (Nota {ultimaDor}/10)</strong>
-              <p style={{margin:'3px 0 0',fontSize:'14px'}}>Nossa equipe especializada do Hospice foi notificada. O Chatbot Zelo está pronto para direcionar seu alívio imediato.</p>
+              <strong style={{fontSize:'1rem'}}>Aviso Clínico: Sua última avaliação registrou dor intensa (Nota {ultimaDor}/10)</strong>
+              <p style={{margin:'3px 0 0',fontSize:'0.875rem'}}>Nossa equipe especializada do Hospice foi notificada. O Chatbot Zelo está pronto para direcionar seu alívio imediato.</p>
             </div>
           </div>
           <div className="button-row">
@@ -587,7 +596,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
           <article className="remedy-schedule-item" key={m.id}>
             <div className="remedy-info">
               <div style={{display:'flex',alignItems:'center',gap:'10px',flexWrap:'wrap'}}>
-                <span className="remedy-time-badge" style={{fontSize:'16px',padding:'4px 10px'}}>⏰ {m.horario||'Horário flexível'}</span>
+                <span className="remedy-time-badge" style={{fontSize:'1rem',padding:'4px 10px'}}>⏰ {m.horario||'Horário flexível'}</span>
                 <b>{m.nome}</b> · <span style={{color:'var(--ink)',fontWeight:700}}>{m.dose}</span>
                 {m.eh_dose_resgate&&<span className="pill" style={{background:'var(--danger-soft)',color:'var(--danger)'}}>⚡ Resgate</span>}
                 {m.status==='tomada'?<span className="pill" style={{background:'#eaf5ec',color:'#1e6b47'}}>✓ Dose tomada hoje</span>:<span className="pill" style={{background:'#fef3c7',color:'#92400e'}}>⏳ Pendente</span>}
@@ -611,7 +620,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
       {/* ABA 2: MINHAS RECEITAS & ORIENTAÇÕES DE USO */}
       {medAba==='receitas'&&<div className="remedy-schedule-list">
         <p className="muted">Relação completa de receitas médicas e orientações de uso vinculadas ao seu plano de cuidado:</p>
-        {data.medicacoes.length===0?<Empty title="Nenhuma receita registrada" text="Nenhuma receita prescrita pela equipe médica no momento."/>:data.medicacoes.map(m=><article className="record-card" key={m.id} style={{marginBottom:'12px'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:'10px',flexWrap:'wrap'}}><h3 style={{margin:0,fontSize:'18px',color:'var(--green)'}}>💊 {m.nome} · {m.dose}</h3><span className="pill">{m.vigencia||'Receita ativa'}</span></div><div className="data-grid" style={{marginTop:'12px'}}><Data label="Posologia e Horários" value={`${m.frequencia} (Horário base: ${m.horario})`}/><Data label="Finalidade" value={m.eh_dose_resgate?'Dose de resgate para crise de dor':'Uso fixo contínuo'}/><Data label="Médico Prescritor" value={m.medico_prescritor||'Equipe do Hospice'}/><Data label="Instruções e Orientações de Uso" value={m.observacao||'Tomar com água conforme prescrição médica.'}/></div></article>)}
+        {data.medicacoes.length===0?<Empty title="Nenhuma receita registrada" text="Nenhuma receita prescrita pela equipe médica no momento."/>:data.medicacoes.map(m=><article className="record-card" key={m.id} style={{marginBottom:'12px'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:'10px',flexWrap:'wrap'}}><h3 style={{margin:0,fontSize:'1.125rem',color:'var(--green)'}}>💊 {m.nome} · {m.dose}</h3><span className="pill">{m.vigencia||'Receita ativa'}</span></div><div className="data-grid" style={{marginTop:'12px'}}><Data label="Posologia e Horários" value={`${m.frequencia} (Horário base: ${m.horario})`}/><Data label="Finalidade" value={m.eh_dose_resgate?'Dose de resgate para crise de dor':'Uso fixo contínuo'}/><Data label="Médico Prescritor" value={m.medico_prescritor||'Equipe do Hospice'}/><Data label="Instruções e Orientações de Uso" value={m.observacao||'Tomar com água conforme prescrição médica.'}/></div></article>)}
       </div>}
 
       </>}
@@ -683,7 +692,7 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
     {/* ORIENTAÇÕES DA EQUIPE */}
     {page==='orientacoes'&&<>
       <PageHeading kicker="EQUIPE DE CUIDADOS" title="Avisos e Orientações Médicas" description="Comunicações e recomendações clínicas enviadas pela equipe do Hospice Erasto Gaertner para o seu cuidado domiciliar."/>
-      {data.orientacoes.length===0?<Empty title="Nenhuma orientação recebida" text="Quando a equipe médica ou de enfermagem emitir um parecer ou orientação, ela aparecerá aqui."/>:data.orientacoes.map(o=><article className="record-card" key={o.id} style={{marginBottom:'14px',borderLeft:`4px solid ${o.prioridade==='alta'?'var(--danger)':'var(--green)'}`}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:'10px',flexWrap:'wrap'}}><h3 style={{margin:0,fontSize:'18px',color:'var(--ink)'}}>🩺 {o.titulo}</h3><span className={`pill ${o.prioridade==='alta'?'severity-high':''}`}>Prioridade {o.prioridade} · {date(o.atualizada_em)}</span></div><p style={{margin:'10px 0 0',fontSize:'15.5px',lineHeight:1.6,color:'var(--ink)',whiteSpace:'pre-line'}}>{o.descricao}</p></article>)}
+      {data.orientacoes.length===0?<Empty title="Nenhuma orientação recebida" text="Quando a equipe médica ou de enfermagem emitir um parecer ou orientação, ela aparecerá aqui."/>:data.orientacoes.map(o=><article className="record-card" key={o.id} style={{marginBottom:'14px',borderLeft:`4px solid ${o.prioridade==='alta'?'var(--danger)':'var(--green)'}`}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:'10px',flexWrap:'wrap'}}><h3 style={{margin:0,fontSize:'1.125rem',color:'var(--ink)'}}>🩺 {o.titulo}</h3><span className={`pill ${o.prioridade==='alta'?'severity-high':''}`}>Prioridade {o.prioridade} · {date(o.atualizada_em)}</span></div><p style={{margin:'10px 0 0',fontSize:'0.96875rem',lineHeight:1.6,color:'var(--ink)',whiteSpace:'pre-line'}}>{o.descricao}</p></article>)}
     </>}
 
     {/* MODAL DE DOSE DE RESGATE RÁPIDA */}

@@ -75,7 +75,7 @@ body {
 
 /* Título H2 do Design System: 40px/42px Bold -> adaptado p/ drawer: H3 (22px/26px Bold) */
 .drawer-title {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 28px;
   color: var(--black-80);
@@ -111,14 +111,14 @@ body {
 }
 
 .user-badge-role {
-  font-size: 11px;
+  font-size: 0.6875rem;
   line-height: 14px;
   font-weight: 400;
   color: var(--primary-50);
 }
 
 .user-badge-name {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 18px;
   font-weight: 600;
   color: var(--color-white);
@@ -128,7 +128,7 @@ body {
   background: transparent;
   border: none;
   color: var(--color-white);
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -185,11 +185,11 @@ body {
   align-items: center;
   justify-content: flex-start;
   color: var(--primary-100);
-  font-size: 17px;
+  font-size: 1.0625rem;
 }
 
 .nav-label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 16px;
   font-weight: 700;
   color: var(--black-80);
@@ -211,7 +211,7 @@ body {
   background-color: var(--primary-10);
   color: var(--black-100);
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;

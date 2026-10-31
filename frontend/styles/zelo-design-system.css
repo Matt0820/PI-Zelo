@@ -113,11 +113,11 @@ body {
 
 /* Escalas de tamanho de fonte dinâmica (WCAG 2.2 AA / AAA) */
 html.font-large {
-  font-size: 19px !important;
+  font-size: 1.1875rem !important;
 }
 
 body.font-large {
-  font-size: 19px !important;
+  font-size: 1.1875rem !important;
   --font-size-base: 19px;
   --font-size-elderly: 22px;
 }
@@ -136,11 +136,11 @@ body.font-large textarea {
 }
 
 html.font-xlarge {
-  font-size: 22px !important;
+  font-size: 1.375rem !important;
 }
 
 body.font-xlarge {
-  font-size: 22px !important;
+  font-size: 1.375rem !important;
   --font-size-base: 22px;
   --font-size-elderly: 26px;
 }
@@ -196,7 +196,7 @@ body.reduced-motion * {
   background-color: var(--zelo-surface-soft);
   border-bottom: 1px solid var(--zelo-border);
   padding: 6px 24px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -223,7 +223,7 @@ body.reduced-motion * {
   color: var(--zelo-text);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;

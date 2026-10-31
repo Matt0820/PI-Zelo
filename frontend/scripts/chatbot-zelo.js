@@ -78,7 +78,7 @@ class ChatbotZeloController {
     `;
     this.stream.appendChild(bubble);
     this.currentBotElements.push(bubble);
-    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    bubble.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     return bubble;
   }
 
@@ -89,7 +89,7 @@ class ChatbotZeloController {
       <div style="font-size: 1.05rem; line-height: 1.45;">${text}</div>
     `;
     this.stream.appendChild(bubble);
-    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    bubble.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     return bubble;
   }
 
@@ -183,7 +183,7 @@ class ChatbotZeloController {
     `;
 
     setTimeout(() => {
-      this.controls.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      this.controls.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     }, 100);
 
     document.getElementById('btn-emerg-no').addEventListener('click', () => {
@@ -248,7 +248,7 @@ class ChatbotZeloController {
     this.attachUndoListener();
 
     setTimeout(() => {
-      this.controls.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      this.controls.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     }, 100);
 
     this.controls.querySelectorAll('.chat-option-btn').forEach(btn => {
@@ -475,7 +475,7 @@ class ChatbotZeloController {
     this.attachUndoListener();
 
     setTimeout(() => {
-      this.controls.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      this.controls.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'end' });
     }, 100);
 
     document.getElementById('btn-chat-yes').addEventListener('click', () => {

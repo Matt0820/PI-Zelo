@@ -101,7 +101,7 @@ body {
 
 .brand-title {
   display: block;
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 800;
   letter-spacing: 1.5px;
   line-height: 1;
@@ -109,7 +109,7 @@ body {
 
 .brand-subtitle {
   display: block;
-  font-size: 7px;
+  font-size: 0.4375rem;
   font-weight: 400;
   letter-spacing: 0.2px;
   line-height: 1.2;
@@ -118,7 +118,7 @@ body {
 }
 
 .header-heading {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1.35;
   color: var(--color-white);
@@ -135,7 +135,7 @@ body {
 
 /* H4 / Subtítulo no Design System */
 .content-title {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--black-80);
   margin-bottom: 12px;
@@ -154,7 +154,7 @@ body {
 }
 
 .terms-scrollbox p {
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.5;
   color: var(--black-80);
   margin-bottom: 10px;
@@ -179,7 +179,7 @@ body {
 
 /* Texto de Aceite / Disclaimer */
 .consent-disclaimer {
-  font-size: 11px;
+  font-size: 0.6875rem;
   line-height: 1.45;
   color: var(--black-80);
   text-align: center;
@@ -196,7 +196,7 @@ body {
   border: none;
   border-radius: 8px;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
