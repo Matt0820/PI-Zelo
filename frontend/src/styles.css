@@ -104,6 +104,7 @@ input:not([type="checkbox"]):not([type="radio"]),select,textarea{min-height:var(
 /* Ajustes de tema para os componentes do app React. */
 .button-primary{color:var(--button-on-primary)}
 .button-danger{background:var(--danger);border-color:var(--danger);color:var(--button-on-danger)}
+.notice-error .button-danger{background:var(--danger);border:1px solid var(--danger);color:var(--button-on-danger)}
 .status-pill{display:inline-flex;align-items:center;gap:.35rem;border:1px solid transparent}
 .status-pill-success{background:var(--status-success-bg);border-color:var(--status-success-border);color:var(--status-success)}
 .status-pill-pending{background:var(--status-pending-bg);color:var(--status-pending)}
