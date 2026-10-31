@@ -713,6 +713,98 @@ html.theme-dark .remedy-info p {
   border-left: 3px solid var(--green) !important;
 }
 
+/* Nota de Prontuário / Observação ESAS (Correção do retângulo branco) */
+html.theme-escuro .record-note,
+:root[data-visual="escuro"] .record-note,
+html.theme-dark .record-note {
+  background: #15201a !important;
+  color: #f4f6f4 !important;
+  border: 1px solid #34463c !important;
+  border-left: 4px solid var(--green) !important;
+}
+
+/* Botão Fechar de Diálogos / Modais (Correção do círculo branco) */
+html.theme-escuro .icon-button,
+:root[data-visual="escuro"] .icon-button,
+html.theme-dark .icon-button {
+  background: #24352c !important;
+  color: #f4f6f4 !important;
+  border: 1px solid #34463c !important;
+}
+html.theme-escuro .icon-button:hover,
+:root[data-visual="escuro"] .icon-button:hover,
+html.theme-dark .icon-button:hover {
+  background: #2e4438 !important;
+  color: #68c499 !important;
+}
+
+/* Placeholders de Entradas no Modo Escuro */
+html.theme-escuro input::placeholder,
+html.theme-escuro textarea::placeholder,
+:root[data-visual="escuro"] input::placeholder,
+:root[data-visual="escuro"] textarea::placeholder,
+html.theme-dark input::placeholder,
+html.theme-dark textarea::placeholder {
+  color: #8f9e95 !important;
+  opacity: 1 !important;
+}
+
+/* Indicadores de Calendário e Relógio Nativos */
+html.theme-escuro input[type="date"]::-webkit-calendar-picker-indicator,
+html.theme-escuro input[type="time"]::-webkit-calendar-picker-indicator,
+:root[data-visual="escuro"] input[type="date"]::-webkit-calendar-picker-indicator,
+:root[data-visual="escuro"] input[type="time"]::-webkit-calendar-picker-indicator,
+html.theme-dark input[type="date"]::-webkit-calendar-picker-indicator,
+html.theme-dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Notificações no Modo Escuro */
+html.theme-escuro .notice-success,
+:root[data-visual="escuro"] .notice-success,
+html.theme-dark .notice-success {
+  background: #234b36 !important;
+  color: #82e8b2 !important;
+  border-color: #3b7454 !important;
+}
+html.theme-escuro .notice-warning,
+:root[data-visual="escuro"] .notice-warning,
+html.theme-dark .notice-warning {
+  background: #47391b !important;
+  color: #f7d27e !important;
+  border-color: #735d27 !important;
+}
+html.theme-escuro .notice-info,
+:root[data-visual="escuro"] .notice-info,
+html.theme-dark .notice-info {
+  background: #1e3a5f !important;
+  color: #93c5fd !important;
+  border-color: #2563eb !important;
+}
+html.theme-escuro .notice-error,
+:root[data-visual="escuro"] .notice-error,
+html.theme-dark .notice-error {
+  background: #2e1d1b !important;
+  color: #ff9d91 !important;
+  border-color: #61312d !important;
+}
+
+/* Divisórias do Histórico */
+html.theme-escuro .history-item,
+:root[data-visual="escuro"] .history-item,
+html.theme-dark .history-item {
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Barra de Ações */
+html.theme-escuro .action-bar,
+:root[data-visual="escuro"] .action-bar,
+html.theme-dark .action-bar {
+  background: var(--paper) !important;
+  border-color: var(--border) !important;
+}
+
 /* Silhueta Anatômica Vetorial no Modo Escuro */
 html.theme-escuro .svg-silhouette-wrapper,
 :root[data-visual="escuro"] .svg-silhouette-wrapper,
@@ -1053,6 +1145,82 @@ html.theme-high-contrast .remedy-info p,
   color: #ffffff !important;
   border: 1px solid #ffffff !important;
   border-left: 4px solid #ffff00 !important;
+}
+
+/* Nota de Prontuário / Observação ESAS no Alto Contraste */
+html.theme-high-contrast .record-note,
+:root[data-visual="alto-contraste"] .record-note {
+  background: #111111 !important;
+  color: #ffffff !important;
+  border: 1px solid #ffffff !important;
+  border-left: 4px solid #ffff00 !important;
+}
+
+/* Botão Fechar de Diálogos / Modais no Alto Contraste */
+html.theme-high-contrast .icon-button,
+:root[data-visual="alto-contraste"] .icon-button {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+html.theme-high-contrast .icon-button:hover,
+:root[data-visual="alto-contraste"] .icon-button:hover {
+  background: #ffff00 !important;
+  color: #000000 !important;
+  border-color: #ffff00 !important;
+}
+
+/* Placeholders no Alto Contraste */
+html.theme-high-contrast input::placeholder,
+html.theme-high-contrast textarea::placeholder,
+:root[data-visual="alto-contraste"] input::placeholder,
+:root[data-visual="alto-contraste"] textarea::placeholder {
+  color: #cccccc !important;
+  opacity: 1 !important;
+}
+
+/* Indicadores de Calendário e Relógio no Alto Contraste */
+html.theme-high-contrast input[type="date"]::-webkit-calendar-picker-indicator,
+html.theme-high-contrast input[type="time"]::-webkit-calendar-picker-indicator,
+:root[data-visual="alto-contraste"] input[type="date"]::-webkit-calendar-picker-indicator,
+:root[data-visual="alto-contraste"] input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Notificações no Alto Contraste */
+html.theme-high-contrast .notice,
+:root[data-visual="alto-contraste"] .notice {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+html.theme-high-contrast .notice-error,
+:root[data-visual="alto-contraste"] .notice-error {
+  border-color: #ff5555 !important;
+  color: #ff5555 !important;
+}
+html.theme-high-contrast .notice-warning,
+:root[data-visual="alto-contraste"] .notice-warning {
+  border-color: #ffff00 !important;
+  color: #ffff00 !important;
+}
+
+/* Pills no Alto Contraste */
+html.theme-high-contrast .pill-success,
+:root[data-visual="alto-contraste"] .pill-success,
+html.theme-high-contrast .pill-warning,
+:root[data-visual="alto-contraste"] .pill-warning {
+  background: #000000 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00 !important;
+}
+
+/* Barra de Ações no Alto Contraste */
+html.theme-high-contrast .action-bar,
+:root[data-visual="alto-contraste"] .action-bar {
+  background: #000000 !important;
+  border: 2px solid #ffffff !important;
 }
 
 html.theme-high-contrast .chat-option-btn.emergency-btn,
