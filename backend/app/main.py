@@ -39,6 +39,7 @@ from app.models import (
     Symptom,
     User,
 )
+from app.time_utils import utc_now
 from app.schemas import (
     ClinicalAlertCreate,
     ClinicalAlertResponse,
@@ -672,7 +673,7 @@ def record_esas_assessment(
         gravidade_maxima=gravidade,
         acionou_triagem_dor=acionou_triagem,
         observacao=payload.observacao,
-        data_registro=datetime.utcnow(),
+        data_registro=utc_now(),
     )
     db.add(esas)
 
@@ -734,7 +735,7 @@ def record_pain_triage(
         medidas_nao_farmacologicas_exibidas=payload.medidas_nao_farmacologicas_exibidas,
         solicitou_agendamento=payload.solicitou_agendamento,
         status_atendimento='alerta_gerado',
-        data_triagem=datetime.utcnow(),
+        data_triagem=utc_now(),
     )
     db.add(sessao)
 
@@ -797,7 +798,7 @@ def update_alert_status(
         alerta.revisado_por = payload.revisado_por
     if payload.observacao_conduta:
         alerta.observacao_conduta = payload.observacao_conduta
-    alerta.atualizado_em = datetime.utcnow()
+    alerta.atualizado_em = utc_now()
 
     db.commit()
     db.refresh(alerta)
@@ -822,7 +823,7 @@ def create_clinical_note(
         tipo_evolucao=payload.tipo_evolucao,
         conteudo=payload.conteudo,
         conduta_plano=payload.conduta_plano,
-        criado_em=datetime.utcnow(),
+        criado_em=utc_now(),
     )
     db.add(note)
     db.commit()
@@ -858,7 +859,7 @@ def record_pain_map_entry(
         foto_anexada_url=payload.foto_anexada_url,
         observacao=payload.observacao,
         medicamento_associado=payload.medicamento_associado,
-        criado_em=datetime.utcnow(),
+        criado_em=utc_now(),
     )
     db.add(entry)
     db.commit()
