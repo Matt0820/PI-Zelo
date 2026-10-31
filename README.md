@@ -10,7 +10,7 @@ Zelo é um protótipo para acompanhamento domiciliar em cuidados paliativos. O r
 - `frontend/`: portal web para paciente/cuidador e equipe, implementado em `src/` com React, TypeScript e Vite.
 - `mobile-app/`: cliente Expo/React Native para paciente e cuidador.
 - `iniciar_zelo.sh` e `iniciar_zelo.bat`: inicializadores locais para Linux/macOS e Windows.
-- `frontend/pages/`, `frontend/paciente/`, `frontend/assistencial/`, `frontend/styles/` e `frontend/scripts/`: telas e assets HTML legados; a build Vite parte de `frontend/index.html` e usa a SPA em `frontend/src/`.
+- O portal web ativo fica em `frontend/src/` e é compilado pelo Vite a partir de `frontend/index.html`. As interfaces HTML estáticas anteriores foram removidas; o código React/TypeScript atual é a fonte da interface web.
 
 ## Início rápido em cinco passos
 
@@ -27,7 +27,7 @@ Zelo é um protótipo para acompanhamento domiciliar em cuidados paliativos. O r
 - [Como rodar](docs/COMO-RODAR.md): instalação, variáveis, banco, comandos e problemas comuns.
 - [Arquitetura](docs/ARQUITETURA.md): fluxo browser/app → API → banco e responsabilidade das pastas.
 - [Backend](docs/BACKEND.md): autenticação, permissões, endpoints, modelos e regras clínicas implementadas.
-- [Frontend web](docs/FRONTEND.md): páginas, estado, componentes, estilos e pontos legados.
+- [Frontend web](docs/FRONTEND.md): páginas, estado, componentes e estilos.
 - [Acessibilidade](docs/ACESSIBILIDADE.md): modos disponíveis e como verificar cada um.
 - [Chatbot](docs/CHATBOT.md): árvore ativa, formato dos nós e fluxo mobile.
 - [Como contribuir](docs/COMO-CONTRIBUIR.md): roteiro para mudanças comuns e revisão.

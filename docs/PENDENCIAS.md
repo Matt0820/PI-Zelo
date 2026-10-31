@@ -17,7 +17,7 @@
 
 ## Baixa
 
-- **Interfaces HTML legadas**: `frontend/pages/`, `frontend/paciente/`, `frontend/assistencial/`, `frontend/styles/`, `frontend/scripts/` e `frontend/login.html` coexistem com a SPA. Confirmar se continuam necessárias antes de qualquer arquivamento. Nada foi apagado.
+- **Captura de telas antiga**: `capture_system_screenshots.py` ainda aponta para páginas estáticas removidas. Atualizar o utilitário para capturar as telas da SPA ou removê-lo em uma tarefa própria.
 - **Alegações dos documentos acadêmicos — `[VERIFICAR]`**: DOCX relata validação clínica/IVC, auditoria WCAG, HTTPS/TLS, pseudonimização e pontuação SUS. Esses resultados não podem ser provados pelo código consultado; solicitar fonte/relatório de auditoria e revisão clínica antes de divulgá-los como propriedade do produto.
 - **Inicializadores sem validação nesta tarefa**: `iniciar_zelo.sh` e `.bat` instalam dependências e iniciam vários serviços. Testar em ambiente limpo de cada sistema operacional e revisar mensagens/encerramento de processos.
 

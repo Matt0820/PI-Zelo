@@ -63,6 +63,6 @@ Login e cadastro público não exigem token. Rotas não relacionadas a `/api/` t
 - A autorização é aplicada por uma dependência FastAPI global e complementada por verificações do papel e do `user_id` em `security.py`.
 - O startup usa `Base.metadata.create_all`, uma alteração pontual de coluna e a rotina `seed_initial_data`; não há ferramenta de migração versionada no inventário atual.
 
-## Pastas que não participam da SPA compilada
+## Interface web
 
-`frontend/pages/`, `frontend/paciente/`, `frontend/assistencial/`, `frontend/styles/`, `frontend/scripts/` e `frontend/login.html` contêm interfaces/scripts HTML anteriores. A build Vite padrão tem `frontend/index.html` como entrada e importa a aplicação de `frontend/src/main.tsx`. Mantenha essas pastas até haver decisão explícita de migração ou arquivamento; não são apagadas nesta documentação.
+A interface ativa é a SPA React/TypeScript em `frontend/src/`, montada por `frontend/index.html` e compilada pelo Vite. As telas HTML estáticas anteriores e seus CSS/JS foram removidos após a busca de referências à partir da SPA, configuração Vite, backend e inicializadores. `frontend/scripts/auditoria-zelo.js` foi mantido por ser um utilitário independente. Foi criado um backup temporário de recuperação fora do repositório.
