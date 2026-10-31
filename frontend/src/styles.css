@@ -1482,3 +1482,121 @@ html.theme-high-contrast [tabindex="0"]:focus-visible {
 :root[data-visual="escuro"] .review-score { background: #26332d; color: var(--ink); border-color: var(--border); }
 :root[data-visual="alto-contraste"] .review-score { background: #000; color: #fff; border: 2px solid #ffff00; }
 @media(max-width:390px) { .rating-row { grid-template-columns: repeat(2, minmax(56px, 1fr)); gap: 12px; } }
+
+/* Paleta noturna: superfícies azul ardósia e acentos clínicos distintos. */
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) {
+  --green: #71d9b2;
+  --green-dark: #8be7c4;
+  --green-soft: #203b3b;
+  --paper: #192536;
+  --canvas: #0e1622;
+  --ink: #f3f6fb;
+  --muted: #b5c1d0;
+  --border: #38495f;
+  --danger: #ff9b91;
+  --danger-soft: #402831;
+  --blue: #8fc8ff;
+  --accent-blue: #8fc8ff;
+  --accent-violet: #c0a8ff;
+  --accent-amber: #f3c56b;
+  --surface-raised: #202f43;
+  --surface-sunken: #111c2b;
+  --shadow: 0 12px 32px rgba(0, 0, 0, .32);
+  color-scheme: dark;
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) body {
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .topbar,
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar {
+  background: #141f2e !important;
+  border-color: #34445a !important;
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item:hover,
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item:focus-visible,
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item.active {
+  background: #203a3b !important;
+  color: var(--green) !important;
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item .nav-icon {
+  background: #223247 !important;
+  color: var(--accent-blue) !important;
+  border-color: #40536c !important;
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .sidebar .nav-item.active .nav-icon {
+  background: var(--green) !important;
+  color: #10211f !important;
+  border-color: var(--green) !important;
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) :is(.record-card, .patient-card, .metric, .alert-card, .wizard-card, .modal-card, .accessibility-mode-card, .remedy-schedule-item, .quick-link, .notice-item-card) {
+  background: var(--paper) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .16);
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) :is(.score, .empty, .sidebar-note, .rating-group, .chat-bubble-zelo) {
+  background: var(--surface-raised) !important;
+  border-color: #40536c !important;
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) :is(input, select, textarea, .role-switch, .remedy-info p, .record-note, .chat-option-btn, .svg-silhouette-wrapper) {
+  background-color: var(--surface-sunken) !important;
+  border-color: #40536c !important;
+}
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric {
+  border-top: 2px solid var(--metric-accent, var(--green)) !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 1) { --metric-accent: var(--accent-blue); }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 2) { --metric-accent: var(--accent-violet); }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n + 3) { --metric-accent: var(--accent-amber); }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric:nth-child(4n) { --metric-accent: var(--green); }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric strong,
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric-icon { color: var(--metric-accent, var(--green)) !important; }
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .metric.danger { --metric-accent: var(--danger); }
+
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .patient-avatar {
+  background: #203a3b !important;
+  color: var(--green) !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .patient-card:hover {
+  border-color: var(--accent-blue) !important;
+  box-shadow: 0 0 0 1px rgba(143, 200, 255, .28), var(--shadow);
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .button-secondary:hover,
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .chat-option-btn:hover {
+  background: #203a3b !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .rating-row button,
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .review-score {
+  background: #172335 !important;
+  border-color: #40536c !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .wizard-progress-track {
+  background: #29384b !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .alert-card {
+  border-left-color: var(--accent-amber) !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .pill-warning,
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .severity-high {
+  background: #47391f !important;
+  color: var(--accent-amber) !important;
+  border-color: #80662d !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .notice-info {
+  background: #1c3550 !important;
+  color: var(--accent-blue) !important;
+  border-color: #385e86 !important;
+}
+:is(html.theme-escuro, :root[data-visual="escuro"], html.theme-dark) .chat-bubble-zelo {
+  background: #242a45 !important;
+  border-color: #454a70 !important;
+}
