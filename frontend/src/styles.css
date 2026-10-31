@@ -110,6 +110,8 @@ input:not([type="checkbox"]):not([type="radio"]),select,textarea{min-height:var(
 .orientation-preview{padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:var(--paper);overflow-wrap:anywhere}
 .medication-shortcut{background:var(--green-soft);border-color:var(--status-success-border);color:var(--green)}
 .map-form label{gap:8px}
+.map-history{max-width:700px;margin-top:0}
+.map-history h2{margin-bottom:8px}
 .page-heading>.button-row{min-width:0;max-width:100%;flex-wrap:wrap;justify-content:flex-end}
 .button-row>.button,.button-row>a.button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 .notice-error .button-row{width:100%;align-items:stretch}

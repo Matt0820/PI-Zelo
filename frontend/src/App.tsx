@@ -676,8 +676,10 @@ function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario
         <label>Observação e cuidados<textarea rows={3} value={mapNote} onChange={e=>setMapNote(e.target.value)} placeholder="Descreva se piora ao movimentar, se tomou remédio ou se há vermelhidão..."/></label>
         <button className="button button-primary" disabled={loading}>{loading?'Enviando…':'Gravar no Mapa do Corpo'}</button>
       </form>
-      <h2 className="section-heading">Registros corporais anteriores</h2>
-      {data.dor.length?data.dor.map(d=><div className="history-item" key={d.id}><b>{d.regiao_anatomica} · {d.tipo_ocorrencia} · {d.intensidade}/10</b><span>{date(d.criado_em)}</span>{d.observacao&&<p>{d.observacao}</p>}</div>):<Empty title="Nenhum local registrado" text="Seus apontamentos no mapa corporal aparecerão aqui."/>}
+      <section className="record-card map-history" aria-labelledby="map-history-title">
+        <h2 id="map-history-title">Registros corporais anteriores</h2>
+        {data.dor.length?data.dor.map(d=><div className="history-item" key={d.id}><b>{d.regiao_anatomica} · {d.tipo_ocorrencia} · {d.intensidade}/10</b><span>{date(d.criado_em)}</span>{d.observacao&&<p>{d.observacao}</p>}</div>):<Empty title="Nenhum local registrado" text="Seus apontamentos no mapa corporal aparecerão aqui."/>}
+      </section>
     </>}
 
     {/* ORIENTAÇÕES DA EQUIPE */}
