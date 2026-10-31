@@ -10,13 +10,18 @@ Modulo FastAPI com endpoints para:
 
 import hashlib
 import hmac
+import base64
+import json
+import secrets
+import time
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import desc, inspect, or_, select, text
 from sqlalchemy.orm import Session
@@ -55,6 +60,7 @@ from app.schemas import (
     SymptomCreate,
     SymptomResponse,
     UserCreate,
+    AuthResponse,
     UserLogin,
     UserResponse,
 )
@@ -68,11 +74,106 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
-    allow_credentials=True,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=False,
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+
+def _b64encode(value: bytes) -> str:
+    return base64.urlsafe_b64encode(value).rstrip(b'=').decode('ascii')
+
+
+def _b64decode(value: str) -> bytes:
+    return base64.urlsafe_b64decode(value + '=' * (-len(value) % 4))
+
+
+def _make_access_token(user: User) -> str:
+    payload = _b64encode(json.dumps({
+        'sub': user.id,
+        'role': user.perfil,
+        'exp': int(time.time()) + settings.AUTH_TOKEN_TTL_SECONDS,
+    }, separators=(',', ':')).encode())
+    signature = _b64encode(hmac.new(settings.AUTH_SECRET.encode(), payload.encode(), hashlib.sha256).digest())
+    return f'{payload}.{signature}'
+
+
+def _decode_access_token(token: str) -> dict:
+    try:
+        payload, signature = token.split('.', 1)
+        expected = _b64encode(hmac.new(settings.AUTH_SECRET.encode(), payload.encode(), hashlib.sha256).digest())
+        if not hmac.compare_digest(signature, expected):
+            raise ValueError('assinatura inválida')
+        claims = json.loads(_b64decode(payload))
+        if int(claims['exp']) <= int(time.time()):
+            raise ValueError('token expirado')
+        return claims
+    except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=401, detail='Sessão inválida ou expirada. Entre novamente.') from exc
+
+
+def _hash_password(password: str) -> str:
+    salt = secrets.token_bytes(16)
+    digest = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 310_000)
+    return f'pbkdf2_sha256$310000${_b64encode(salt)}${_b64encode(digest)}'
+
+
+def _verify_password(password: str, stored: str) -> tuple[bool, bool]:
+    """Retorna (válida, precisa migrar); atualiza hashes legados após login válido."""
+    if stored.startswith('pbkdf2_sha256$'):
+        try:
+            _, rounds, salt, expected = stored.split('$', 3)
+            actual = _b64encode(hashlib.pbkdf2_hmac('sha256', password.encode(), _b64decode(salt), int(rounds)))
+            return hmac.compare_digest(actual, expected), False
+        except (ValueError, TypeError):
+            return False, False
+    legacy = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    valid = hmac.compare_digest(stored, legacy)
+    return valid, valid
+
+
+@app.middleware('http')
+async def authenticate_api_requests(request: Request, call_next):
+    path = request.url.path
+    if not path.startswith('/api/') or request.method == 'OPTIONS':
+        return await call_next(request)
+
+    public = (path in {'/api/auth/login', '/api/login'} or (path == '/api/users' and request.method == 'POST'))
+    if public:
+        return await call_next(request)
+
+    header = request.headers.get('authorization', '')
+    if not header.lower().startswith('bearer '):
+        return JSONResponse(status_code=401, content={'detail': 'Autenticação necessária.'})
+    try:
+        claims = _decode_access_token(header[7:].strip())
+    except HTTPException as exc:
+        return JSONResponse(status_code=exc.status_code, content={'detail': exc.detail})
+
+    try:
+        with SessionLocal() as db:
+            user = db.get(User, int(claims.get('sub')))
+            if not user or not user.ativo:
+                return JSONResponse(status_code=401, content={'detail': 'Conta inativa ou inexistente. Entre novamente.'})
+            role = user.perfil
+            user_id = user.id
+    except (TypeError, ValueError):
+        return JSONResponse(status_code=401, content={'detail': 'Sessão inválida. Entre novamente.'})
+    is_team = role in {'admin', 'assistencial'}
+    if path == '/api/seed' and role != 'admin':
+        return JSONResponse(status_code=403, content={'detail': 'Apenas administradores podem popular a base.'})
+    if path == '/api/users' and request.method == 'GET' and not is_team:
+        return JSONResponse(status_code=403, content={'detail': 'Acesso restrito à equipe assistencial.'})
+    if path.startswith('/api/alertas') and not is_team:
+        return JSONResponse(status_code=403, content={'detail': 'Acesso restrito à equipe assistencial.'})
+    user_path = re.match(r'^/api/users/(\d+)(?:/|$)', path)
+    if user_path and not is_team and int(user_path.group(1)) != int(user_id):
+        return JSONResponse(status_code=403, content={'detail': 'Acesso permitido apenas aos próprios dados.'})
+    if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|medications|orientations)(?:/|$)', path):
+        return JSONResponse(status_code=403, content={'detail': 'Esta ação é restrita à equipe assistencial.'})
+
+    return await call_next(request)
 
 frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
 frontend_build_dir = frontend_dir / "dist"
@@ -91,7 +192,7 @@ def seed_initial_data(db: Session) -> None:
     admin_user = User(
         nome="Administrador do Sistema Zelo",
         email="admin@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("admin123".encode()).hexdigest(),
+        senha_hash=_hash_password("admin123"),
         perfil="admin",
         prontuario="ADM-001",
         telefone="(41) 3000-0001",
@@ -103,7 +204,7 @@ def seed_initial_data(db: Session) -> None:
     medico_user = User(
         nome="Dr. Alexandre Prado",
         email="medico@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("medico123".encode()).hexdigest(),
+        senha_hash=_hash_password("medico123"),
         perfil="assistencial",
         prontuario="CRM-PR 24890",
         telefone="(41) 3000-0002",
@@ -115,7 +216,7 @@ def seed_initial_data(db: Session) -> None:
     enfermeira_user = User(
         nome="Enf. Mariana Santos",
         email="enfermeira@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("enf123".encode()).hexdigest(),
+        senha_hash=_hash_password("enf123"),
         perfil="assistencial",
         prontuario="COREN-PR 330719",
         telefone="(41) 3000-0003",
@@ -128,7 +229,7 @@ def seed_initial_data(db: Session) -> None:
     p1 = User(
         nome="Leovegildo Coimbra Nunes",
         email="leovegildo.paciente@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("paciente123".encode()).hexdigest(),
+        senha_hash=_hash_password("paciente123"),
         perfil="paciente",
         prontuario="001",
         idade=74,
@@ -152,7 +253,7 @@ def seed_initial_data(db: Session) -> None:
     c1 = User(
         nome="Carlos Nunes (Cuidador)",
         email="cuidador@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("paciente123".encode()).hexdigest(),
+        senha_hash=_hash_password("paciente123"),
         perfil="paciente",
         prontuario="CUID-001",
         telefone="(41) 98713-2808",
@@ -166,7 +267,7 @@ def seed_initial_data(db: Session) -> None:
     p2 = User(
         nome="Maria Helena Fagundes",
         email="maria.helena@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("zelo123".encode()).hexdigest(),
+        senha_hash=_hash_password("zelo123"),
         perfil="paciente",
         prontuario="002",
         idade=68,
@@ -190,7 +291,7 @@ def seed_initial_data(db: Session) -> None:
     p3 = User(
         nome="Joao Batista da Silva",
         email="joao.batista@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("zelo123".encode()).hexdigest(),
+        senha_hash=_hash_password("zelo123"),
         perfil="paciente",
         prontuario="003",
         idade=81,
@@ -214,7 +315,7 @@ def seed_initial_data(db: Session) -> None:
     p4 = User(
         nome="Alzira Pereira dos Santos",
         email="alzira.santos@zelo.saude.gov.br",
-        senha_hash=hashlib.sha256("zelo123".encode()).hexdigest(),
+        senha_hash=_hash_password("zelo123"),
         perfil="paciente",
         prontuario="004",
         idade=79,
@@ -443,8 +544,10 @@ def trigger_seed(db: Annotated[Session, Depends(get_db)]) -> dict:
     return {"message": "Base de dados verificada e populada com sucesso."}
 
 
-@app.post('/api/users', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) -> User:
+@app.post('/api/users', response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
+def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) -> dict:
+    if payload.perfil != 'paciente':
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='O cadastro público permite criar apenas contas de paciente.')
     existing = db.scalar(select(User).where(User.email == payload.email))
     if existing:
         raise HTTPException(
@@ -455,8 +558,8 @@ def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) ->
     user = User(
         nome=payload.nome,
         email=str(payload.email),
-        senha_hash=hashlib.sha256(payload.senha.encode('utf-8')).hexdigest(),
-        perfil=payload.perfil,
+        senha_hash=_hash_password(payload.senha),
+        perfil='paciente',
         prontuario=payload.prontuario,
         idade=payload.idade,
         sexo=payload.sexo,
@@ -475,12 +578,12 @@ def create_user(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) ->
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+    return {'user': user, 'access_token': _make_access_token(user)}
 
 
-@app.post('/api/auth/login', response_model=UserResponse)
-@app.post('/api/login', response_model=UserResponse)
-def login(payload: UserLogin, db: Annotated[Session, Depends(get_db)]) -> User:
+@app.post('/api/auth/login', response_model=AuthResponse)
+@app.post('/api/login', response_model=AuthResponse)
+def login(payload: UserLogin, db: Annotated[Session, Depends(get_db)]) -> dict:
     identificador = payload.email.strip()
     cpf_digits = ''.join(c for c in identificador if c.isdigit())
     cpf_formatado = f"{cpf_digits[:3]}.{cpf_digits[3:6]}.{cpf_digits[6:9]}-{cpf_digits[9:]}" if len(cpf_digits) == 11 else None
@@ -497,13 +600,17 @@ def login(payload: UserLogin, db: Annotated[Session, Depends(get_db)]) -> User:
     user = db.scalar(
         select(User).where(or_(*identificador_conditions))
     )
-    senha_hash = hashlib.sha256(payload.senha.encode('utf-8')).hexdigest()
-    if not user or not user.ativo or not hmac.compare_digest(user.senha_hash, senha_hash):
+    valid_password, needs_migration = _verify_password(payload.senha, user.senha_hash) if user else (False, False)
+    if not user or not user.ativo or not valid_password:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Credenciais invalidas. Verifique o identificador e a senha.',
         )
-    return user
+    if needs_migration:
+        user.senha_hash = _hash_password(payload.senha)
+        db.commit()
+        db.refresh(user)
+    return {'user': user, 'access_token': _make_access_token(user)}
 
 
 @app.get('/api/users', response_model=list[UserResponse])

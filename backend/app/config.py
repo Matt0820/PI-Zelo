@@ -5,6 +5,7 @@ e MySQL em ambiente de produção.
 """
 
 import os
+import secrets
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -25,6 +26,18 @@ class Settings:
         'DATABASE_URL',
         f'sqlite:///{BASE_DIR / "zelo.db"}',
     )
+    # In production, set a stable secret through the environment. The fallback
+    # keeps local development usable and intentionally invalidates sessions on restart.
+    AUTH_SECRET: str = os.getenv('ZELO_AUTH_SECRET') or secrets.token_urlsafe(48)
+    AUTH_TOKEN_TTL_SECONDS: int = int(os.getenv('ZELO_AUTH_TOKEN_TTL_SECONDS', '28800'))
+    CORS_ORIGINS: list[str] = [
+        origin.strip()
+        for origin in os.getenv(
+            'ZELO_CORS_ORIGINS',
+            'http://localhost:5173,http://127.0.0.1:5173',
+        ).split(',')
+        if origin.strip()
+    ]
 
 
 settings = Settings()

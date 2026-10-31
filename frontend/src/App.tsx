@@ -15,6 +15,7 @@ const date=(value:string)=>new Date(value).toLocaleString('pt-BR',{dateStyle:'me
 
 export default function App(){
  const [usuario,setUsuario]=useState<Usuario|null>(()=>{try{const saved=localStorage.getItem(sessionKey);return saved?JSON.parse(saved) as Usuario:null;}catch{return null;}});
+ useEffect(()=>{const expired=()=>{try{localStorage.removeItem(sessionKey);}catch{}setUsuario(null);setSelecionado(null);};window.addEventListener('zelo:auth-expired',expired);return()=>window.removeEventListener('zelo:auth-expired',expired);},[]);
  const [notice,setNotice]=useState<Notice|null>(null);
  const [busy,setBusy]=useState(false);
  const [equipePagina,setEquipePagina]=useState<TeamPage>('painel');
@@ -37,7 +38,7 @@ export default function App(){
  useEffect(()=>{if(usuario&&isTeam)carregarEquipe().catch(e=>show('error',String(e.message||e)));},[usuario?.id,isTeam]);
  useEffect(()=>{if(usuario&&!isTeam)carregarPaciente(usuario.id).catch(e=>show('error',String(e.message||e)));},[usuario?.id,isTeam]);
  async function entrar(email:string,senha:string,expected:'equipe'|'paciente'){setBusy(true);try{const user=await api.login(email,senha);if(!user.ativo)throw new Error('Esta conta está inativa. Fale com a equipe responsável.');if(expected==='equipe'&&!['assistencial','admin'].includes(user.perfil))throw new Error('Esta conta é de paciente. Selecione a opção Paciente.');if(expected==='paciente'&&!['paciente','cuidador'].includes(user.perfil))throw new Error('Esta conta é da equipe. Selecione Equipe assistencial.');setUsuario(user);localStorage.setItem(sessionKey,JSON.stringify(user));}catch(e){show('error',e instanceof Error?e.message:'Não foi possível entrar.');}finally{setBusy(false);}}
- function sair(){localStorage.removeItem(sessionKey);setUsuario(null);setSelecionado(null);setMenuAberto(false);}
+ function sair(){localStorage.removeItem(sessionKey);localStorage.removeItem('@zelo/web/access-token');setUsuario(null);setSelecionado(null);setMenuAberto(false);}
  if(!usuario)return <Login entrar={entrar} criarConta={async dados=>{setBusy(true);try{const user=await api.criarPaciente(dados);setUsuario(user);localStorage.setItem(sessionKey,JSON.stringify(user));show('success','Conta do paciente criada.');}finally{setBusy(false);}}} busy={busy} notice={notice} />;
  return <div className="app-shell">
   <header className="topbar"><button className="brand" onClick={()=>{setSelecionado(null);isTeam?setEquipePagina('painel'):setPaginaPaciente('inicio');}} aria-label="Ir para o início"><img src={logo} alt="Zelo"/><span><b>zelo</b><small>{isTeam?'Portal assistencial':'Área do paciente'}</small></span></button><div className="topbar-user"><span>{usuario.nome}</span><button className="button button-quiet" onClick={sair}>Sair</button></div><button className="menu-trigger" aria-label="Abrir menu" onClick={()=>setMenuAberto(true)}><span className="menu-icon" aria-hidden="true"><i/><i/><i/></span></button></header>

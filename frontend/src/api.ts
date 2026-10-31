@@ -16,21 +16,30 @@ export type Medicacao = { id:number; user_id:number; nome:string; dose:string; h
 export type Orientacao = { id:number; user_id:number; titulo:string; descricao:string; categoria:string; prioridade:string; atualizada_em:string };
 
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const tokenKey='@zelo/web/access-token';
+function getToken(){try{return localStorage.getItem(tokenKey);}catch{return null;}}
+function setToken(token:string|null){try{if(token)localStorage.setItem(tokenKey,token);else localStorage.removeItem(tokenKey);}catch{/* armazenamento indisponível: a sessão valerá até recarregar */}}
+type AuthResponse={user:Usuario;access_token:string;token_type:'bearer'};
 async function request<T>(path:string, init:RequestInit={}):Promise<T>{
   let response:Response;
-  try { response=await fetch(`${API_BASE}${path}`,{...init,headers:{'Content-Type':'application/json',...init.headers}}); }
+  const token=getToken();
+  try { response=await fetch(`${API_BASE}${path}`,{...init,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{ }),...init.headers}}); }
   catch { throw new Error('Não foi possível conectar à API. Confirme se o backend está iniciado.'); }
   const body=await response.json().catch(()=>null) as {detail?:unknown}|null;
+  if(response.status===401&&path!=='/api/auth/login'&&path!=='/api/login'){
+    setToken(null);
+    if(typeof window!=='undefined')window.dispatchEvent(new Event('zelo:auth-expired'));
+  }
   if(!response.ok){const detail=body?.detail;const msg=typeof detail==='string'?detail:Array.isArray(detail)?detail.map((e)=>String((e as {msg?:string}).msg||'Campo inválido')).join('; '):'Não foi possível concluir a solicitação.';throw new Error(`API ${response.status}: ${msg}`);}
   return body as T;
 }
 const get=<T,>(path:string)=>request<T>(path);
 const post=<T,>(path:string,data:unknown)=>request<T>(path,{method:'POST',body:JSON.stringify(data)});
 export const api={
-  login:(email:string,senha:string)=>post<Usuario>('/api/auth/login',{email,senha}),
+  login:async(email:string,senha:string)=>{const auth=await post<AuthResponse>('/api/auth/login',{email,senha});setToken(auth.access_token);return auth.user;},
   pacientes:()=>get<Usuario[]>('/api/users?perfil=paciente'),
   paciente:(id:number)=>get<Usuario>(`/api/users/${id}`),
-  criarPaciente:(data:unknown)=>post<Usuario>('/api/users',data),
+  criarPaciente:async(data:unknown)=>{const auth=await post<AuthResponse>('/api/users',data);setToken(auth.access_token);return auth.user;},
   esas:(id:number)=>get<ESAS[]>(`/api/users/${id}/esas`),
   triagens:(id:number)=>get<Triagem[]>(`/api/users/${id}/triagem-dor`),
   locaisDor:(id:number)=>get<LocalDor[]>(`/api/users/${id}/locais-dor`),

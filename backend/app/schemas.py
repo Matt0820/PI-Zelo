@@ -39,7 +39,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     """Estrutura aceita no cadastro de um novo usuário."""
-    senha: str
+    senha: str = Field(min_length=8)
 
 
 class UserUpdate(BaseModel):
@@ -74,6 +74,13 @@ class UserResponse(UserBase):
     id: int
     ativo: bool
     criado_em: datetime
+
+
+class AuthResponse(BaseModel):
+    """Usuário autenticado e token de acesso temporário."""
+    user: UserResponse
+    access_token: str
+    token_type: str = 'bearer'
 
 
 # ============================================================================
