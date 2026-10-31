@@ -15,6 +15,7 @@ import {
   buscarOrientacoes,
   criarMedicacao,
   criarUsuario,
+  limparTokenAcesso,
   registrarESAS,
   registrarLocalDor,
   registrarTriagemDor,
@@ -180,6 +181,7 @@ export default function App() {
 
   async function sair() {
     await AsyncStorage.removeItem(STORAGE_KEYS.perfil);
+    await limparTokenAcesso();
     setUserId(null);
     setAvaliacoesESAS([]);
     setMedicacoes([]);

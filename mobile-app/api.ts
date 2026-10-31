@@ -5,10 +5,12 @@
  * aplicativo, incluindo a escala ESAS e a triagem conversacional da dor.
  */
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { ESASAssessment, LocalDor, Medicacao, Orientacao, PainTriageData, Sintoma } from './types';
 
 const hostLocal = Platform.OS === 'android' ? '10.0.2.2' : '127.0.0.1';
 const API_URL = (process.env.EXPO_PUBLIC_API_URL || `http://${hostLocal}:8000`).replace(/\/$/, '');
+const TOKEN_KEY = '@zelo/access_token';
 
 type UsuarioApi = {
   id: number;
@@ -16,6 +18,12 @@ type UsuarioApi = {
   email: string;
   ativo: boolean;
   criado_em: string;
+};
+
+type AuthResponseApi = {
+  user: UsuarioApi;
+  access_token: string;
+  token_type: string;
 };
 
 type SintomaApi = {
@@ -76,11 +84,13 @@ type LocalDorApi = {
 
 async function requisicao<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
+  const token = await AsyncStorage.getItem(TOKEN_KEY).catch(() => null);
   try {
     response = await fetch(`${API_URL}${path}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
       },
     });
@@ -102,6 +112,26 @@ async function requisicao<T>(path: string, options: RequestInit = {}): Promise<T
   return body as T;
 }
 
+async function usuarioAutenticado(path: string, options: RequestInit): Promise<UsuarioApi> {
+  const resposta = await requisicao<AuthResponseApi>(path, options);
+  if (
+    !resposta?.user
+    || typeof resposta.user.id !== 'number'
+    || typeof resposta.user.nome !== 'string'
+    || typeof resposta.user.email !== 'string'
+    || typeof resposta.access_token !== 'string'
+  ) {
+    throw new Error('A resposta de autenticação da API está inválida.');
+  }
+  await AsyncStorage.setItem(TOKEN_KEY, resposta.access_token);
+  return resposta.user;
+}
+
+/** Remove o token local ao encerrar a sessão. */
+export async function limparTokenAcesso(): Promise<void> {
+  await AsyncStorage.removeItem(TOKEN_KEY);
+}
+
 /**
  * Dados enviados ao criar a conta de paciente.
  */
@@ -111,7 +141,7 @@ export type DadosUsuario = { nome:string; email:string; senha:string; perfil:'pa
  * Cria uma conta pela API e devolve o perfil retornado.
  */
 export function criarUsuario(dados: DadosUsuario) {
-  return requisicao<UsuarioApi>('/api/users', {
+  return usuarioAutenticado('/api/users', {
     method: 'POST',
     body: JSON.stringify(dados),
   });
@@ -121,7 +151,7 @@ export function criarUsuario(dados: DadosUsuario) {
  * Autentica o usuário na API.
  */
 export function entrar(email: string, senha: string) {
-  return requisicao<UsuarioApi>('/api/auth/login', {
+  return usuarioAutenticado('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, senha }),
   });

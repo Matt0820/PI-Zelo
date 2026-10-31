@@ -23,7 +23,7 @@ import { useVisual, Palette } from '../visual';
 type HomeTab = 'resumo' | 'sintomas' | 'medicacoes';
 
 type HomeScreenProps = {
-  nomeResponsavel: string;
+  nomeResponsavel?: string | null;
   orientacoes: Orientacao[];
   avaliacoesESAS: ESASAssessment[];
   medicacoes: Medicacao[];
@@ -60,7 +60,8 @@ export default function HomeScreen({
   const [menuAberto, setMenuAberto] = useState(false);
   const { cores } = useVisual();
   const estilos = criarEstilos(cores);
-  const primeiroNome = nomeResponsavel.trim().split(/\s+/)[0] || 'Responsável';
+  const nomeNormalizado = typeof nomeResponsavel === 'string' ? nomeResponsavel.trim() : '';
+  const primeiroNome = nomeNormalizado.split(/\s+/)[0] || 'Responsável';
 
   function sair() {
     Alert.alert('Sair da conta', 'Deseja voltar à tela de cadastro?', [
