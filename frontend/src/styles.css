@@ -442,7 +442,7 @@ html.reduce-motion * {
   fill: rgba(0, 0, 0, 0);
   stroke: transparent;
   /* A borda invisível amplia a área clicável nas divisões entre regiões. */
-  stroke-width: 32;
+  stroke-width: 24;
   stroke-linejoin: round;
   stroke-linecap: round;
   cursor: pointer;
@@ -459,9 +459,9 @@ html.reduce-motion * {
   stroke-width: 7;
 }
 .svg-body-part.selected {
-  fill: rgba(255, 193, 7, .7) !important;
-  stroke: #a85c00 !important;
-  stroke-width: 10 !important;
+  fill: rgba(255, 193, 7, .6) !important;
+  stroke: #9c5700 !important;
+  stroke-width: 8 !important;
 }
 /* Mantém o trio intermediário equilibrado sem deixar uma coluna vazia. */
 .rating-row.rating-row-three { grid-template-columns: repeat(3, minmax(56px, 1fr)); }
@@ -489,7 +489,7 @@ html.theme-high-contrast .svg-body-part:hover {
 html.theme-high-contrast .svg-body-part.selected {
   fill: rgba(255, 255, 0, .58) !important;
   stroke: #ffff00 !important;
-  stroke-width: 9 !important;
+  stroke-width: 7 !important;
 }
 html.theme-high-contrast .svg-body-part:focus-visible {
   fill: rgba(255, 255, 0, .25);
@@ -843,9 +843,9 @@ html.theme-dark .svg-body-part:hover {
 html.theme-escuro .svg-body-part.selected,
 :root[data-visual="escuro"] .svg-body-part.selected,
 html.theme-dark .svg-body-part.selected {
-  fill: rgba(255, 193, 7, .7) !important;
-  stroke: #a85c00 !important;
-  stroke-width: 10 !important;
+  fill: rgba(255, 193, 7, .6) !important;
+  stroke: #9c5700 !important;
+  stroke-width: 8 !important;
 }
 html.theme-escuro .svg-body-part:focus-visible,
 :root[data-visual="escuro"] .svg-body-part:focus-visible,

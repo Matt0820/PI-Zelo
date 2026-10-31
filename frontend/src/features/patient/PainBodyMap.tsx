@@ -15,8 +15,16 @@ import {
 const OPPOSITE_REGION: Record<string, string> = {
   cabeca_frente: 'cabeca_costas', cabeca_costas: 'cabeca_frente',
   pescoco_frente: 'cervical', cervical: 'pescoco_frente',
-  ombro_direito: 'braco_dir_costas', braco_dir_costas: 'ombro_direito',
-  ombro_esquerdo: 'braco_esq_costas', braco_esq_costas: 'ombro_esquerdo',
+  ombro_direito: 'braco_sup_dir_costas',
+  ombro_esquerdo: 'braco_sup_esq_costas',
+  braco_superior_direito: 'braco_sup_dir_costas', braco_sup_dir_costas: 'braco_superior_direito',
+  cotovelo_direito: 'cotovelo_dir_costas', cotovelo_dir_costas: 'cotovelo_direito',
+  antebraco_direito: 'antebraco_dir_costas', antebraco_dir_costas: 'antebraco_direito',
+  mao_direita: 'mao_dir_costas', mao_dir_costas: 'mao_direita',
+  braco_superior_esquerdo: 'braco_sup_esq_costas', braco_sup_esq_costas: 'braco_superior_esquerdo',
+  cotovelo_esquerdo: 'cotovelo_esq_costas', cotovelo_esq_costas: 'cotovelo_esquerdo',
+  antebraco_esquerdo: 'antebraco_esq_costas', antebraco_esq_costas: 'antebraco_esquerdo',
+  mao_esquerda: 'mao_esq_costas', mao_esq_costas: 'mao_esquerda',
   torax: 'dorso_superior', dorso_superior: 'torax',
   abdomen_superior: 'lombar_sacra', lombar_sacra: 'abdomen_superior',
   abdomen_inferior: 'gluteos', gluteos: 'abdomen_inferior',
@@ -26,6 +34,24 @@ const OPPOSITE_REGION: Record<string, string> = {
   joelho_perna_direita: 'panturrilha_pe_dir', panturrilha_pe_dir: 'joelho_perna_direita',
   joelho_perna_esquerda: 'panturrilha_pe_esq', panturrilha_pe_esq: 'joelho_perna_esquerda'
 };
+
+const ARM_SEGMENT_PATHS = [
+  { name: 'Braço superior', path: 'M314 358 C304 405 302 463 293 507 Q318 529 350 536 C365 493 380 454 385 420 Q389 387 405 358Z' },
+  { name: 'Cotovelo', path: 'M293 507 Q318 529 350 536 L356 558 Q320 552 287 530Z' },
+  { name: 'Antebraço', path: 'M287 530 Q320 552 356 558 L316 618 C300 662 282 706 260 742 Q239 741 219 735 C235 697 250 650 264 604Z' },
+  { name: 'Mão', path: 'M219 735 Q195 751 164 777 L184 850 Q197 861 210 850 L229 836 Q244 849 256 834 L266 789 Q269 764 260 742 Q239 741 219 735Z' }
+] as const;
+
+const ARM_REGION_IDS = {
+  frente: {
+    direito: ['braco_superior_direito', 'cotovelo_direito', 'antebraco_direito', 'mao_direita'],
+    esquerdo: ['braco_superior_esquerdo', 'cotovelo_esquerdo', 'antebraco_esquerdo', 'mao_esquerda']
+  },
+  costas: {
+    direito: ['braco_sup_dir_costas', 'cotovelo_dir_costas', 'antebraco_dir_costas', 'mao_dir_costas'],
+    esquerdo: ['braco_sup_esq_costas', 'cotovelo_esq_costas', 'antebraco_esq_costas', 'mao_esq_costas']
+  }
+} as const;
 
 export interface PainBodyMapProps {
   usuario: Usuario;
@@ -71,6 +97,36 @@ export function PainBodyMap({
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     selecionarRegiao(id);
+  }
+
+  function renderArmZones(side: 'direito' | 'esquerdo'): React.JSX.Element {
+    const regionIds = ARM_REGION_IDS[view][side];
+    const transform = side === 'esquerdo' ? 'translate(1024 0) scale(-1 1)' : undefined;
+
+    return (
+      <g key={`${view}-${side}`} transform={transform}>
+        {ARM_SEGMENT_PATHS.map((segment, index) => {
+          const id = regionIds[index];
+          const region = ANATOMICAL_REGIONS.find(item => item.id === id);
+          const isSelected = selectedRegionId === id;
+          const label = `${segment.name} ${side}`;
+
+          return (
+            <path
+              key={id}
+              d={segment.path}
+              className={`svg-body-part ${isSelected ? 'selected' : ''}`}
+              onClick={() => selecionarRegiao(id)}
+              onKeyDown={event => handleRegionKeyDown(event, id)}
+              role="button"
+              tabIndex={0}
+              aria-label={region?.name ?? label}
+              aria-pressed={isSelected}
+            />
+          );
+        })}
+      </g>
+    );
   }
 
   async function handleSalvar(e: React.FormEvent) {
@@ -288,28 +344,9 @@ export function PainBodyMap({
                     aria-label="Quadril e bacia anterior"
                     aria-pressed={selectedRegionId === 'quadril_frente'}
                   />
-                  {/* Braço Direito */}
-                  <path
-                    d="M314 358 C304 405 302 463 293 507 L264 604 C250 650 235 697 219 735 Q195 751 164 777 L184 850 Q197 861 210 850 L229 836 Q244 849 256 834 L266 789 Q269 764 260 742 C282 706 300 662 316 618 L350 536 C365 493 380 454 385 420 Q389 387 405 358Z"
-                    className={`svg-body-part ${selectedRegionId === 'braco_direito' ? 'selected' : ''}`}
-                    onClick={() => selecionarRegiao('braco_direito')}
-                    onKeyDown={e => handleRegionKeyDown(e, 'braco_direito')}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Braço e mão direita"
-                    aria-pressed={selectedRegionId === 'braco_direito'}
-                  />
-                  {/* Braço Esquerdo */}
-                  <path
-                    d="M710 358 C720 405 722 463 731 507 L760 604 C774 650 789 697 805 735 Q829 751 860 777 L840 850 Q827 861 814 850 L795 836 Q780 849 768 834 L758 789 Q755 764 764 742 C742 706 724 662 708 618 L674 536 C659 493 644 454 639 420 Q635 387 619 358Z"
-                    className={`svg-body-part ${selectedRegionId === 'braco_esquerdo' ? 'selected' : ''}`}
-                    onClick={() => selecionarRegiao('braco_esquerdo')}
-                    onKeyDown={e => handleRegionKeyDown(e, 'braco_esquerdo')}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Braço e mão esquerda"
-                    aria-pressed={selectedRegionId === 'braco_esquerdo'}
-                  />
+                  {/* Braços, cotovelos, antebraços e mãos, separados pelas linhas da silhueta. */}
+                  {renderArmZones('direito')}
+                  {renderArmZones('esquerdo')}
                   {/* Coxa Direita */}
                   <path
                     d="M364 780 Q430 802 512 790 L512 970 Q480 966 447 961 Q395 953 363 965 C363 910 357 835 364 780Z"
@@ -415,28 +452,9 @@ export function PainBodyMap({
                     aria-label="Glúteos e quadril posterior"
                     aria-pressed={selectedRegionId === 'gluteos'}
                   />
-                  {/* Braço Direito Posterior */}
-                  <path
-                    d="M316 358 C304 405 302 463 293 507 L264 604 C250 650 235 697 219 735 Q195 751 164 777 L184 850 Q197 861 210 850 L229 836 Q244 849 256 834 L266 789 Q269 764 260 742 C282 706 300 662 316 618 L350 536 C365 493 380 454 385 420 Q389 387 405 358Z"
-                    className={`svg-body-part ${selectedRegionId === 'braco_dir_costas' ? 'selected' : ''}`}
-                    onClick={() => selecionarRegiao('braco_dir_costas')}
-                    onKeyDown={e => handleRegionKeyDown(e, 'braco_dir_costas')}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Braço direito posterior"
-                    aria-pressed={selectedRegionId === 'braco_dir_costas'}
-                  />
-                  {/* Braço Esquerdo Posterior */}
-                  <path
-                    d="M708 358 C720 405 722 463 731 507 L760 604 C774 650 789 697 805 735 Q829 751 860 777 L840 850 Q827 861 814 850 L795 836 Q780 849 768 834 L758 789 Q755 764 764 742 C742 706 724 662 708 618 L674 536 C659 493 644 454 639 420 Q635 387 619 358Z"
-                    className={`svg-body-part ${selectedRegionId === 'braco_esq_costas' ? 'selected' : ''}`}
-                    onClick={() => selecionarRegiao('braco_esq_costas')}
-                    onKeyDown={e => handleRegionKeyDown(e, 'braco_esq_costas')}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Braço esquerdo posterior"
-                    aria-pressed={selectedRegionId === 'braco_esq_costas'}
-                  />
+                  {/* Braços posteriores e mãos seguem a mesma divisão anatômica do verso. */}
+                  {renderArmZones('direito')}
+                  {renderArmZones('esquerdo')}
                   {/* Coxa Direita Posterior */}
                   <path
                     d="M364 780 Q430 802 512 790 L512 968 Q480 967 446 961 Q394 952 363 965 C363 900 358 835 364 780Z"
