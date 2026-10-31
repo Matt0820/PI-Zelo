@@ -1,6 +1,6 @@
-import { FormEvent, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import logo from '../images/logo-zelo-verde.png';
-import { AccessibilityBar } from './components/AccessibilityBar';
+import { AccessibilityBar, Button, ModalDialog, NoticeFeedback, PageHeading, MetricCard, EmptyState, DataCell } from './components';
 import { useAccessibility, ModoVisual } from './context/AccessibilityContext';
 import { Alerta, api, ESAS, Evolucao, LocalDor, Medicacao, Orientacao, Triagem, Usuario } from './api';
 
@@ -77,7 +77,7 @@ export default function App(){
    </aside>
    {menuAberto&&<button aria-label="Fechar menu" className="sidebar-scrim" onClick={()=>setMenuAberto(false)} />}
    <main className="main-content">
-    {notice&&<div className={`notice notice-${notice.kind}`} role="status">{notice.text}<button onClick={()=>setNotice(null)} aria-label="Fechar">×</button></div>}
+    {notice&&<NoticeFeedback kind={notice.kind} message={notice.text} onDismiss={()=>setNotice(null)} />}
     {isTeam? <TeamArea page={equipePagina} setPage={setEquipePagina} selected={selecionado} setSelected={setSelecionado} patients={pacientes} alerts={alertas} query={query} setQuery={setQuery} details={detalhes} busy={busy} setBusy={setBusy} openPatient={(p)=>{setBusy(true);carregarDetalhe(p).then(()=>setBusy(false)).catch(e=>{setBusy(false);show('error',e.message);});}} refreshDetail={()=>selecionado?carregarDetalhe(selecionado):carregarEquipe()} openModal={setModal} notice={show} updateAlert={async(a,state)=>{try{await api.atualizarAlerta(a.id,{estado:state,revisado_por:usuario.nome,observacao_conduta:state==='Tratado'?'Conduta registrada pela equipe no portal Zelo.':null});await carregarEquipe();show('success',`Alerta atualizado para “${state}”.`);}catch(e){show('error',String((e as Error).message));}}} />
       : <PatientArea usuario={usuario} page={paginaPaciente} setPage={setPaginaPaciente} data={patientData} refresh={()=>carregarPaciente(usuario.id)} notice={show} />}
    </main>
@@ -110,8 +110,7 @@ function TeamArea({page,setPage,selected,setSelected,patients,alerts,query,setQu
  return <section><PageHeading kicker="RESUMO DO SERVIÇO" title="Visão geral" description="Acompanhe pacientes e registros recentes em um só lugar." action={<button className="button button-primary" onClick={()=>openModal('paciente')}>Cadastrar paciente</button>} /><div className="metric-grid"><Metric label="Pacientes cadastrados" value={patients.length} /><Metric label="Alertas novos" value={newAlerts} tone={newAlerts?'danger':''}/><Metric label="Em revisão" value={alerts.filter(a=>a.estado==='Em revisao').length}/><Metric label="Alertas tratados" value={alerts.filter(a=>a.estado==='Tratado').length}/></div><div className="section-title"><div><h2>Pacientes recentes</h2><p>Acesso rápido ao prontuário.</p></div><button className="button button-secondary" onClick={()=>setPage('pacientes')}>Ver pacientes</button></div>{patients.length===0?<Empty title="Nenhum paciente cadastrado" text="Cadastre o primeiro paciente para começar o acompanhamento."/>:<div className="patient-grid">{patients.slice(0,4).map(p=><PatientCard key={p.id} patient={p} onClick={()=>openPatient(p)}/>)}</div>}<div className="section-title"><div><h2>Alertas novos</h2><p>Registros enviados pelo paciente ou cuidador.</p></div><button className="button button-secondary" onClick={()=>setPage('alertas')}>Abrir alertas</button></div>{alerts.filter(a=>a.estado==='Novo').slice(0,3).map(a=><AlertCard key={a.id} alert={a} patient={patients.find(p=>p.id===a.user_id)} openPatient={openPatient} update={updateAlert}/>)}</section>;
 }
 
-function PageHeading({kicker,title,description,action}:{kicker:string;title:string;description:string;action?:ReactNode}){return <div className="page-heading"><div><span className="eyebrow">{kicker}</span><h1>{title}</h1><p>{description}</p></div>{action}</div>;}
-function Metric({label,value,tone=''}:{label:string;value:number|string;tone?:string}){return <article className={`metric ${tone}`}><span>{label}</span><strong>{value}</strong></article>;}
+function Metric({label,value,tone=''}:{label:string;value:number|string;tone?:string}){return <MetricCard label={label} value={value} danger={tone==='danger'} />;}
 function PatientCard({patient,onClick}:{patient:Usuario;onClick:()=>void}){return <button className="patient-card" onClick={onClick}><span className="patient-avatar">{patient.nome.slice(0,1).toUpperCase()}</span><span className="patient-card-body"><b>{patient.nome}</b><small>{patient.prontuario?`Prontuário ${patient.prontuario}`:'Prontuário não informado'}</small><small>{patient.diagnostico_oncologico||'Diagnóstico não informado'}</small></span><span className="chevron">›</span></button>;}
 function AlertCard({alert,patient,openPatient,update}:{alert:Alerta;patient?:Usuario;openPatient:(p:Usuario)=>void;update:(a:Alerta,state:string)=>void}){return <article className="alert-card"><div className="alert-top"><span className={`severity severity-${alert.severidade==='grave'?'high':'medium'}`}>{alert.severidade==='grave'?'Prioridade alta':alert.severidade}</span><span className="state">{alert.estado==='Em revisao'?'Em revisão':alert.estado}</span></div><h3>{alert.titulo}</h3><p>{alert.descricao}</p><small>{date(alert.criado_em)}{patient?` · ${patient.nome}`:''}</small><div className="button-row">{patient&&<button className="button button-secondary" onClick={()=>openPatient(patient)}>Abrir prontuário</button>}{alert.estado==='Novo'&&<button className="button button-secondary" onClick={()=>update(alert,'Em revisao')}>Iniciar revisão</button>}{alert.estado!=='Tratado'&&<button className="button button-primary" onClick={()=>update(alert,'Tratado')}>Registrar conduta e tratar</button>}</div></article>;}
 function PatientRecord({patient,details,openModal,back,busy,notice,refresh}:{patient:Usuario;details:{esas:ESAS[];triagens:Triagem[];dor:LocalDor[];medicacoes:Medicacao[];orientacoes:Orientacao[];evolucoes:Evolucao[]};openModal:(m:'paciente'|'orientacao'|'diagnostico'|'agendamento'|'medicacao'|null)=>void;back:()=>void;busy:boolean;notice:(kind:Notice['kind'],text:string)=>void;refresh:()=>Promise<void>}){
@@ -129,8 +128,8 @@ function PatientRecord({patient,details,openModal,back,busy,notice,refresh}:{pat
  <article className="record-card"><div className="section-title" style={{marginTop:0}}><div><h2>Medicações e Prescrições</h2><p>Receitas ativas vinculadas ao paciente.</p></div><button className="button button-primary" onClick={()=>openModal('medicacao')}>+ Prescrever</button></div>{details.medicacoes.length?details.medicacoes.map(m=><div className="history-item" key={m.id} style={{padding:'10px 0'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'8px',flexWrap:'wrap'}}><b>💊 {m.nome} · {m.dose}</b><span className="pill">{m.horario} ({m.frequencia})</span></div>{m.observacao&&<p style={{margin:'4px 0 0',fontSize:'13px'}}>📋 Orientações: {m.observacao}</p>}{m.eh_dose_resgate&&<small style={{color:'var(--danger)',fontWeight:700}}>⚡ Dose de resgate autorizada</small>}</div>):<Empty title="Sem medicações" text="Prescreva a primeira medicação para o paciente."/>}</article></div>
  <button className="button button-quiet" onClick={()=>refresh().then(()=>notice('success','Prontuário atualizado.'))}>Atualizar dados do prontuário</button></section>;
 }
-function Data({label,value}:{label:string;value:string|number|null|undefined}){return <div className="data-cell"><dt>{label}</dt><dd>{value||'Não informado'}</dd></div>}
-function Empty({title,text}:{title:string;text:string}){return <div className="empty"><b>{title}</b><p>{text}</p></div>}
+function Data({label,value}:{label:string;value:string|number|null|undefined}){return <DataCell label={label} value={value||'Não informado'} />;}
+function Empty({title,text}:{title:string;text:string}){return <EmptyState title={title} text={text} />;}
 function Loading(){return <div className="loading" role="status">Carregando dados…</div>}
 
 function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orientacao'|'diagnostico'|'agendamento'|'medicacao';patient:Usuario|null;professional:Usuario;close:()=>void;done:(m:string)=>void}){
@@ -236,15 +235,7 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
 
   const title={paciente:'Cadastrar paciente',orientacao:'Enviar orientação',diagnostico:'Enviar diagnóstico e justificativa',agendamento:'Enviar agendamento',medicacao:'Prescrever Medicamento ou Receita'}[type];
 
-  return <div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)close();}}>
-    <section className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div className="modal-head">
-        <div>
-          <span className="eyebrow">{patient?.nome||'NOVO PRONTUÁRIO'}</span>
-          <h2 id="modal-title">{title}</h2>
-        </div>
-        <button className="icon-button" onClick={close} aria-label="Fechar">×</button>
-      </div>
+  return <ModalDialog title={title} kicker={patient?.nome||'NOVO PRONTUÁRIO'} onClose={close} size="large">
 
       <form onSubmit={submit} className="form-stack">
         {type==='paciente'&&<>
@@ -337,14 +328,13 @@ function TeamModal({type,patient,professional,close,done}:{type:'paciente'|'orie
         {error&&<div className="notice notice-error">{error}</div>}
 
         <div className="modal-actions">
-          <button type="button" className="button button-secondary" onClick={close}>Cancelar</button>
-          <button className="button button-primary" disabled={sending}>
-            {sending?'Enviando…':type==='paciente'?'Cadastrar paciente':type==='medicacao'?'Salvar Prescrição no Prontuário':title}
-          </button>
+          <Button type="button" variant="secondary" onClick={close}>Cancelar</Button>
+          <Button type="submit" variant="primary" loading={sending} loadingText="Salvando no prontuário…">
+            {type==='paciente'?'Cadastrar paciente':type==='medicacao'?'Salvar Prescrição no Prontuário':title}
+          </Button>
         </div>
       </form>
-    </section>
-  </div>;
+  </ModalDialog>;
 }
 
 function PatientArea({usuario,page,setPage,data,refresh,notice}:{usuario:Usuario;page:PatientPage;setPage:(p:PatientPage)=>void;data:{esas:ESAS[];medicacoes:Medicacao[];orientacoes:Orientacao[];dor:LocalDor[]};refresh:()=>Promise<void>;notice:(kind:Notice['kind'],text:string)=>void}){
