@@ -26,6 +26,13 @@
 
 /* Chatbot Zelo */
 .chatbot-shell{width:min(100%,780px);margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.chatbot-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.chat-current-question{margin:0;color:var(--ink);font-size:18px;line-height:1.45}
+.chat-instructions{margin:0;padding-left:22px;color:var(--ink);line-height:1.6}
+.chat-current-question:focus,.chatbot-shell h1:focus,.chatbot-shell h2:focus{outline:3px solid var(--blue);outline-offset:4px;border-radius:3px}
+.chatbot-shell button:focus-visible,.chatbot-shell a:focus-visible,.chatbot-shell textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.chat-flow-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px}
+.chat-flow-actions [role="group"]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .chat-stream{display:flex;flex-direction:column;gap:14px;min-height:280px}
 .chat-bubble{max-width:85%;padding:18px 20px;border-radius:16px;line-height:1.55;font-size:16px}
 .chat-bubble-zelo{align-self:flex-start;background:var(--paper);border:1.5px solid var(--border);color:var(--ink);box-shadow:0 3px 10px rgba(0,0,0,.04)}
@@ -37,6 +44,7 @@
 .chat-option-btn{min-height:54px;padding:12px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--paper);color:var(--ink);font-size:16px;font-weight:700;text-align:left;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s ease}
 .chat-option-btn:hover{background:var(--green-soft);border-color:var(--green);color:var(--green);transform:translateY(-1px)}
 .chat-actions-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:6px}
+@media(max-width:760px){.chatbot-heading{align-items:stretch;flex-direction:column}.chatbot-heading>.button{width:100%}.chat-bubble{max-width:100%}.chat-flow-actions{align-items:stretch;flex-direction:column}.chat-flow-actions>.button,.chat-flow-actions [role="group"]>.button{width:100%}}
 
 /* Alertas de Remédios e Receitas */
 .remedy-alert-card{background:linear-gradient(135deg,#f4faf6 0%,#eaf5ec 100%);border:2px solid #b9d8c4;border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 4px 14px rgba(27,94,74,.06)}
