@@ -73,15 +73,7 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
 
   if (chronological.length === 0) {
     return (
-      <div
-        style={{
-          padding: '24px',
-          textAlign: 'center',
-          background: 'var(--paper)',
-          borderRadius: '12px',
-          border: '1px solid var(--border)'
-        }}
-      >
+      <div className="empty">
         <p style={{ color: 'var(--muted)', margin: 0 }}>
           Nenhuma avaliação ESAS registrada para gerar a curva de tendência temporal.
         </p>
@@ -135,13 +127,7 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
   const prevRecord = chronological.length > 1 ? chronological[chronological.length - 2] : null;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px'
-      }}
-    >
+    <div className="esas-trend-wrapper">
       {/* Barra de Presets e Seletores */}
       <div
         style={{
@@ -204,30 +190,13 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
               key={s.key}
               type="button"
               onClick={() => toggleSymptom(s.key)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '5px 11px',
-                borderRadius: '20px',
-                fontSize: '12px',
-                fontWeight: active ? 800 : 500,
-                border: `1.5px solid ${active ? s.color : 'var(--border)'}`,
-                backgroundColor: active ? 'var(--paper)' : 'transparent',
-                color: active ? 'var(--ink)' : 'var(--muted)',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
+              className={`esas-chip ${active ? 'active' : ''}`}
+              style={{ borderColor: active ? s.color : undefined }}
               aria-pressed={active}
             >
               <span
-                style={{
-                  width: '10px',
-                  height: '10px',
-                  borderRadius: '50%',
-                  backgroundColor: active ? s.color : '#c0b8ad',
-                  display: 'inline-block'
-                }}
+                className="esas-chip-dot"
+                style={{ backgroundColor: active ? s.color : 'var(--muted)' }}
               />
               {s.label}
             </button>
@@ -236,15 +205,7 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
       </div>
 
       {/* Contêiner Responsivo do Gráfico SVG */}
-      <div
-        style={{
-          background: 'var(--paper)',
-          border: '1px solid var(--border)',
-          borderRadius: '12px',
-          padding: '16px 12px 10px',
-          overflowX: 'auto'
-        }}
-      >
+      <div className="esas-svg-card">
         <svg
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
           style={{
@@ -262,7 +223,8 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
             y={padTop}
             width={chartWidth}
             height={criticalY - padTop}
-            fill="rgba(220, 38, 38, 0.05)"
+            fill="var(--danger-soft)"
+            fillOpacity="0.4"
             rx="4"
           />
 
@@ -272,7 +234,7 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
             y1={criticalY}
             x2={padLeft + chartWidth}
             y2={criticalY}
-            stroke="#dc2626"
+            stroke="var(--danger)"
             strokeDasharray="4 4"
             strokeWidth="1.5"
             strokeOpacity="0.8"
@@ -280,7 +242,7 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
           <text
             x={padLeft + chartWidth - 6}
             y={criticalY - 6}
-            fill="#dc2626"
+            fill="var(--danger)"
             fontSize="10"
             fontWeight="700"
             textAnchor="end"
@@ -407,109 +369,55 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
 
       {/* Painel de Variação Clínica Recente (Delta) */}
       {prevRecord && (
-        <div
-          style={{
-            background: 'var(--paper-soft, #faf7f2)',
-            border: '1px solid var(--border)',
-            borderRadius: '10px',
-            padding: '14px 16px'
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '10px'
-            }}
-          >
-            <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--ink)' }}>
+        <div className="esas-delta-panel">
+          <div className="esas-delta-header">
+            <span className="esas-delta-title">
               Variação da Última Avaliação ({formatShortDate(prevRecord.data_registro)} → {formatShortDate(lastRecord.data_registro)}):
             </span>
-            <span style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <span className="esas-delta-badge-label">
               Resposta Terapêutica
             </span>
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
-              gap: '10px'
-            }}
-          >
+          <div className="esas-delta-grid">
             {ESAS_SYMPTOMS.filter(s => activeKeys.has(s.key)).map(s => {
               const currentVal = Number(lastRecord[s.key] ?? 0);
               const prevVal = Number(prevRecord[s.key] ?? 0);
               const delta = currentVal - prevVal;
-
               const isImprovement = delta < 0; // Menos sintoma = melhora clínica
               const isCritical = currentVal >= 7;
 
               return (
                 <div
                   key={`delta-${s.key}`}
-                  style={{
-                    background: 'var(--paper)',
-                    border: `1px solid ${isCritical ? '#fca5a5' : 'var(--border)'}`,
-                    borderRadius: '8px',
-                    padding: '8px 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}
+                  className={`esas-delta-card ${isCritical ? 'critical' : ''}`}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div className="esas-delta-info">
                     <span
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: s.color,
-                        flexShrink: 0
-                      }}
+                      className="esas-delta-dot"
+                      style={{ backgroundColor: s.color }}
                     />
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink)' }}>
+                    <span className="esas-delta-name">
                       {s.label}
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div className="esas-delta-values">
                     <span
-                      style={{
-                        fontSize: '13px',
-                        fontWeight: 800,
-                        color: isCritical ? '#dc2626' : 'var(--ink)',
-                        fontVariantNumeric: 'tabular-nums'
-                      }}
+                      className={`esas-delta-current ${isCritical ? 'critical' : ''}`}
                     >
                       {currentVal}/10
                     </span>
 
                     {delta !== 0 ? (
                       <span
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 800,
-                          color: isImprovement ? 'var(--green)' : '#dc2626',
-                          backgroundColor: isImprovement ? 'var(--green-soft)' : '#fee2e2',
-                          padding: '2px 5px',
-                          borderRadius: '4px',
-                          fontVariantNumeric: 'tabular-nums'
-                        }}
+                        className={`esas-delta-diff ${isImprovement ? 'improvement' : 'worsening'}`}
                         title={isImprovement ? 'Melhora clínica' : 'Agravamento do sintoma'}
                       >
                         {isImprovement ? `↓ ${delta}` : `↑ +${delta}`}
                       </span>
                     ) : (
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          color: 'var(--muted)',
-                          padding: '2px 5px',
-                          fontVariantNumeric: 'tabular-nums'
-                        }}
-                      >
+                      <span className="esas-delta-diff neutral">
                         =
                       </span>
                     )}

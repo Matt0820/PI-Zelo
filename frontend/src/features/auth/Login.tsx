@@ -401,7 +401,7 @@ export function Login({
                           height: '5px',
                           borderRadius: '3px',
                           overflow: 'hidden',
-                          background: '#f1f5f9'
+                          background: 'var(--paper-soft)'
                         }}
                       >
                         <div
@@ -592,7 +592,7 @@ export function Login({
                 <>
                   <div
                     style={{
-                      background: '#f8fafc',
+                      background: 'var(--paper-soft)',
                       border: '1px solid #e2e8f0',
                       padding: '12px 14px',
                       borderRadius: '10px',

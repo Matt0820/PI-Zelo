@@ -242,7 +242,7 @@ export function TeamModal({
         {/* CADASTRO DE NOVO FÁRMACO NO CATÁLOGO DO BANCO */}
         {isCadastroFarmaco && (
           <>
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '12px 14px', borderRadius: '10px', marginBottom: '8px' }}>
+            <div style={{ background: 'var(--green-soft)', border: '1px solid var(--green)', padding: '12px 14px', borderRadius: '10px', marginBottom: '8px' }}>
               <strong style={{ color: '#166534', fontSize: '13.5px' }}>
                 🏥 Formulário Institucional de Medicamentos (RENAME / Cuidados Paliativos)
               </strong>
@@ -511,7 +511,7 @@ export function TeamModal({
         {type === 'medicacao' && !isCadastroFarmaco && (
           <>
             {/* SELETOR DO CATÁLOGO DO BANCO */}
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', marginBottom: '16px' }}>
+            <div style={{ background: 'var(--paper-soft)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
                 <label style={{ fontWeight: 700, color: 'var(--green-dark)', margin: 0, fontSize: '14px' }}>
                   💊 Selecionar do Catálogo do Banco de Dados:
