@@ -2593,4 +2593,3 @@ html.theme-dark .button-primary * {
   color: #121a16 !important;
 }
 
-.login-clock{display:flex;flex-direction:column;gap:2px;color:var(--muted);font-size:12px;line-height:1.35}.login-clock span{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}.login-clock time{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
