@@ -9,12 +9,19 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import qn, nsdecls
 
-BASE_DIR = Path(r"c:\Users\teste\Downloads\Zelo")
+BASE_DIR = Path(__file__).resolve().parent
 IMG_DIR = BASE_DIR / "docs" / "telas_sistema"
-BRAIN_DIR = Path(r"C:\Users\teste\.gemini\antigravity\brain\22791596-8225-434f-8443-9b6d0e32ed31")
+BRAIN_DIR = Path(r"C:\Users\teste\.gemini\antigravity\brain\ced5692f-64fe-427e-be46-c080be18c9e0")
 OUT_DOCX_LOCAL = BASE_DIR / "Zelo_Documento_Telas_e_Funcionalidades.docx"
+OUT_DOC_LOCAL = BASE_DIR / "Zelo_Documento_Telas_e_Funcionalidades.doc"
 OUT_DOCX_BRAIN = BRAIN_DIR / "Zelo_Documento_Telas_e_Funcionalidades.docx"
+OUT_DOC_BRAIN = BRAIN_DIR / "Zelo_Documento_Telas_e_Funcionalidades.doc"
 OUT_MD_BRAIN = BRAIN_DIR / "documento_telas_e_funcionalidades_zelo.md"
+
+DOWNLOADS_DIR = Path.home() / "Downloads"
+DESKTOP_DIR = Path.home() / "OneDrive" / "Área de Trabalho"
+if not DESKTOP_DIR.exists():
+    DESKTOP_DIR = Path.home() / "Desktop"
 
 def set_cell_background(cell, fill_hex):
     shading_elm = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{fill_hex}"/>')
@@ -539,6 +546,39 @@ def create_document():
                 "Manutenção da integridade de todos os alvos interativos."
             ],
             "ihc": "Critério de Sucesso WCAG 2.2 - 1.4.4 (Redimensionamento de Texto): Permite que o texto seja ampliado em até 200% sem tecnologia assistiva e sem perda de conteúdo ou funcionalidade."
+        },
+        {
+            "num": "25",
+            "img": "25_catalogo_medicamentos.png",
+            "title": "Catálogo Institucional de Fármacos e Protocolos de Dor (RENAME / Erasto Gaertner)",
+            "tipo": "Desktop / Farmacologia Institucional",
+            "largura": Inches(6.2),
+            "objetivo": "Padronizar o arsenal terapêutico para cuidados paliativos domiciliares, organizando princípios ativos, doses usuais e identificando claramente as Doses de Resgate SOS para alívio rápido da dor.",
+            "funcionalidades": [
+                "Cards farmacológicos padronizados: Bisacodil, Clonazepam, Dexametasona, Morfina, Paracetamol, etc.",
+                "Identificação de vias de administração seguras no domicílio: Oral (VO), Subcutânea (SC) e Transdérmica (TD).",
+                "Badge destacado '⚡ Resgate SOS' para medicamentos autorizados em crises de dor aguda.",
+                "Filtros ágeis por sintoma-alvo (Dor, Constipação, Náusea, Ansiedade/Insônia) e busca instantânea.",
+                "Caixa de Precauções & Orientações Clínicas com alertas médicos essenciais (ex.: uso compulsório de laxativo com opioides).",
+                "Botão de cadastro administrativo para inclusão de novas moléculas na base institucional."
+            ],
+            "ihc": "Heurística #5 de Nielsen (Prevenção de erros): A visualização padronizada de doses e frequências previne erros graves de posologia em fármacos potentes (opioides e adjuvantes). Tipografia numérica tabular (tabular-nums) para precisão decimal."
+        },
+        {
+            "num": "26",
+            "img": "26_tendencia_temporal_esas.png",
+            "title": "Curva de Tendência Temporal ESAS e Painel de Variação Clínica Recente (Delta)",
+            "tipo": "Desktop / Prontuário Avançado",
+            "largura": Inches(6.2),
+            "objetivo": "Visualização longitudinal gráfica da evolução dos sintomas ao longo do tempo, correlacionando o ajuste de analgesia com a resposta terapêutica através do cálculo de variação (delta).",
+            "funcionalidades": [
+                "Gráfico vetorial interativo em SVG responsivo traçando as curvas de múltiplos sintomas simultaneamente.",
+                "Zona Crítica em vermelho (ESAS >= 7) com linha pontilhada delimitando o limiar de alarme da equipe.",
+                "Painel de Resposta Terapêutica com cálculo automático de variação (delta) entre a última e a penúltima avaliação.",
+                "Indicadores semafóricos de melhora clínica (seta verde descendo), piora (seta vermelha subindo) ou estabilidade (=).",
+                "Integração perfeita aos temas Claro, Noturno (Escuro) e Alto Contraste AAA sem artefatos visuais."
+            ],
+            "ihc": "Ergonomia Cognitiva Médica e Heurística #1 (Visibilidade do estado): Transforma dados tabulares dispersos em uma representação gráfica unificada, reduzindo o tempo de interpretação médica para menos de 5 segundos."
         }
     ]
 
@@ -720,12 +760,34 @@ def create_document():
         "mais necessita."
     )
 
-    # Salva os arquivos
+    # Salva os arquivos no projeto
     doc.save(str(OUT_DOCX_LOCAL))
+    shutil.copy2(OUT_DOCX_LOCAL, OUT_DOC_LOCAL)
+    
+    # Copia para Downloads
+    out_docx_downloads = DOWNLOADS_DIR / "Zelo_Documento_Telas_e_Funcionalidades.docx"
+    out_doc_downloads = DOWNLOADS_DIR / "Zelo_Documento_Telas_e_Funcionalidades.doc"
+    shutil.copy2(OUT_DOCX_LOCAL, out_docx_downloads)
+    shutil.copy2(OUT_DOCX_LOCAL, out_doc_downloads)
+
+    # Copia para Desktop (Área de Trabalho)
+    if DESKTOP_DIR.exists():
+        out_docx_desktop = DESKTOP_DIR / "Zelo_Documento_Telas_e_Funcionalidades.docx"
+        out_doc_desktop = DESKTOP_DIR / "Zelo_Documento_Telas_e_Funcionalidades.doc"
+        shutil.copy2(OUT_DOCX_LOCAL, out_docx_desktop)
+        shutil.copy2(OUT_DOCX_LOCAL, out_doc_desktop)
+
+    # Copia para Brain
+    BRAIN_DIR.mkdir(parents=True, exist_ok=True)
     shutil.copy2(OUT_DOCX_LOCAL, OUT_DOCX_BRAIN)
-    print(f"Documento DOCX gerado com sucesso em:")
-    print(f"  -> {OUT_DOCX_LOCAL} ({OUT_DOCX_LOCAL.stat().st_size} bytes)")
-    print(f"  -> {OUT_DOCX_BRAIN} ({OUT_DOCX_BRAIN.stat().st_size} bytes)")
+    shutil.copy2(OUT_DOCX_LOCAL, OUT_DOC_BRAIN)
+
+    print(f"Documento DOCX e DOC gerados com sucesso!")
+    print(f"  -> Projeto DOCX: {OUT_DOCX_LOCAL} ({OUT_DOCX_LOCAL.stat().st_size} bytes)")
+    print(f"  -> Projeto DOC:  {OUT_DOC_LOCAL} ({OUT_DOC_LOCAL.stat().st_size} bytes)")
+    print(f"  -> Downloads:    {out_docx_downloads}")
+    if DESKTOP_DIR.exists():
+        print(f"  -> Desktop:      {out_docx_desktop}")
 
     # Gera também a versão em Markdown
     build_markdown_version()
