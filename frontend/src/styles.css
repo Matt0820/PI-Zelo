@@ -1531,24 +1531,48 @@ html.theme-high-contrast .sidebar .nav-logout .nav-icon, :root[data-visual="alto
   border-color: #ff5555 !important;
 }
 
-html.theme-high-contrast .button-primary, :root[data-visual="alto-contraste"] .button-primary,
-html.theme-high-contrast .rating-row button.selected, :root[data-visual="alto-contraste"] .rating-row button.selected {
+html.theme-high-contrast .button-primary,
+html.theme-high-contrast .button-primary *,
+html.theme-high-contrast .button-primary span,
+:root[data-visual="alto-contraste"] .button-primary,
+:root[data-visual="alto-contraste"] .button-primary *,
+:root[data-visual="alto-contraste"] .button-primary span,
+html.theme-high-contrast .rating-row button.selected,
+html.theme-high-contrast .rating-row button.selected *,
+:root[data-visual="alto-contraste"] .rating-row button.selected,
+:root[data-visual="alto-contraste"] .rating-row button.selected * {
   background: #ffff00 !important;
   color: #000000 !important;
-  border: 2px solid #ffff00 !important;
+  border-color: #ffff00 !important;
   font-weight: 900 !important;
 }
 
-html.theme-high-contrast .button-secondary, :root[data-visual="alto-contraste"] .button-secondary,
-html.theme-high-contrast .button-quiet, :root[data-visual="alto-contraste"] .button-quiet {
+html.theme-high-contrast .button-secondary,
+html.theme-high-contrast .button-secondary *,
+html.theme-high-contrast .button-quiet,
+html.theme-high-contrast .button-quiet *,
+:root[data-visual="alto-contraste"] .button-secondary,
+:root[data-visual="alto-contraste"] .button-secondary *,
+:root[data-visual="alto-contraste"] .button-quiet,
+:root[data-visual="alto-contraste"] .button-quiet * {
   background: #000000 !important;
   color: #ffff00 !important;
   border: 2px solid #ffff00 !important;
   font-weight: 800 !important;
 }
 
-html.theme-high-contrast .button-secondary:hover, :root[data-visual="alto-contraste"] .button-secondary:hover,
-html.theme-high-contrast .button-quiet:hover, :root[data-visual="alto-contraste"] .button-quiet:hover {
+html.theme-high-contrast .button-secondary:hover,
+html.theme-high-contrast .button-secondary:hover *,
+html.theme-high-contrast .button-secondary:hover span,
+html.theme-high-contrast .button-quiet:hover,
+html.theme-high-contrast .button-quiet:hover *,
+html.theme-high-contrast .button-quiet:hover span,
+:root[data-visual="alto-contraste"] .button-secondary:hover,
+:root[data-visual="alto-contraste"] .button-secondary:hover *,
+:root[data-visual="alto-contraste"] .button-secondary:hover span,
+:root[data-visual="alto-contraste"] .button-quiet:hover,
+:root[data-visual="alto-contraste"] .button-quiet:hover *,
+:root[data-visual="alto-contraste"] .button-quiet:hover span {
   background: #ffff00 !important;
   color: #000000 !important;
 }
@@ -2506,4 +2530,50 @@ html.theme-high-contrast .catalog-precautions-box,
   background: #000000 !important;
   border: 1px solid #ffffff !important;
   color: #ffffff !important;
+}
+
+/* Beacon Indicator (Alerta Crítico / Ação Imediata) nos modos de acessibilidade */
+html.theme-high-contrast .beacon-indicator,
+:root[data-visual="alto-contraste"] .beacon-indicator {
+  background: #000000 !important;
+  border: 2px solid #ff5555 !important;
+  color: #ff5555 !important;
+  font-weight: 900 !important;
+}
+
+html.theme-high-contrast .beacon-indicator *,
+:root[data-visual="alto-contraste"] .beacon-indicator * {
+  color: #ff5555 !important;
+}
+
+html.theme-high-contrast .beacon-dot,
+:root[data-visual="alto-contraste"] .beacon-dot {
+  background: #ff5555 !important;
+  box-shadow: 0 0 0 2px #000000, 0 0 0 4px #ff5555 !important;
+}
+
+html.theme-escuro .beacon-indicator,
+:root[data-visual="escuro"] .beacon-indicator,
+html.theme-dark .beacon-indicator {
+  background: #361715 !important;
+  border: 1.5px solid #822720 !important;
+  color: #ff9d91 !important;
+}
+
+html.theme-escuro .beacon-indicator *,
+:root[data-visual="escuro"] .beacon-indicator *,
+html.theme-dark .beacon-indicator * {
+  color: #ff9d91 !important;
+}
+
+html.theme-escuro .beacon-dot,
+:root[data-visual="escuro"] .beacon-dot,
+html.theme-dark .beacon-dot {
+  background: #ff9d91 !important;
+}
+
+html.theme-escuro .button-primary *,
+:root[data-visual="escuro"] .button-primary *,
+html.theme-dark .button-primary * {
+  color: #121a16 !important;
 }
