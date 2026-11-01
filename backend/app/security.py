@@ -95,10 +95,12 @@ def get_current_user(
     if not user or not user.ativo:
         raise HTTPException(status_code=401, detail='Conta inativa ou inexistente. Entre novamente.')
 
-    is_team = user.perfil in {'admin', 'assistencial'}
+    is_team = user.perfil in {'admin', 'assistencial', 'medico'}
     is_medico = user.perfil == 'medico'
     if path == '/api/seed' and user.perfil != 'admin':
         raise HTTPException(status_code=403, detail='Apenas administradores podem popular a base.')
+    if path.startswith('/api/catalog/medications') and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and not is_team:
+        raise HTTPException(status_code=403, detail='Apenas a equipe assistencial ou médica pode gerenciar o catálogo de medicamentos.')
     if path == '/api/users' and request.method == 'GET' and not is_team:
         if not is_medico or request.query_params.get('perfil') != 'paciente':
             raise HTTPException(status_code=403, detail='Acesso restrito à equipe assistencial.')

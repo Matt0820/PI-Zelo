@@ -209,6 +209,15 @@ export default function App(): React.JSX.Element {
       }
     },
     {
+      id: 'catalogo',
+      name: 'Catálogo de fármacos',
+      icon: 'pill',
+      action: () => {
+        setSelecionado(null);
+        setEquipePagina('catalogo');
+      }
+    },
+    {
       id: 'acessibilidade',
       name: 'Acessibilidade',
       icon: 'bolt',
@@ -246,7 +255,7 @@ export default function App(): React.JSX.Element {
         >
           <img src={logo} alt="Logotipo do Zelo" width="160" height="40" style={{ objectFit: 'contain' }} />
           <span>
-            <b>zelo</b>
+            <b>ZELO</b>
             <small>{isTeam ? 'Portal assistencial' : 'Área do paciente'}</small>
           </span>
         </button>

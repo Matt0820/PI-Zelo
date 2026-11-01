@@ -288,6 +288,40 @@ class MedicationResponse(MedicationBase):
     user_id: int
 
 
+class CatalogMedicationBase(BaseModel):
+    nome: str = Field(min_length=1, max_length=150)
+    principio_ativo: str | None = Field(default=None, max_length=150)
+    via_administracao: str = Field(default='Oral (VO)', max_length=50)
+    dose_padrao: str = Field(min_length=1, max_length=100)
+    frequencia_padrao: str = Field(min_length=1, max_length=80)
+    eh_dose_resgate: bool = False
+    sintoma_alvo: str | None = Field(default=None, max_length=100)
+    orientacoes_padrao: str | None = None
+    ativo: bool = True
+
+
+class CatalogMedicationCreate(CatalogMedicationBase):
+    pass
+
+
+class CatalogMedicationUpdate(BaseModel):
+    nome: str | None = Field(default=None, min_length=1, max_length=150)
+    principio_ativo: str | None = Field(default=None, max_length=150)
+    via_administracao: str | None = Field(default=None, max_length=50)
+    dose_padrao: str | None = Field(default=None, min_length=1, max_length=100)
+    frequencia_padrao: str | None = Field(default=None, min_length=1, max_length=80)
+    eh_dose_resgate: bool | None = None
+    sintoma_alvo: str | None = Field(default=None, max_length=100)
+    orientacoes_padrao: str | None = None
+    ativo: bool | None = None
+
+
+class CatalogMedicationResponse(CatalogMedicationBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    criado_em: datetime
+
+
 class OrientationBase(BaseModel):
     titulo: str
     descricao: str

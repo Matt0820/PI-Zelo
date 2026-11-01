@@ -196,6 +196,24 @@ class Medication(Base):
     usuario: Mapped['User'] = relationship(back_populates='medicacoes')
 
 
+class CatalogMedication(Base):
+    """Medicamento padronizado no catálogo/formulário institucional de Cuidados Paliativos (RENAME)."""
+
+    __tablename__ = 'catalog_medications'
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    nome: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
+    principio_ativo: Mapped[str | None] = mapped_column(String(150), nullable=True)
+    via_administracao: Mapped[str] = mapped_column(String(50), default='Oral (VO)', nullable=False)
+    dose_padrao: Mapped[str] = mapped_column(String(100), nullable=False)
+    frequencia_padrao: Mapped[str] = mapped_column(String(80), nullable=False)
+    eh_dose_resgate: Mapped[bool] = mapped_column(Boolean, default=False)
+    sintoma_alvo: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    orientacoes_padrao: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ativo: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
+
+
 class ClinicalNote(Base):
     """Evolução clínica multiprofissional (Enfermagem e Medicina)."""
 

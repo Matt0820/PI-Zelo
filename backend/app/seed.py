@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import (
+    CatalogMedication,
     ClinicalAlert,
     ClinicalNote,
     ESASAssessment,
@@ -344,4 +345,159 @@ def seed_initial_data(db: Session) -> None:
     )
     db.add_all([ori1, ori2])
 
+    db.commit()
+
+
+
+def seed_catalog_medications(db: Session) -> None:
+    """Popula o catálogo de medicamentos padronizados (RENAME / Cuidados Paliativos)."""
+    if db.scalar(select(CatalogMedication).limit(1)):
+        return
+
+    catalogo = [
+        CatalogMedication(
+            nome="Morfina 10mg (VO)",
+            principio_ativo="Sulfato de Morfina",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (10mg)",
+            frequencia_padrao="A cada 4 horas",
+            eh_dose_resgate=True,
+            sintoma_alvo="Dor",
+            orientacoes_padrao="Opioide de referência. Dose de resgate para dor irruptiva / pontada. Requer laxativo preventivo concomitante.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Morfina 10mg/mL ampola (SC/IV)",
+            principio_ativo="Sulfato de Morfina",
+            via_administracao="Subcutânea (SC)",
+            dose_padrao="5mg (0,5 mL)",
+            frequencia_padrao="A cada 4 horas",
+            eh_dose_resgate=True,
+            sintoma_alvo="Dor / Dispneia",
+            orientacoes_padrao="Indicado em crise de dor intensa ou dispneia refratária quando a via oral estiver comprometida.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Metadona 5mg (VO)",
+            principio_ativo="Cloridrato de Metadona",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (5mg)",
+            frequencia_padrao="A cada 8 horas",
+            eh_dose_resgate=False,
+            sintoma_alvo="Dor",
+            orientacoes_padrao="Opioide potente com ação no receptor NMDA. Indicado para dor crônica oncológica e dor neuropática.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Fentanil 25mcg/h adesivo (TD)",
+            principio_ativo="Fentanila",
+            via_administracao="Transdérmica (TD)",
+            dose_padrao="1 adesivo (25mcg/h)",
+            frequencia_padrao="Trocar a cada 72 horas",
+            eh_dose_resgate=False,
+            sintoma_alvo="Dor",
+            orientacoes_padrao="Indicado para dor crônica estável em pacientes com tolerância a opioides ou disfagia grave.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Dipirona 500mg (VO)",
+            principio_ativo="Dipirona Monoidratada",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (500mg)",
+            frequencia_padrao="A cada 6 horas",
+            eh_dose_resgate=False,
+            sintoma_alvo="Dor / Febre",
+            orientacoes_padrao="Analgésico e antipirético adjuvante. Pode ser associado a opioides para controle da dor somática.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Paracetamol 500mg (VO)",
+            principio_ativo="Paracetamol",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (500mg)",
+            frequencia_padrao="A cada 6 horas",
+            eh_dose_resgate=False,
+            sintoma_alvo="Dor",
+            orientacoes_padrao="Analgésico adjuvante para dor leve a moderada. Respeitar dose máxima de 3g ao dia.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Lactulose 667mg/mL (VO)",
+            principio_ativo="Lactulose",
+            via_administracao="Oral (VO)",
+            dose_padrao="15 a 30 mL",
+            frequencia_padrao="1 a 2x ao dia",
+            eh_dose_resgate=False,
+            sintoma_alvo="Constipação",
+            orientacoes_padrao="Laxativo osmótico profilático obrigatório em uso regular de opioides. Manter hidratação regular.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Bisacodil 5mg (VO)",
+            principio_ativo="Bisacodil",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 a 2 comprimidos (5 a 10mg)",
+            frequencia_padrao="À noite ao deitar",
+            eh_dose_resgate=False,
+            sintoma_alvo="Constipação",
+            orientacoes_padrao="Laxativo estimulante do peristaltismo colônico. Não ingerir com leite ou antiácidos.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Ondansetrona 8mg (VO)",
+            principio_ativo="Cloridrato de Ondansetrona",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (8mg)",
+            frequencia_padrao="A cada 8 horas",
+            eh_dose_resgate=False,
+            sintoma_alvo="Náusea",
+            orientacoes_padrao="Antagonista 5-HT3 de primeira linha para náuseas induzidas por quimioterapia ou opioides.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Haloperidol 1mg (VO)",
+            principio_ativo="Haloperidol",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (1mg)",
+            frequencia_padrao="A cada 8 ou 12 horas",
+            eh_dose_resgate=False,
+            sintoma_alvo="Náusea / Delirium",
+            orientacoes_padrao="Antiemético central para náusea mediada por quimiorreceptores; primeira linha para delirium hiperativo.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Dexametasona 4mg (VO)",
+            principio_ativo="Acetato de Dexametasona",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (4mg)",
+            frequencia_padrao="1x ao dia pela manhã",
+            eh_dose_resgate=False,
+            sintoma_alvo="Náusea / Cansaço / Dor",
+            orientacoes_padrao="Corticoide adjuvante potente para dor por estiramento capsular hepático, hipertensão intracraniana ou astenia.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Escopolamina 10mg (VO/SC)",
+            principio_ativo="Butilbrometo de Escopolamina",
+            via_administracao="Subcutânea (SC)",
+            dose_padrao="1 ampola (20mg) ou 1 cp (10mg)",
+            frequencia_padrao="A cada 6 horas",
+            eh_dose_resgate=False,
+            sintoma_alvo="Secreção / Cólica",
+            orientacoes_padrao="Anticolinérgico para controle de estertor (ronco da morte) nas últimas horas/dias de vida e alívio de cólicas.",
+            ativo=True,
+        ),
+        CatalogMedication(
+            nome="Clonazepam 0,5mg (VO)",
+            principio_ativo="Clonazepam",
+            via_administracao="Oral (VO)",
+            dose_padrao="1 comprimido (0,5mg)",
+            frequencia_padrao="À noite ao deitar",
+            eh_dose_resgate=False,
+            sintoma_alvo="Ansiedade / Insônia",
+            orientacoes_padrao="Benzodiazepínico para ansiedade reativa e controle de insônia em cuidados paliativos.",
+            ativo=True,
+        ),
+    ]
+    db.add_all(catalogo)
     db.commit()

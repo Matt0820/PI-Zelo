@@ -110,6 +110,20 @@ export type Medicacao = {
   vigencia: string | null;
 };
 
+export type MedicamentoCatalogo = {
+  id: number;
+  nome: string;
+  principio_ativo: string | null;
+  via_administracao: string;
+  dose_padrao: string;
+  frequencia_padrao: string;
+  eh_dose_resgate: boolean;
+  sintoma_alvo: string | null;
+  orientacoes_padrao: string | null;
+  ativo: boolean;
+  criado_em: string;
+};
+
 export type Orientacao = {
   id: number;
   user_id: number;
@@ -271,5 +285,21 @@ export const api = {
       body: JSON.stringify(data)
     }),
   registrarTriagem: (id: number, data: unknown) =>
-    post<Triagem>(`/api/users/${id}/triagem-dor`, data)
+    post<Triagem>(`/api/users/${id}/triagem-dor`, data),
+  catalogoMedicamentos: (params?: { search?: string; sintoma_alvo?: string; apenas_ativos?: boolean }) => {
+    const query = new URLSearchParams();
+    if (params?.search) query.set('search', params.search);
+    if (params?.sintoma_alvo) query.set('sintoma_alvo', params.sintoma_alvo);
+    if (params?.apenas_ativos !== undefined) query.set('apenas_ativos', String(params.apenas_ativos));
+    const qs = query.toString();
+    return get<MedicamentoCatalogo[]>(`/api/catalog/medications${qs ? `?${qs}` : ''}`);
+  },
+  criarMedicamentoCatalogo: (data: unknown) => post<MedicamentoCatalogo>('/api/catalog/medications', data),
+  atualizarMedicamentoCatalogo: (id: number, data: unknown) =>
+    request<MedicamentoCatalogo>(`/api/catalog/medications/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    }),
+  removerMedicamentoCatalogo: (id: number) =>
+    request<void>(`/api/catalog/medications/${id}`, { method: 'DELETE' })
 };

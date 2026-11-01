@@ -1,10 +1,16 @@
-import React, { FormEvent, useState } from 'react';
-import { Usuario, api } from '../../api';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { Usuario, MedicamentoCatalogo, api } from '../../api';
 import { Button } from '../../components/Button';
 import { ModalDialog } from '../../components/ModalDialog';
 import { NoticeFeedback } from '../../components/NoticeFeedback';
 
-export type TeamModalType = 'paciente' | 'orientacao' | 'diagnostico' | 'agendamento' | 'medicacao';
+export type TeamModalType =
+  | 'paciente'
+  | 'orientacao'
+  | 'diagnostico'
+  | 'agendamento'
+  | 'medicacao'
+  | 'cadastrar_farmaco';
 
 export interface TeamModalProps {
   type: TeamModalType;
@@ -24,7 +30,10 @@ export function TeamModal({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
 
-  // Estados dedicados para prescrição de medicamentos
+  // Submodo de cadastro de novo fármaco direto na tela de prescrição
+  const [subModoCadastro, setSubModoCadastro] = useState(type === 'cadastrar_farmaco');
+
+  // Estados dedicados para prescrição de medicamentos ao paciente
   const [medNome, setMedNome] = useState('');
   const [medDose, setMedDose] = useState('');
   const [medHorario, setMedHorario] = useState('08:00');
@@ -33,85 +42,36 @@ export function TeamModal({
   const [medObs, setMedObs] = useState('');
   const [medResgate, setMedResgate] = useState(false);
 
-  const atalhosEquipe = [
-    {
-      nome: 'Morfina 10mg (Resgate)',
-      dose: '1 comprimido (10mg)',
-      freq: 'Se dor forte (máx a cada 4h)',
-      resgate: true,
-      obs: 'Dose de resgate SOS se dor intensa (nota >= 7). Não ultrapassar a posologia sem contato com a equipe.'
-    },
-    {
-      nome: 'Morfina 30mg (Contínuo)',
-      dose: '1 comprimido (30mg)',
-      freq: 'A cada 12 horas (08:00 e 20:00)',
-      resgate: false,
-      obs: 'Uso contínuo fixo para controle de dor basal. Tomar rigorosamente nos horários prescritos.'
-    },
-    {
-      nome: 'Codeína 30mg',
-      dose: '1 comprimido (30mg)',
-      freq: 'A cada 6 horas se dor',
-      resgate: false,
-      obs: 'Opioide fraco para dor moderada. Associar a laxativo profilático conforme protocolo.'
-    },
-    {
-      nome: 'Gabapentina 300mg',
-      dose: '1 cápsula (300mg)',
-      freq: '1x ao dia à noite',
-      resgate: false,
-      obs: 'Dor neuropática (queimação/choque). Tomar preferencialmente à noite para mitigar sonolência.'
-    },
-    {
-      nome: 'Dipirona 500mg',
-      dose: '1 comprimido (500mg)',
-      freq: 'A cada 6 horas se dor/febre',
-      resgate: false,
-      obs: 'Analgésico e antitérmico para dor leve/moderada.'
-    },
-    {
-      nome: 'Paracetamol 500mg',
-      dose: '1 comprimido (500mg)',
-      freq: 'A cada 8 horas',
-      resgate: false,
-      obs: 'Analgésico comum para controle de desconforto leve.'
-    },
-    {
-      nome: 'Ondansetrona 8mg',
-      dose: '1 comprimido (8mg)',
-      freq: 'A cada 8 horas se náusea',
-      resgate: false,
-      obs: 'Antiemético. Tomar 30 min antes das refeições em caso de náusea ou profilático pré-quimio.'
-    },
-    {
-      nome: 'Haloperidol 1mg',
-      dose: '5 gotas (1mg)',
-      freq: '1x ao dia à noite',
-      resgate: false,
-      obs: 'Controle de náusea refratária ou delírio/agitação noturna.'
-    },
-    {
-      nome: 'Dexametasona 4mg',
-      dose: '1 comprimido (4mg)',
-      freq: '1x ao dia pela manhã',
-      resgate: false,
-      obs: 'Corticoide para edema peritumoral e astenia. Tomar com café da manhã para evitar gastrite.'
-    },
-    {
-      nome: 'Lactulose 667mg/ml',
-      dose: '15ml (1 colher de sopa)',
-      freq: '1x ao dia à noite',
-      resgate: false,
-      obs: 'Laxativo osmótico profilático obrigatório no uso de opioides. Manter boa hidratação oral.'
-    }
-  ];
+  // Estados para cadastro no Catálogo do Banco de Dados
+  const [catNome, setCatNome] = useState('');
+  const [catPrincipio, setCatPrincipio] = useState('');
+  const [catVia, setCatVia] = useState('Oral (VO)');
+  const [catDose, setCatDose] = useState('');
+  const [catFreq, setCatFreq] = useState('A cada 8 horas');
+  const [catSintoma, setCatSintoma] = useState('Dor');
+  const [catResgate, setCatResgate] = useState(false);
+  const [catObs, setCatObs] = useState('');
 
-  function aplicarAtalho(a: typeof atalhosEquipe[0]) {
-    setMedNome(a.nome);
-    setMedDose(a.dose);
-    setMedFreq(a.freq);
-    setMedObs(a.obs);
-    setMedResgate(a.resgate);
+  // Catálogo carregado do backend
+  const [catalogo, setCatalogo] = useState<MedicamentoCatalogo[]>([]);
+  const [carregandoCatalogo, setCarregandoCatalogo] = useState(false);
+
+  useEffect(() => {
+    if (type === 'medicacao' || type === 'cadastrar_farmaco') {
+      setCarregandoCatalogo(true);
+      api.catalogoMedicamentos({ apenas_ativos: true })
+        .then(items => setCatalogo(items))
+        .catch(() => {})
+        .finally(() => setCarregandoCatalogo(false));
+    }
+  }, [type]);
+
+  function aplicarMedicamentoCatalogo(med: MedicamentoCatalogo) {
+    setMedNome(med.nome);
+    setMedDose(med.dose_padrao);
+    setMedFreq(med.frequencia_padrao);
+    setMedObs(med.orientacoes_padrao || '');
+    setMedResgate(med.eh_dose_resgate);
   }
 
   async function submit(e: FormEvent<HTMLFormElement>) {
@@ -119,7 +79,47 @@ export function TeamModal({
     setSending(true);
     setError('');
     const f = new FormData(e.currentTarget);
+
     try {
+      if (type === 'cadastrar_farmaco' || subModoCadastro) {
+        const nome = (catNome || String(f.get('nome') || '')).trim();
+        const dose = (catDose || String(f.get('dose_padrao') || '')).trim();
+        const freq = (catFreq || String(f.get('frequencia_padrao') || '')).trim();
+        const via = catVia || String(f.get('via_administracao') || 'Oral (VO)');
+        const principio = (catPrincipio || String(f.get('principio_ativo') || '')).trim();
+        const sintoma = catSintoma || String(f.get('sintoma_alvo') || 'Dor');
+        const obs = (catObs || String(f.get('orientacoes_padrao') || '')).trim();
+        const resgate = catResgate || f.get('eh_dose_resgate') === 'on';
+
+        if (!nome || !dose || !freq) {
+          throw new Error('Informe o nome do fármaco, a dose padrão e a frequência recomendada.');
+        }
+
+        const novo = await api.criarMedicamentoCatalogo({
+          nome,
+          principio_ativo: principio || null,
+          via_administracao: via,
+          dose_padrao: dose,
+          frequencia_padrao: freq,
+          eh_dose_resgate: resgate,
+          sintoma_alvo: sintoma,
+          orientacoes_padrao: obs || null,
+          ativo: true
+        });
+
+        if (type === 'medicacao' && subModoCadastro) {
+          // Volta para a prescrição já com o novo fármaco selecionado
+          setCatalogo(prev => [novo, ...prev]);
+          aplicarMedicamentoCatalogo(novo);
+          setSubModoCadastro(false);
+          setSending(false);
+          return;
+        }
+
+        done(`Fármaco "${nome}" cadastrado com sucesso no catálogo institucional do banco de dados.`);
+        return;
+      }
+
       if (type === 'paciente') {
         await api.criarPaciente({
           nome: String(f.get('nome')),
@@ -218,23 +218,163 @@ export function TeamModal({
     }
   }
 
-  const title = {
-    paciente: 'Cadastrar paciente',
-    orientacao: 'Enviar orientação',
-    diagnostico: 'Enviar diagnóstico e justificativa',
-    agendamento: 'Enviar agendamento',
-    medicacao: 'Prescrever Medicamento ou Receita'
-  }[type];
+  const isCadastroFarmaco = type === 'cadastrar_farmaco' || subModoCadastro;
+
+  const title = isCadastroFarmaco
+    ? 'Cadastrar Fármaco no Catálogo Institucional'
+    : {
+        paciente: 'Cadastrar paciente',
+        orientacao: 'Enviar orientação',
+        diagnostico: 'Enviar diagnóstico e justificativa',
+        agendamento: 'Enviar agendamento',
+        medicacao: 'Prescrever Medicamento ou Receita',
+        cadastrar_farmaco: 'Cadastrar Fármaco no Catálogo Institucional'
+      }[type];
 
   return (
     <ModalDialog
       title={title}
-      kicker={patient?.nome || 'NOVO PRONTUÁRIO'}
+      kicker={isCadastroFarmaco ? 'CATÁLOGO DE MEDICAMENTOS (BANCO DE DADOS)' : patient?.nome || 'NOVO PRONTUÁRIO'}
       onClose={close}
       size="large"
     >
       <form onSubmit={submit} className="form-stack">
-        {type === 'paciente' && (
+        {/* CADASTRO DE NOVO FÁRMACO NO CATÁLOGO DO BANCO */}
+        {isCadastroFarmaco && (
+          <>
+            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '12px 14px', borderRadius: '10px', marginBottom: '8px' }}>
+              <strong style={{ color: '#166534', fontSize: '13.5px' }}>
+                🏥 Formulário Institucional de Medicamentos (RENAME / Cuidados Paliativos)
+              </strong>
+              <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#14532d', lineHeight: 1.45 }}>
+                Os fármacos cadastrados aqui ficam salvos no banco de dados e são disponibilizados imediatamente com posologias de referência para a equipe médica e assistencial.
+              </p>
+            </div>
+
+            <div className="form-grid">
+              <label>
+                Nome Comercial e Apresentação *
+                <input
+                  name="nome"
+                  required
+                  value={catNome}
+                  onChange={e => setCatNome(e.target.value)}
+                  placeholder="Ex.: Morfina 10mg (VO) ou Fentanil 25mcg/h (TD)"
+                />
+              </label>
+
+              <label>
+                Princípio Ativo
+                <input
+                  name="principio_ativo"
+                  value={catPrincipio}
+                  onChange={e => setCatPrincipio(e.target.value)}
+                  placeholder="Ex.: Sulfato de Morfina"
+                />
+              </label>
+            </div>
+
+            <div className="form-grid">
+              <label>
+                Via de Administração *
+                <select
+                  name="via_administracao"
+                  value={catVia}
+                  onChange={e => setCatVia(e.target.value)}
+                  style={{ minHeight: '44px' }}
+                >
+                  <option value="Oral (VO)">Oral (VO)</option>
+                  <option value="Subcutânea (SC)">Subcutânea (SC)</option>
+                  <option value="Sublingual (SL)">Sublingual (SL)</option>
+                  <option value="Transdérmica (TD)">Transdérmica (TD)</option>
+                  <option value="Intravenosa (IV)">Intravenosa (IV)</option>
+                  <option value="Retal (VR)">Retal (VR)</option>
+                </select>
+              </label>
+
+              <label>
+                Sintoma-Alvo Predominante (ESAS) *
+                <select
+                  name="sintoma_alvo"
+                  value={catSintoma}
+                  onChange={e => setCatSintoma(e.target.value)}
+                  style={{ minHeight: '44px' }}
+                >
+                  <option value="Dor">Dor (Nociceptiva / Neuropática / Irruptiva)</option>
+                  <option value="Constipação">Constipação (Intestino Preso / Indução por opioides)</option>
+                  <option value="Náusea">Náusea e Vômito</option>
+                  <option value="Dispneia">Dispneia (Falta de Ar)</option>
+                  <option value="Delirium / Ansiedade">Delirium / Agitação / Ansiedade</option>
+                  <option value="Secreção / Estertor">Secreção de vias aéreas / Estertor / Cólica</option>
+                  <option value="Cansaço">Cansaço / Astenia</option>
+                  <option value="Outro">Outro sintoma geral</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="form-grid">
+              <label>
+                Dose Padrão de Referência *
+                <input
+                  name="dose_padrao"
+                  required
+                  value={catDose}
+                  onChange={e => setCatDose(e.target.value)}
+                  placeholder="Ex.: 1 comprimido (10mg) ou 15 mL"
+                />
+              </label>
+
+              <label>
+                Frequência Sugerida *
+                <input
+                  name="frequencia_padrao"
+                  required
+                  value={catFreq}
+                  onChange={e => setCatFreq(e.target.value)}
+                  placeholder="Ex.: A cada 4 horas ou 1x ao dia à noite"
+                />
+              </label>
+            </div>
+
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: '4px 0' }}>
+              <input
+                type="checkbox"
+                name="eh_dose_resgate"
+                checked={catResgate}
+                onChange={e => setCatResgate(e.target.checked)}
+                style={{ width: '20px', height: '20px', accentColor: 'var(--danger)' }}
+              />
+              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>
+                ⚡ É dose de resgate recomendada (para alívio rápido de dor/crise aguda SOS)
+              </span>
+            </label>
+
+            <label>
+              Orientações, Recomendações e Precauções Clínicas
+              <textarea
+                name="orientacoes_padrao"
+                rows={3}
+                value={catObs}
+                onChange={e => setCatObs(e.target.value)}
+                placeholder="Ex.: Prescrever laxativo osmótico concomitante se for opioide contínuo. Não partir comprimidos de liberação prolongada."
+              />
+            </label>
+
+            {type === 'medicacao' && subModoCadastro && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setSubModoCadastro(false)}
+                style={{ marginBottom: '8px' }}
+              >
+                ‹ Voltar à Prescrição do Paciente
+              </Button>
+            )}
+          </>
+        )}
+
+        {/* CADASTRO DE PACIENTE */}
+        {type === 'paciente' && !isCadastroFarmaco && (
           <>
             <label>
               Nome completo do paciente *
@@ -242,7 +382,7 @@ export function TeamModal({
             </label>
             <label>
               Email do paciente *
-              <input type="email" name="email" required maxLength={255} />
+              <input type="email" name="email" required maxLength={255} spellCheck={false} />
             </label>
             <label>
               Senha inicial *
@@ -272,66 +412,59 @@ export function TeamModal({
           </>
         )}
 
-        {type === 'orientacao' && (
+        {/* ORIENTAÇÃO */}
+        {type === 'orientacao' && !isCadastroFarmaco && (
           <>
             <label>
-              Título *
-              <input
-                name="titulo"
-                required
-                maxLength={200}
-                placeholder="Ex.: Cuidados com a medicação da dor"
-              />
+              Título da orientação *
+              <input name="titulo" required maxLength={120} />
             </label>
             <label>
-              Orientação Clínica *
-              <textarea
-                name="descricao"
-                required
-                rows={5}
-                placeholder="Escreva a orientação em linguagem direta e acessível para o paciente/familiar."
-              />
+              Descrição e instruções *
+              <textarea name="descricao" rows={4} required />
             </label>
             <div className="form-grid">
               <label>
                 Categoria
-                <select name="categoria">
-                  <option value="cuidados">Cuidados gerais</option>
-                  <option value="sintoma">Manejo de Sintoma</option>
-                  <option value="medicacao">Medicação e Posologia</option>
+                <select name="categoria" defaultValue="cuidados">
+                  <option value="dor">Dor e analgesia</option>
+                  <option value="constipacao">Constipação intestinal</option>
+                  <option value="cuidados">Cuidados gerais e conforto</option>
+                  <option value="sintomas">Controle de outros sintomas</option>
+                  <option value="seguranca">Segurança e sinais de alarme</option>
                 </select>
               </label>
               <label>
                 Prioridade
-                <select name="prioridade">
-                  <option value="baixa">Baixa</option>
+                <select name="prioridade" defaultValue="media">
+                  <option value="alta">Alta prioridade</option>
                   <option value="media">Média</option>
-                  <option value="alta">Alta (Urgente)</option>
+                  <option value="baixa">Baixa</option>
                 </select>
               </label>
             </div>
-            <p className="helper">
-              A orientação ficará disponível na tela inicial do app do paciente assim que for enviada.
-            </p>
+            <p className="helper">A orientação é sincronizada com o app Zelo do paciente.</p>
           </>
         )}
 
-        {type === 'diagnostico' && (
+        {/* DIAGNÓSTICO */}
+        {type === 'diagnostico' && !isCadastroFarmaco && (
           <>
             <label>
-              Diagnóstico clínico *
+              Diagnóstico oncológico e estadiamento *
               <input
                 name="diagnostico"
                 required
-                placeholder="Diagnóstico oncológico e, se disponível, CID-10"
+                defaultValue={patient?.diagnostico_oncologico || ''}
+                placeholder="Ex.: Neoplasia de pulmão estágio IV com metástases ósseas"
               />
             </label>
             <label>
-              Motivo da indicação de cuidados paliativos *
+              Motivo e justificativa dos cuidados paliativos *
               <textarea
                 name="motivo"
+                rows={3}
                 required
-                rows={4}
                 placeholder="Registre o contexto clínico que fundamenta o acompanhamento paliativo exclusivo ou proporcional."
               />
             </label>
@@ -345,7 +478,8 @@ export function TeamModal({
           </>
         )}
 
-        {type === 'agendamento' && (
+        {/* AGENDAMENTO */}
+        {type === 'agendamento' && !isCadastroFarmaco && (
           <>
             <div className="form-grid">
               <label>
@@ -373,24 +507,62 @@ export function TeamModal({
           </>
         )}
 
-        {type === 'medicacao' && (
+        {/* PRESCRIÇÃO DE MEDICAMENTO AO PACIENTE */}
+        {type === 'medicacao' && !isCadastroFarmaco && (
           <>
-            <div>
-              <label style={{ marginBottom: '6px', display: 'block', fontWeight: 700 }}>
-                Atalhos Rápidos de Cuidados Paliativos (Protocolo Clínico / RENAME):
-              </label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
-                {atalhosEquipe.map(a => (
-                  <button
-                    key={a.nome}
-                    type="button"
-                    className="button button-quiet med-shortcut-btn"
-                    onClick={() => aplicarAtalho(a)}
-                  >
-                    + {a.nome}
-                  </button>
-                ))}
+            {/* SELETOR DO CATÁLOGO DO BANCO */}
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                <label style={{ fontWeight: 700, color: 'var(--green-dark)', margin: 0, fontSize: '14px' }}>
+                  💊 Selecionar do Catálogo do Banco de Dados:
+                </label>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  
+                  onClick={() => setSubModoCadastro(true)}
+                  style={{ fontSize: '13px' }}
+                >
+                  + Cadastrar Novo Fármaco no Banco
+                </Button>
               </div>
+
+              {carregandoCatalogo ? (
+                <small className="muted">Carregando catálogo terapêutico…</small>
+              ) : (
+                <select
+                  onChange={e => {
+                    const sel = catalogo.find(c => c.id === Number(e.target.value));
+                    if (sel) aplicarMedicamentoCatalogo(sel);
+                  }}
+                  style={{ minHeight: '44px', width: '100%' }}
+                >
+                  <option value="">-- Escolha um medicamento do banco para autopreencher --</option>
+                  {catalogo.map(c => (
+                    <option key={c.id} value={c.id}>
+                      {c.nome} [{c.via_administracao}] — Alvo: {c.sintoma_alvo || 'Geral'} {c.eh_dose_resgate ? '⚡ (Resgate SOS)' : ''}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {/* Atalhos Rápidos Clicáveis extraídos do Banco */}
+              {catalogo.length > 0 && (
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px' }}>
+                  {catalogo.slice(0, 8).map(c => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      className="button button-quiet med-shortcut-btn"
+                      onClick={() => aplicarMedicamentoCatalogo(c)}
+                      title={c.orientacoes_padrao || c.nome}
+                      style={{ fontSize: '12.5px', padding: '6px 10px', minHeight: '32px' }}
+                    >
+                      + {c.nome.split(' ')[0]} {c.dose_padrao}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="form-grid">
@@ -401,7 +573,7 @@ export function TeamModal({
                   required
                   value={medNome}
                   onChange={e => setMedNome(e.target.value)}
-                  placeholder="Ex.: Morfina 10mg"
+                  placeholder="Ex.: Morfina 10mg (VO)"
                 />
               </label>
               <label>
@@ -432,7 +604,7 @@ export function TeamModal({
                   name="frequencia"
                   value={medFreq}
                   onChange={e => setMedFreq(e.target.value)}
-                  placeholder="Ex.: A cada 8 horas, 1x ao dia…"
+                  placeholder="Ex.: A cada 4 horas, 1x ao dia…"
                 />
               </label>
             </div>
@@ -461,10 +633,10 @@ export function TeamModal({
                   name="eh_dose_resgate"
                   checked={medResgate}
                   onChange={e => setMedResgate(e.target.checked)}
-                  style={{ width: '20px', height: '20px' }}
+                  style={{ width: '20px', height: '20px', accentColor: 'var(--danger)' }}
                 />
                 <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>
-                  É Dose de Resgate (Crise de Dor)
+                  ⚡ É Dose de Resgate (Crise de Dor / SOS)
                 </span>
               </label>
             </div>
@@ -476,7 +648,7 @@ export function TeamModal({
                 rows={3}
                 value={medObs}
                 onChange={e => setMedObs(e.target.value)}
-                placeholder="Ex.: Tomar com um copo de água após refeição. Não mastigar. Se náusea, tomar antiemético 30 min antes."
+                placeholder="Ex.: Tomar com um copo de água após refeição. Não mastigar. Se constipação, manter laxativo associado."
               />
             </label>
 
@@ -492,8 +664,15 @@ export function TeamModal({
           <Button type="button" variant="secondary" onClick={close}>
             Cancelar
           </Button>
-          <Button type="submit" variant="primary" loading={sending} loadingText="Salvando no prontuário…">
-            {type === 'paciente'
+          <Button
+            type="submit"
+            variant="primary"
+            loading={sending}
+            loadingText={isCadastroFarmaco ? 'Salvando no catálogo…' : 'Salvando no prontuário…'}
+          >
+            {isCadastroFarmaco
+              ? 'Salvar Fármaco no Banco'
+              : type === 'paciente'
               ? 'Cadastrar paciente'
               : type === 'medicacao'
               ? 'Salvar Prescrição no Prontuário'

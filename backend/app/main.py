@@ -31,7 +31,7 @@ from app.security import (
     _verify_password,
     get_current_user,
 )
-from app.seed import seed_initial_data
+from app.seed import seed_catalog_medications, seed_initial_data
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -75,6 +75,7 @@ def startup() -> None:
             )
     with SessionLocal() as db:
         seed_initial_data(db)
+        seed_catalog_medications(db)
 
 
 @app.get('/health', response_model=HealthResponse)

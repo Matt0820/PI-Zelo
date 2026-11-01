@@ -7,8 +7,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Medication, Orientation, User
+from app.models import CatalogMedication, Medication, Orientation, User
 from app.schemas import (
+    CatalogMedicationCreate,
+    CatalogMedicationResponse,
+    CatalogMedicationUpdate,
     MedicationCreate,
     MedicationResponse,
     MedicationUpdate,
@@ -192,3 +195,115 @@ def list_orientations(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[Orientation]:
     return db.scalars(select(Orientation).where(Orientation.user_id == user_id)).all()
+
+
+
+# ==========================================
+# CATÁLOGO DE MEDICAMENTOS INSTITUCIONAL (RENAME / CUIDADOS PALIATIVOS)
+# ==========================================
+
+@router.get('/api/catalog/medications', response_model=list[CatalogMedicationResponse])
+def list_catalog_medications(
+    db: Annotated[Session, Depends(get_db)],
+    search: str | None = None,
+    sintoma_alvo: str | None = None,
+    apenas_ativos: bool = True,
+) -> list[CatalogMedication]:
+    """Lista medicamentos padronizados no catálogo institucional."""
+    stmt = select(CatalogMedication)
+    if apenas_ativos:
+        stmt = stmt.where(CatalogMedication.ativo == True)
+    if sintoma_alvo:
+        stmt = stmt.where(CatalogMedication.sintoma_alvo.ilike(f'%{sintoma_alvo}%'))
+    if search:
+        search_term = f'%{search}%'
+        stmt = stmt.where(
+            (CatalogMedication.nome.ilike(search_term))
+            | (CatalogMedication.principio_ativo.ilike(search_term))
+            | (CatalogMedication.sintoma_alvo.ilike(search_term))
+        )
+    stmt = stmt.order_by(CatalogMedication.nome.asc())
+    return list(db.scalars(stmt).all())
+
+
+@router.post(
+    '/api/catalog/medications',
+    response_model=CatalogMedicationResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_catalog_medication(
+    payload: CatalogMedicationCreate,
+    db: Annotated[Session, Depends(get_db)],
+) -> CatalogMedication:
+    """Médico ou equipe assistencial cadastra novo medicamento no catálogo institucional."""
+    med = CatalogMedication(
+        nome=payload.nome.strip(),
+        principio_ativo=payload.principio_ativo.strip() if payload.principio_ativo else None,
+        via_administracao=payload.via_administracao.strip(),
+        dose_padrao=payload.dose_padrao.strip(),
+        frequencia_padrao=payload.frequencia_padrao.strip(),
+        eh_dose_resgate=payload.eh_dose_resgate,
+        sintoma_alvo=payload.sintoma_alvo.strip() if payload.sintoma_alvo else None,
+        orientacoes_padrao=payload.orientacoes_padrao.strip() if payload.orientacoes_padrao else None,
+        ativo=payload.ativo,
+    )
+    db.add(med)
+    db.commit()
+    db.refresh(med)
+    return med
+
+
+@router.patch(
+    '/api/catalog/medications/{med_id}',
+    response_model=CatalogMedicationResponse,
+)
+def update_catalog_medication(
+    med_id: int,
+    payload: CatalogMedicationUpdate,
+    db: Annotated[Session, Depends(get_db)],
+) -> CatalogMedication:
+    """Atualiza dados ou posologia de um medicamento do catálogo."""
+    med = db.get(CatalogMedication, med_id)
+    if not med:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Medicamento do catálogo não encontrado.')
+
+    if payload.nome is not None:
+        med.nome = payload.nome.strip()
+    if payload.principio_ativo is not None:
+        med.principio_ativo = payload.principio_ativo.strip() or None
+    if payload.via_administracao is not None:
+        med.via_administracao = payload.via_administracao.strip()
+    if payload.dose_padrao is not None:
+        med.dose_padrao = payload.dose_padrao.strip()
+    if payload.frequencia_padrao is not None:
+        med.frequencia_padrao = payload.frequencia_padrao.strip()
+    if payload.eh_dose_resgate is not None:
+        med.eh_dose_resgate = payload.eh_dose_resgate
+    if payload.sintoma_alvo is not None:
+        med.sintoma_alvo = payload.sintoma_alvo.strip() or None
+    if payload.orientacoes_padrao is not None:
+        med.orientacoes_padrao = payload.orientacoes_padrao.strip() or None
+    if payload.ativo is not None:
+        med.ativo = payload.ativo
+
+    db.commit()
+    db.refresh(med)
+    return med
+
+
+@router.delete(
+    '/api/catalog/medications/{med_id}',
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_catalog_medication(
+    med_id: int,
+    db: Annotated[Session, Depends(get_db)],
+):
+    """Desativa um medicamento do catálogo institucional."""
+    med = db.get(CatalogMedication, med_id)
+    if not med:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Medicamento do catálogo não encontrado.')
+
+    med.ativo = False
+    db.commit()
+    return None
