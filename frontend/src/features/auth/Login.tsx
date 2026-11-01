@@ -1,4 +1,5 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { formatBrasiliaDateTime } from '../../utils/date-time';
 import logo from '../../../images/logo-zelo-verde.png';
 import { Button } from '../../components/Button';
 import { NoticeFeedback } from '../../components/NoticeFeedback';
@@ -49,6 +50,12 @@ export function Login({
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [erro, setErro] = useState('');
+  const [clockNow, setClockNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setClockNow(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const [dados, setDados] = useState<Record<string, string>>({
     nome: '',
@@ -229,10 +236,18 @@ export function Login({
           style={{
             width: 'min(100%, 430px)',
             display: 'flex',
-            justifyContent: 'flex-end',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
             marginBottom: '12px'
           }}
         >
+          <div className="login-clock" aria-live="off">
+            <span>Horário de Brasília</span>
+            <time dateTime={clockNow.toISOString()}>
+              {formatBrasiliaDateTime(clockNow, { dateStyle: 'short', timeStyle: 'medium' })}
+            </time>
+          </div>
           <AccessibilityBar />
         </div>
 
