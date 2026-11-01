@@ -137,22 +137,40 @@ export const ANATOMICAL_REGIONS: AnatomicalRegion[] = [
     path: 'M 408 388 L 343 392 L 343 478 L 395 447 L 417 428 L 412 412 Z'
   },
   {
-    id: 'mao_frente_dir',
-    name: 'Mão e dedos direitos (Palma)',
+    id: 'palma_frente_dir',
+    name: 'Palma da mão direita',
     view: 'frente',
     category: 'membros_superiores',
-    description: 'Palma e dedos da mão direita',
-    center: { x: 141, y: 521 },
-    path: 'M 146 471 L 143 478 L 121 497 L 104 522 L 110 522 L 120 514 L 125 517 L 125 520 L 140 523 L 163 518 L 164 522 L 143 527 L 136 527 L 126 524 L 123 525 L 117 551 L 118 564 L 123 564 L 128 572 L 132 569 L 138 571 L 145 563 L 152 562 L 168 515 L 170 489 Z'
+    description: 'Região palmar da mão direita, sem os dedos',
+    center: { x: 143, y: 506 },
+    path: 'M 146 471 L 143 478 L 121 497 L 104 522 L 110 522 L 120 514 L 125 517 L 125 520 L 140 523 L 163 518 L 164 522 L 143 527 L 136 527 L 126 524 L 123 525 L 132 541 L 145 544 L 158 541 L 168 515 L 170 489 Z'
   },
   {
-    id: 'mao_frente_esq',
-    name: 'Mão e dedos esquerdos (Palma)',
+    id: 'dedos_frente_dir',
+    name: 'Dedos da mão direita',
     view: 'frente',
     category: 'membros_superiores',
-    description: 'Palma e dedos da mão esquerda',
-    center: { x: 540, y: 521 },
-    path: 'M 536 471 L 512 489 L 514 513 L 530 562 L 537 562 L 545 571 L 550 569 L 555 572 L 560 564 L 565 563 L 565 551 L 559 524 L 539 527 L 520 523 L 517 520 L 522 518 L 542 523 L 557 520 L 557 517 L 560 514 L 572 522 L 578 522 L 579 520 L 571 512 L 562 498 L 540 479 Z'
+    description: 'Falanges dos dedos da mão direita',
+    center: { x: 137, y: 556 },
+    path: 'M 123 525 L 132 541 L 145 544 L 158 541 L 152 562 L 145 563 L 138 571 L 132 569 L 128 572 L 123 564 L 118 564 L 117 551 Z'
+  },
+  {
+    id: 'palma_frente_esq',
+    name: 'Palma da mão esquerda',
+    view: 'frente',
+    category: 'membros_superiores',
+    description: 'Região palmar da mão esquerda, sem os dedos',
+    center: { x: 538, y: 506 },
+    path: 'M 536 471 L 512 489 L 514 513 L 530 541 L 543 544 L 556 541 L 559 524 L 539 527 L 520 523 L 517 520 L 522 518 L 542 523 L 557 520 L 557 517 L 560 514 L 572 522 L 578 522 L 579 520 L 571 512 L 562 498 L 540 479 Z'
+  },
+  {
+    id: 'dedos_frente_esq',
+    name: 'Dedos da mão esquerda',
+    view: 'frente',
+    category: 'membros_superiores',
+    description: 'Falanges dos dedos da mão esquerda',
+    center: { x: 548, y: 556 },
+    path: 'M 530 541 L 543 544 L 556 541 L 559 524 L 565 551 L 565 563 L 560 564 L 555 572 L 550 569 L 545 571 L 537 562 L 530 562 Z'
   },
   {
     id: 'coxa_frente_dir',
