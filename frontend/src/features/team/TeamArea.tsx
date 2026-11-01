@@ -636,7 +636,7 @@ export function TeamArea({
 
                       >
 
-                        🎯 {med.sintoma_alvo}
+                        {med.sintoma_alvo}
 
                       </span>
 
