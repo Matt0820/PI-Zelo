@@ -2,13 +2,12 @@
 
 printf '%s\n' '====================================================================='
 printf '%s\n' '                 INICIANDO O SISTEMA ZELO'
-printf '%s\n' '     Website React/Vite + API FastAPI + aplicativo Expo'
+printf '%s\n' '            Website React/Vite + API FastAPI'
 printf '%s\n' '====================================================================='
 printf '\n'
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd) || exit 1
 BACKEND_DIR="$SCRIPT_DIR/backend"
-MOBILE_DIR="$SCRIPT_DIR/mobile-app"
 FRONTEND_DIR="$SCRIPT_DIR/frontend"
 VENV_DIR="$BACKEND_DIR/.venv"
 PYTHON="$VENV_DIR/bin/python"
@@ -46,7 +45,7 @@ if ! "$PYTHON" -m pip install -r "$BACKEND_DIR/requirements.txt"; then
 fi
 
 if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-    printf '%s\n' 'Erro: Node.js e npm são necessários para iniciar o Expo.' >&2
+    printf '%s\n' 'Erro: Node.js e npm são necessários para iniciar o website.' >&2
     exit 1
 fi
 
@@ -54,14 +53,6 @@ if [ ! -d "$FRONTEND_DIR/node_modules" ]; then
     printf '%s\n' 'Instalando dependências do website React/Vite...'
     if ! (cd "$FRONTEND_DIR" && (npm ci || npm install)); then
         printf '%s\n' 'Erro ao instalar as dependências do website.' >&2
-        exit 1
-    fi
-fi
-
-if [ ! -d "$MOBILE_DIR/node_modules" ]; then
-    printf '%s\n' 'Instalando dependências do aplicativo Expo...'
-    if ! (cd "$MOBILE_DIR" && (npm ci || npm install)); then
-        printf '%s\n' 'Erro ao instalar as dependências do aplicativo mobile.' >&2
         exit 1
     fi
 fi
@@ -78,23 +69,6 @@ if "$PYTHON" -c 'import socket, sys; s = socket.socket(); s.settimeout(1); resul
     exit 1
 fi
 
-if [ -z "${EXPO_PUBLIC_API_URL:-}" ]; then
-    API_HOST=
-    if command -v ip >/dev/null 2>&1; then
-        API_HOST=$(ip -4 route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([^ ]*\).*/\1/p' | head -n 1)
-    fi
-    if [ -z "$API_HOST" ] && command -v hostname >/dev/null 2>&1; then
-        API_HOST=$(hostname -I 2>/dev/null | awk '{print $1}')
-    fi
-    if [ -z "$API_HOST" ] && command -v ipconfig >/dev/null 2>&1; then
-        API_HOST=$(ipconfig getifaddr en0 2>/dev/null || true)
-    fi
-    EXPO_PUBLIC_API_URL="http://${API_HOST:-127.0.0.1}:8000"
-fi
-EXPO_PUBLIC_API_URL=${EXPO_PUBLIC_API_URL%/}
-export EXPO_PUBLIC_API_URL
-
-printf '%s\n' "API para o Expo: $EXPO_PUBLIC_API_URL"
 printf '%s\n' 'Iniciando backend FastAPI em http://0.0.0.0:8000 ...'
 (
     cd "$BACKEND_DIR" || exit 1
@@ -110,7 +84,6 @@ printf '%s\n' 'Iniciando website React/Vite em http://localhost:5173 ...'
 WEB_PID=$!
 
 printf '%s\n' 'Website: http://localhost:5173'
-printf '%s\n' 'Iniciando aplicativo Expo. Pressione Ctrl+C para encerrar os serviços.'
+printf '%s\n' 'Pressione Ctrl+C para encerrar os serviços.'
 printf '\n'
-cd "$MOBILE_DIR" || exit 1
-npm start
+wait

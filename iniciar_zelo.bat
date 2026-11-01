@@ -4,11 +4,10 @@ title Inicializador Zelo
 set "ROOT=%~dp0"
 set "BACKEND=%ROOT%backend"
 set "FRONTEND=%ROOT%frontend"
-set "MOBILE=%ROOT%mobile-app"
 set "PYTHON=%BACKEND%\.venv\Scripts\python.exe"
 
 echo =====================================================================
-echo          INICIANDO WEBSITE ZELO, API E APLICATIVO EXPO
+echo                 INICIANDO APLICACAO WEB ZELO E API
 echo =====================================================================
 echo.
 
@@ -47,26 +46,6 @@ if not exist "%FRONTEND%\node_modules" (
   popd
 )
 
-if not exist "%MOBILE%\node_modules" (
-  echo Instalando dependencias do aplicativo Expo...
-  pushd "%MOBILE%"
-  call npm install
-  if errorlevel 1 (popd& echo Erro nas dependencias do Expo.& pause& exit /b 1)
-  popd
-)
-
-:: Deteccao de IP local via Python (evita falhas de escape de PowerShell)
-set "LAN_IP="
-pushd "%BACKEND%"
-.\.venv\Scripts\python.exe -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8',80)); open(r'..\.lan_ip.tmp','w').write(s.getsockname()[0]); s.close()" 2>nul
-popd
-if exist "%ROOT%.lan_ip.tmp" (
-  set /p LAN_IP=<"%ROOT%.lan_ip.tmp"
-  del "%ROOT%.lan_ip.tmp" >nul 2>nul
-)
-if not defined LAN_IP set "LAN_IP=127.0.0.1"
-set "EXPO_PUBLIC_API_URL=http://%LAN_IP%:8000"
-
 :: Verificacao preventiva de portas ocupadas
 "%PYTHON%" -c "import socket, sys; s=socket.socket(); res=s.connect_ex(('127.0.0.1', 8000)); s.close(); sys.exit(0 if res==0 else 1)" >nul 2>nul
 if not errorlevel 1 (
@@ -80,9 +59,8 @@ if not errorlevel 1 (
 
 echo.
 echo =====================================================================
-echo API para dispositivos Expo: %EXPO_PUBLIC_API_URL%
-echo Website Zelo:               http://localhost:5173
-echo Documentacao da API:        http://localhost:8000/docs
+echo Website Zelo (Portal & Paciente): http://localhost:5173
+echo Documentacao da API:              http://localhost:8000/docs
 echo =====================================================================
 echo.
 
@@ -92,13 +70,10 @@ start "API Zelo" /d "%BACKEND%" cmd /k ""%PYTHON%" -m uvicorn app.main:app --hos
 echo Iniciando Website Zelo (React / Vite)...
 start "Website Zelo" /d "%FRONTEND%" cmd /k "npm run dev"
 
-echo Iniciando Aplicativo Mobile (Expo)...
-start "Aplicativo Expo Zelo" /d "%MOBILE%" cmd /k "set EXPO_PUBLIC_API_URL=%EXPO_PUBLIC_API_URL%&& npm start"
-
 timeout /t 3 /nobreak >nul
 start "" http://localhost:5173
 
 echo Servicos iniciados com sucesso!
-echo Feche as janelas "API Zelo", "Website Zelo" e "Aplicativo Expo Zelo" para encerrar.
+echo Feche as janelas "API Zelo" e "Website Zelo" para encerrar.
 echo.
 pause
