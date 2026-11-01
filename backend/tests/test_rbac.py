@@ -119,6 +119,16 @@ def test_patient_can_confirm_and_undo_own_medication(client: TestClient):
     assert res_undo.status_code == 200
     assert res_undo.json()['status'] == 'ativo'
 
+    # Paciente também pode atualizar status e observação via PATCH em sua própria medicação
+    res_patch = client.patch(
+        f'/api/users/{id1}/medications/{med_id}',
+        json={'status': 'tomada', 'observacao': 'Tomado às 15:00'},
+        headers={'Authorization': f'Bearer {token1}'},
+    )
+    assert res_patch.status_code == 200
+    assert res_patch.json()['status'] == 'tomada'
+    assert 'Tomado às 15:00' in res_patch.json()['observacao']
+
     # Paciente pode registrar dose de resgate de forma direta
     res_rescue = client.post(
         f'/api/users/{id1}/rescue-doses',

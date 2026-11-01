@@ -33,14 +33,17 @@ export function MedicationSchedule({
         minute: '2-digit',
         timeZone: 'America/Sao_Paulo'
       });
-      const obsAtual = m.observacao
-        ? `${m.observacao} · Confirmado às ${nowHora}`
-        : `Confirmado às ${nowHora}`;
-
-      await api.atualizarMedicacao(usuario.id, m.id, {
-        status: 'tomada',
-        observacao: obsAtual
-      });
+      try {
+        await api.confirmarMedicacao(usuario.id, m.id);
+      } catch {
+        const obsAtual = m.observacao
+          ? `${m.observacao} · Confirmado às ${nowHora}`
+          : `Confirmado às ${nowHora}`;
+        await api.atualizarMedicacao(usuario.id, m.id, {
+          status: 'tomada',
+          observacao: obsAtual
+        });
+      }
       await refresh();
       notice('success', `Dose de ${m.nome} confirmada com sucesso às ${nowHora}!`);
     } catch (err) {
@@ -53,7 +56,11 @@ export function MedicationSchedule({
   async function reabrirRemedio(m: Medicacao) {
     setLoading(true);
     try {
-      await api.atualizarMedicacao(usuario.id, m.id, { status: 'ativo' });
+      try {
+        await api.desfazerConfirmacaoMedicacao(usuario.id, m.id);
+      } catch {
+        await api.atualizarMedicacao(usuario.id, m.id, { status: 'ativo' });
+      }
       await refresh();
       notice('success', `Lembrete de ${m.nome} reaberto como pendente.`);
     } catch (err) {

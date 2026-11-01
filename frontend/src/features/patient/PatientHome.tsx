@@ -60,8 +60,12 @@ export function PatientHome({
     setLoading(true);
     try {
       const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
-      const obsAtual = m.observacao ? `${m.observacao} · Confirmado às ${nowHora}` : `Confirmado às ${nowHora}`;
-      await api.atualizarMedicacao(usuario.id, m.id, { status: 'tomada', observacao: obsAtual });
+      try {
+        await api.confirmarMedicacao(usuario.id, m.id);
+      } catch {
+        const obsAtual = m.observacao ? `${m.observacao} · Confirmado às ${nowHora}` : `Confirmado às ${nowHora}`;
+        await api.atualizarMedicacao(usuario.id, m.id, { status: 'tomada', observacao: obsAtual });
+      }
       await refresh();
       notice('success', `Dose de ${m.nome} confirmada com sucesso às ${nowHora}!`);
     } catch (err) {
@@ -76,16 +80,24 @@ export function PatientHome({
     setLoading(true);
     try {
       const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
-      await api.criarMedicacao(usuario.id, {
-        nome: resgateNome,
-        dose: '1 dose de resgate SOS',
-        horario: nowHora,
-        frequencia: 'Uso pontual para crise aguda de dor',
-        observacao: resgateObs ? `Dose de resgate tomada às ${nowHora}. Obs: ${resgateObs}` : `Dose de resgate tomada às ${nowHora}`,
-        status: 'tomada',
-        eh_dose_resgate: true,
-        medico_prescritor: 'Prescrição de resgate domiciliar'
-      });
+      try {
+        await api.registrarDoseResgate(usuario.id, {
+          nome: resgateNome,
+          horario: nowHora,
+          observacao: resgateObs ? `Dose de resgate tomada às ${nowHora}. Obs: ${resgateObs}` : `Dose de resgate tomada às ${nowHora}`
+        });
+      } catch {
+        await api.criarMedicacao(usuario.id, {
+          nome: resgateNome,
+          dose: '1 dose de resgate SOS',
+          horario: nowHora,
+          frequencia: 'Uso pontual para crise aguda de dor',
+          observacao: resgateObs ? `Dose de resgate tomada às ${nowHora}. Obs: ${resgateObs}` : `Dose de resgate tomada às ${nowHora}`,
+          status: 'tomada',
+          eh_dose_resgate: true,
+          medico_prescritor: 'Prescrição de resgate domiciliar'
+        });
+      }
       await refresh();
       setModalResgate(false);
       setResgateObs('');
