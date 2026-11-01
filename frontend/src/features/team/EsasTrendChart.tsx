@@ -1,3 +1,4 @@
+import { formatBrasiliaDateTime } from '../../utils/date-time';
 import React, { useMemo, useState } from 'react';
 import { ESAS } from '../../api';
 
@@ -109,17 +110,11 @@ export function EsasTrendChart({ esas }: EsasTrendChartProps): React.JSX.Element
   const criticalY = getY(7);
 
   // Formatação de data resumida
-  const formatShortDate = (isoStr: string) => {
-    const d = new Date(isoStr);
-    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
-  };
+  const formatShortDate = (isoStr: string) =>
+    formatBrasiliaDateTime(isoStr, { day: '2-digit', month: '2-digit' });
 
   const formatFullDate = (isoStr: string) => {
-    return new Date(isoStr).toLocaleString('pt-BR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-      timeZone: 'America/Sao_Paulo'
-    });
+    return formatBrasiliaDateTime(isoStr, { dateStyle: 'short', timeStyle: 'short' });
   };
 
   // Análise de Variação Recente (Delta entre última e penúltima avaliação)

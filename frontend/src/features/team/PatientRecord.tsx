@@ -1,3 +1,4 @@
+import { formatBrasiliaDateTime } from '../../utils/date-time';
 import React from 'react';
 import { Usuario, ESAS, Triagem, LocalDor, Medicacao, Orientacao, Evolucao } from '../../api';
 import { Button } from '../../components/Button';
@@ -57,7 +58,7 @@ export function PatientRecord({
   const appointment = details.evolucoes.find(e => e.tipo_evolucao === 'Agendamento');
 
   const dateFmt = (value: string) =>
-    new Date(value).toLocaleString('pt-BR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Sao_Paulo' });
+    formatBrasiliaDateTime(value, { dateStyle: 'medium', timeStyle: 'short' });
 
   return (
     <section aria-label={`Prontuário de ${patient.nome}`}>

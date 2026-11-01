@@ -1,3 +1,4 @@
+import { formatBrasiliaTime } from '../../utils/date-time';
 import React, { useState, useEffect, useRef } from 'react';
 import { Usuario, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -106,7 +107,7 @@ export function ChatbotZelo({
     };
     setAnswers(updatedAnswers);
 
-    const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+    const now = formatBrasiliaTime(new Date(), { hour: '2-digit', minute: '2-digit' });
 
     // Mensagem emitida pelo Zelo no nó atual
     const zeloMessageText =

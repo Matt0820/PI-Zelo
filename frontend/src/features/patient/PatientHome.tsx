@@ -1,3 +1,4 @@
+import { formatBrasiliaDateTime, formatBrasiliaTime } from '../../utils/date-time';
 import React, { useState } from 'react';
 import { Usuario, ESAS, Medicacao, Orientacao, LocalDor, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -59,7 +60,7 @@ export function PatientHome({
   async function tomarRemedio(m: Medicacao) {
     setLoading(true);
     try {
-      const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+      const nowHora = formatBrasiliaTime(new Date(), { hour: '2-digit', minute: '2-digit' });
       try {
         await api.confirmarMedicacao(usuario.id, m.id);
       } catch {
@@ -79,7 +80,7 @@ export function PatientHome({
     e.preventDefault();
     setLoading(true);
     try {
-      const nowHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+      const nowHora = formatBrasiliaTime(new Date(), { hour: '2-digit', minute: '2-digit' });
       try {
         await api.registrarDoseResgate(usuario.id, {
           nome: resgateNome,
@@ -299,7 +300,7 @@ export function PatientHome({
             <h2>Última Avaliação de Sintomas Enviada</h2>
             <p>
               {lastESAS
-                ? `Enviada em ${new Date(lastESAS.data_registro).toLocaleString('pt-BR', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Sao_Paulo' })} · Gravidade: ${lastESAS.gravidade_maxima}`
+                ? `Enviada em ${formatBrasiliaDateTime(lastESAS.data_registro, { dateStyle: 'medium', timeStyle: 'short' })} · Gravidade: ${lastESAS.gravidade_maxima}`
                 : 'Nenhuma avaliação registrada ainda.'}
             </p>
           </div>

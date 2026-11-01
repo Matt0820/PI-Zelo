@@ -1,3 +1,4 @@
+import { formatBrasiliaDateTime } from '../../utils/date-time';
 import React from 'react';
 import { Alerta, Usuario } from '../../api';
 import { Button } from '../../components/Button';
@@ -15,11 +16,7 @@ export function AlertCard({
   openPatient,
   update
 }: AlertCardProps): React.JSX.Element {
-  const dataFmt = new Date(alert.criado_em).toLocaleString('pt-BR', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-    timeZone: 'America/Sao_Paulo'
-  });
+  const dataFmt = formatBrasiliaDateTime(alert.criado_em, { dateStyle: 'medium', timeStyle: 'short' });
 
   const isGrave = alert.severidade === 'grave';
   const isNovo = alert.estado === 'Novo';

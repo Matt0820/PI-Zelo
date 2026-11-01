@@ -1,3 +1,4 @@
+import { formatBrasiliaDateTime } from '../../utils/date-time';
 import React, { useState } from 'react';
 import { Usuario, LocalDor, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -427,11 +428,7 @@ export function PainBodyMap({
         <div className="history-list">
           {locaisDor.map(item => {
             const config = OCCURRENCE_TYPES[item.tipo_ocorrencia as OccurrenceType] || OCCURRENCE_TYPES.dor;
-            const dataFmt = new Date(item.criado_em).toLocaleString('pt-BR', {
-              dateStyle: 'medium',
-              timeStyle: 'short',
-              timeZone: 'America/Sao_Paulo'
-            });
+            const dataFmt = formatBrasiliaDateTime(item.criado_em, { dateStyle: 'medium', timeStyle: 'short' });
 
             return (
               <article key={item.id} className="record-card" style={{ marginBottom: '12px' }}>

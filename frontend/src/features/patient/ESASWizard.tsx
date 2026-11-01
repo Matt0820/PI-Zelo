@@ -1,3 +1,4 @@
+import { formatBrasiliaDateTime } from '../../utils/date-time';
 import React, { useState } from 'react';
 import { Usuario, ESAS, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -303,11 +304,7 @@ export function ESASWizard({
         <p className="muted">Nenhuma avaliação anterior registrada ainda.</p>
       ) : (
         ultimasAvaliacoes.slice(0, 4).map(e => {
-          const dataFmt = new Date(e.data_registro).toLocaleString('pt-BR', {
-            dateStyle: 'medium',
-            timeStyle: 'short',
-            timeZone: 'America/Sao_Paulo'
-          });
+          const dataFmt = formatBrasiliaDateTime(e.data_registro, { dateStyle: 'medium', timeStyle: 'short' });
           return (
             <p className="history-line" key={e.id}>
               {dataFmt} · <b>Dor:</b> {e.dor}/10 · <b>Cansaço:</b> {e.cansaco}/10 ·{' '}

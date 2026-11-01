@@ -1,3 +1,4 @@
+import { formatBrasiliaDateTime } from '../../utils/date-time';
 import React from 'react';
 import { Orientacao } from '../../api';
 import { EmptyState } from '../../components/EmptyState';
@@ -24,11 +25,7 @@ export function PatientOrientations({ orientacoes }: PatientOrientationsProps): 
       ) : (
         <div className="remedy-schedule-list">
           {orientacoes.map(o => {
-            const dataFmt = new Date(o.atualizada_em).toLocaleString('pt-BR', {
-              dateStyle: 'medium',
-              timeStyle: 'short',
-              timeZone: 'America/Sao_Paulo'
-            });
+            const dataFmt = formatBrasiliaDateTime(o.atualizada_em, { dateStyle: 'medium', timeStyle: 'short' });
 
             return (
               <article

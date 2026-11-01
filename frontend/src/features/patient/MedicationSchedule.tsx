@@ -1,3 +1,4 @@
+import { formatBrasiliaTime } from '../../utils/date-time';
 import React, { useState } from 'react';
 import { Usuario, Medicacao, api } from '../../api';
 import { Button } from '../../components/Button';
@@ -28,11 +29,7 @@ export function MedicationSchedule({
   async function tomarRemedio(m: Medicacao) {
     setLoading(true);
     try {
-      const nowHora = new Date().toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZone: 'America/Sao_Paulo'
-      });
+      const nowHora = formatBrasiliaTime(new Date(), { hour: '2-digit', minute: '2-digit' });
       try {
         await api.confirmarMedicacao(usuario.id, m.id);
       } catch {
@@ -74,11 +71,7 @@ export function MedicationSchedule({
     e.preventDefault();
     setLoading(true);
     try {
-      const nowHora = new Date().toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZone: 'America/Sao_Paulo'
-      });
+      const nowHora = formatBrasiliaTime(new Date(), { hour: '2-digit', minute: '2-digit' });
       await api.criarMedicacao(usuario.id, {
         nome: resgateNome,
         dose: '1 dose de resgate SOS',
