@@ -1,10 +1,9 @@
 # Pendências técnicas
 
-**Objetivo:** registrar riscos e pontos que precisam de decisão ou validação. Nenhum item abaixo foi corrigido nesta tarefa.
+**Objetivo:** registrar riscos e pontos que ainda precisam de decisão ou validação.
 
 ## Alta
 
-- **Divergência do papel `medico` — `[VERIFICAR]`**: `frontend/src/App.tsx:72` renderiza portal de equipe para `medico`; `backend/app/security.py:98` considera equipe apenas `admin` e `assistencial`. Confirmar papéis oficiais e alinhar UI e API em mudança funcional separada. Pode bloquear o acesso do perfil médico a listas/alertas.
 - **Credenciais de desenvolvimento no compose — `[VERIFICAR]`**: `backend/docker-compose.yml` declara valores de autenticação do MySQL no próprio arquivo e publica portas ao host. Revisar proteção de ambiente e mecanismo de segredos antes de uso fora da máquina local. Valores não foram copiados para esta documentação.
 
 ## Média
@@ -13,7 +12,7 @@
 - **Migração de schema manual**: `backend/app/main.py:68-78` cria tabelas e aplica uma alteração pontual de coluna durante o startup. Sem migrações versionadas, mudanças futuras podem divergir entre bancos existentes.
 - **Chatbot web duplicado**: `frontend/src/features/chatbot/` é o fluxo importado pela área do paciente; `frontend/src/chatbot/` mantém uma segunda árvore/máquina e `ChatbotZeloScreen.tsx`, sem referência de uso na navegação atual. Decidir se arquiva, remove ou integra em tarefa própria; código não foi apagado.
 - **Exceção do banco devolvida ao cliente**: `backend/app/main.py:84-90` inclui o texto da exceção de conexão no detalhe HTTP 503. Avaliar se respostas de produção devem ocultar detalhes internos.
-- **Suíte de testes indisponível na baseline**: há testes em `backend/tests/` e `pytest` em `requirements-dev.txt`, mas o módulo não estava instalado no `.venv`; não foi possível executar os testes da baseline sem instalar ferramenta.
+- **Política de acesso por perfil**: a API permite ao perfil `medico` consultar pacientes e prontuários em modo de leitura, além de consultar e atualizar alertas. Revisar essa matriz de permissões com a equipe responsável antes de uso clínico real.
 
 ## Baixa
 

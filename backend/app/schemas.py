@@ -88,7 +88,7 @@ class AuthResponse(BaseModel):
 # ============================================================================
 
 class ESASCreate(BaseModel):
-    """Submissão da avaliação ESAS completa (9 sintomas de 0 a 10)."""
+    """Submissão da avaliação ESAS completa (10 sintomas de 0 a 10)."""
     dor: int = Field(ge=0, le=10, description="Intensidade da dor de 0 a 10")
     cansaco: int = Field(ge=0, le=10, description="Cansaço/Fadiga de 0 a 10")
     nausea: int = Field(ge=0, le=10, description="Náusea de 0 a 10")

@@ -96,19 +96,29 @@ def get_current_user(
         raise HTTPException(status_code=401, detail='Conta inativa ou inexistente. Entre novamente.')
 
     is_team = user.perfil in {'admin', 'assistencial'}
+    is_medico = user.perfil == 'medico'
     if path == '/api/seed' and user.perfil != 'admin':
         raise HTTPException(status_code=403, detail='Apenas administradores podem popular a base.')
     if path == '/api/users' and request.method == 'GET' and not is_team:
-        raise HTTPException(status_code=403, detail='Acesso restrito à equipe assistencial.')
+        if not is_medico or request.query_params.get('perfil') != 'paciente':
+            raise HTTPException(status_code=403, detail='Acesso restrito à equipe assistencial.')
     if path.startswith('/api/alertas') and not is_team:
-        raise HTTPException(status_code=403, detail='Acesso restrito à equipe assistencial.')
+        if not is_medico or request.method not in {'GET', 'PATCH'}:
+            raise HTTPException(status_code=403, detail='Acesso restrito à equipe assistencial.')
     user_path = re.match(r'^/api/users/(\d+)(?:/|$)', path)
-    if user_path and not is_team and int(user_path.group(1)) != user.id:
-        raise HTTPException(status_code=403, detail='Acesso permitido apenas aos próprios dados.')
-    if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|orientations)(?:/|$)', path):
-        raise HTTPException(status_code=403, detail='Esta ação é restrita à equipe assistencial.')
-    if user_path and not is_team and request.method == 'DELETE' and re.search(r'/medications(?:/|$)', path):
-        raise HTTPException(status_code=403, detail='Apenas a equipe assistencial pode remover medicamentos.')
+    if user_path and not is_team:
+        is_own_record = int(user_path.group(1)) == user.id
+        if not is_own_record and not (is_medico and request.method == 'GET'):
+            raise HTTPException(status_code=403, detail='Acesso permitido apenas aos próprios dados.')
+        if is_medico and request.method not in {'GET', 'HEAD', 'OPTIONS'}:
+            raise HTTPException(status_code=403, detail='O perfil médico possui acesso de leitura aos prontuários.')
+    if user_path and not is_team and request.method in {'POST', 'PATCH', 'PUT', 'DELETE'} and re.search(r'/(evolucoes|medications|orientations|rescue-doses)(?:/|$)', path):
+        patient_medication_action = request.method == 'POST' and (
+            re.fullmatch(rf'/api/users/{user.id}/rescue-doses', path)
+            or re.fullmatch(rf'/api/users/{user.id}/medications/\d+/(confirm|undo-confirmation)', path)
+        )
+        if not patient_medication_action:
+            raise HTTPException(status_code=403, detail='Esta ação é restrita à equipe assistencial.')
 
     request.state.current_user = user
     return user

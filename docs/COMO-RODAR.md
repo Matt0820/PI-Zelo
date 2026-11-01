@@ -58,7 +58,7 @@ O Vite serve em `http://localhost:5173` e encaminha `/api` e `/health` para `htt
 npm run build
 ```
 
-A build é criada em `frontend/dist`; quando presente, o backend a serve sob `/frontend/` e redireciona a raiz para a página compilada. A variável opcional `VITE_API_URL` substitui a base de API vazia usada pelo cliente web.
+A build é criada em `frontend/dist`; quando presente, o backend a serve sob `/frontend/` e redireciona a raiz para a página compilada. A variável opcional `VITE_API_URL` substitui a base de API vazia usada pelo cliente web. Para deploy estático na raiz de um domínio (como Vercel), configure `VITE_BASE_PATH=/`; no deploy integrado ao backend, deixe essa variável vazia para manter o prefixo `/frontend/`.
 
 ### App Expo
 

@@ -46,12 +46,19 @@ def record_esas_assessment(
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Paciente nao encontrado.')
 
-    scores = [
-        payload.dor, payload.cansaco, payload.nausea, payload.depressao,
-        payload.ansiedade, payload.sonolencia, payload.apetite,
-        payload.mal_estar, payload.falta_de_ar,
-    ]
-    max_score = max(scores)
+    scores = {
+        'dor': payload.dor,
+        'cansaço': payload.cansaco,
+        'náusea': payload.nausea,
+        'tristeza': payload.depressao,
+        'ansiedade': payload.ansiedade,
+        'sonolência': payload.sonolencia,
+        'falta de apetite': payload.apetite,
+        'mal-estar': payload.mal_estar,
+        'falta de ar': payload.falta_de_ar,
+        'constipação': payload.constipacao or 0,
+    }
+    sintoma_mais_intenso, max_score = max(scores.items(), key=lambda item: item[1])
     gravidade = 'grave' if max_score >= 7 else ('moderada' if max_score >= 4 else 'leve')
     acionou_triagem = (payload.dor >= 7)
 
@@ -74,12 +81,23 @@ def record_esas_assessment(
     )
     db.add(esas)
 
-    if acionou_triagem:
+    if max_score >= 7:
+        alerta_dor = acionou_triagem
+        sintomas_graves = ', '.join(
+            f'{nome} {nota}/10' for nome, nota in scores.items() if nota >= 7
+        )
         alerta = ClinicalAlert(
             user_id=user_id,
-            tipo_alerta='dor_grave',
-            titulo=f'Registro ESAS - Dor intensa ({payload.dor}/10)',
-            descricao=f'{user.nome} informou nivel de dor {payload.dor}/10 na regua ESAS. Fluxo conversacional de triagem Zelo ativado no domicilio.',
+            tipo_alerta='dor_grave' if alerta_dor else 'sintoma_grave',
+            titulo=(
+                f'Registro ESAS - Dor intensa ({payload.dor}/10)'
+                if alerta_dor
+                else f'Registro ESAS - {sintoma_mais_intenso.capitalize()} em intensidade alta ({max_score}/10)'
+            ),
+            descricao=(
+                f'{user.nome} informou sintomas em intensidade alta na escala ESAS: {sintomas_graves}.'
+                + (' A triagem de dor do Zelo foi acionada.' if alerta_dor else '')
+            ),
             severidade='grave',
             estado='Novo',
         )
