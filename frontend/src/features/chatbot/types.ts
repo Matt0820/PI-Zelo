@@ -6,12 +6,18 @@ export type PainDuration = 'aguda' | 'cronica';
 
 export interface ChatbotAnswers {
   intensidadeDor: number;
+  sintomaGatilho?: string;
   temSinaisEmergencia: boolean;
   caracteristicaDor: PainCharacteristic;
   duracaoDor: PainDuration;
   maisDeDuasSemanas: boolean;
   fezDoseResgate: boolean;
   medicamentosEfetivos: boolean;
+  temSintomaAcompanhante: boolean;
+  sintomaAcompanhanteDesc: string | null;
+  temConstipacao: boolean;
+  temFatorPiora: boolean;
+  fatorPioraDesc: string | null;
   solicitarContato: boolean;
   observacoesAdicionais?: string;
 }

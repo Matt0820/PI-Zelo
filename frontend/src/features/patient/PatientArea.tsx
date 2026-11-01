@@ -32,7 +32,8 @@ export function PatientArea({
   refresh,
   notice
 }: PatientAreaProps): React.JSX.Element {
-  const [chatbotDor, setChatbotDor] = useState<number>(8);
+  const [chatbotScore, setChatbotScore] = useState<number>(8);
+  const [chatbotSintoma, setChatbotSintoma] = useState<string>('dor');
 
   return (
     <section className="patient-area-shell">
@@ -44,8 +45,9 @@ export function PatientArea({
           orientacoes={data.orientacoes}
           dor={data.dor}
           onNavigate={setPage}
-          onOpenChatbotComDor={dor => {
-            setChatbotDor(dor);
+          onOpenChatbotComDor={(score, sintoma) => {
+            setChatbotScore(score);
+            setChatbotSintoma(sintoma || 'dor');
             setPage('chatbot');
           }}
           refresh={refresh}
@@ -59,8 +61,9 @@ export function PatientArea({
           ultimasAvaliacoes={data.esas}
           refresh={refresh}
           notice={notice}
-          onConcluirComGrave={dor => {
-            setChatbotDor(dor);
+          onConcluirComGrave={(score, sintoma) => {
+            setChatbotScore(score);
+            setChatbotSintoma(sintoma || 'dor');
             setPage('chatbot');
           }}
           onConcluirLeve={() => setPage('inicio')}
@@ -70,7 +73,8 @@ export function PatientArea({
       {page === 'chatbot' && (
         <ChatbotZelo
           usuario={usuario}
-          dorInicial={chatbotDor}
+          dorInicial={chatbotScore}
+          sintomaGatilho={chatbotSintoma}
           onConcluir={() => setPage('inicio')}
           notice={notice}
           refresh={refresh}

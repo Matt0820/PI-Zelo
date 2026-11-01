@@ -2,7 +2,7 @@
 
 Contratos Pydantic para validação e serialização de dados, abrangendo:
 - Usuários e perfis (equipe assistencial, paciente, cuidador)
-- Avaliação da Escala ESAS (9 sintomas)
+- Avaliação da Escala ESAS (10 sintomas)
 - Triagem conversacional da dor (Script clínico validado por juízes)
 - Central de Alertas Clínicos (Novo -> Em revisão -> Tratado)
 - Medicamentos (RENAME) e Evoluções de Enfermagem/Medicina

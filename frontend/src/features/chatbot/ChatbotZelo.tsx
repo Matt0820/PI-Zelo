@@ -16,6 +16,7 @@ import {
 export interface ChatbotZeloProps {
   usuario: Usuario;
   dorInicial?: number;
+  sintomaGatilho?: string;
   onConcluir: () => void;
   notice: (kind: 'success' | 'error', text: string) => void;
   refresh?: () => Promise<void>;
@@ -24,13 +25,16 @@ export interface ChatbotZeloProps {
 export function ChatbotZelo({
   usuario,
   dorInicial = 8,
+  sintomaGatilho = 'dor',
   onConcluir,
   notice,
   refresh
 }: ChatbotZeloProps): React.JSX.Element {
   const [answers, setAnswers] = useState<ChatbotAnswers>(() => ({
     ...INITIAL_CHATBOT_ANSWERS,
-    intensidadeDor: Math.max(7, Number(dorInicial) || 8)
+    intensidadeDor: Math.max(7, Number(dorInicial) || 8),
+    sintomaGatilho: sintomaGatilho || 'dor',
+    temConstipacao: sintomaGatilho === 'constipacao'
   }));
 
   const [currentNodeId, setCurrentNodeId] = useState<string>('acolhimento');
@@ -67,10 +71,10 @@ export function ChatbotZelo({
         fez_dose_resgate: finalAnswers.fezDoseResgate,
         medicamentos_efetivos: finalAnswers.medicamentosEfetivos,
         em_acompanhamento: true,
-        tem_sintoma_acompanhante: false,
-        sintoma_acompanhante_desc: null,
-        tem_fator_piora: false,
-        fator_piora_desc: null,
+        tem_sintoma_acompanhante: finalAnswers.temSintomaAcompanhante || finalAnswers.temConstipacao,
+        sintoma_acompanhante_desc: finalAnswers.sintomaAcompanhanteDesc || (finalAnswers.temConstipacao ? 'Constipação intestinal persistente' : null),
+        tem_fator_piora: finalAnswers.temFatorPiora,
+        fator_piora_desc: finalAnswers.fatorPioraDesc,
         alerta_sinais_alarme_exibido: true,
         medidas_nao_farmacologicas_exibidas: true,
         solicitou_agendamento: finalAnswers.solicitarContato
@@ -422,7 +426,7 @@ export function ChatbotZelo({
               Corrigir / Voltar à pergunta anterior
             </Button>
             <span className="muted" style={{ fontSize: '13px' }}>
-              Etapa {Math.floor(history.length / 2) + 1} de 6
+              Etapa {Math.min(7, Math.floor(history.length / 2) + 1)} de 7
             </span>
           </div>
         )}

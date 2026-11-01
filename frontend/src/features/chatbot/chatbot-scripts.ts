@@ -2,12 +2,18 @@ import { ChatNode, ChatbotAnswers } from './types';
 
 export const INITIAL_CHATBOT_ANSWERS: ChatbotAnswers = {
   intensidadeDor: 8,
+  sintomaGatilho: 'dor',
   temSinaisEmergencia: false,
   caracteristicaDor: 'somatica',
   duracaoDor: 'aguda',
   maisDeDuasSemanas: false,
   fezDoseResgate: false,
   medicamentosEfetivos: false,
+  temSintomaAcompanhante: false,
+  sintomaAcompanhanteDesc: null,
+  temConstipacao: false,
+  temFatorPiora: false,
+  fatorPioraDesc: null,
   solicitarContato: false,
   observacoesAdicionais: ''
 };
@@ -18,8 +24,13 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     id: 'acolhimento',
     speaker: 'zelo',
     title: 'Enfermeira Virtual Zelo · Acolhimento Imediato',
-    message: (answers, userName) =>
-      `Olá, ${userName.split(' ')[0]}. Identificamos que você registrou um sintoma com intensidade forte (nota ${answers.intensidadeDor}/10). Estou aqui para ajudar a avaliar e direcionar o seu alívio agora no domicílio.`,
+    message: (answers, userName) => {
+      const primeiroNome = userName.split(' ')[0];
+      if (answers.sintomaGatilho === 'constipacao' || answers.temConstipacao) {
+        return `Olá, ${primeiroNome}. Identificamos que você registrou constipação intestinal (intestino preso) em intensidade alta (nota ${answers.intensidadeDor}/10). Em cuidados paliativos, a prisão de ventre ligada ao uso contínuo de opioides precisa de acolhimento e alívio rápido. Estou aqui para orientar seu cuidado no domicílio.`;
+      }
+      return `Olá, ${primeiroNome}. Identificamos que você registrou um sintoma com intensidade forte (nota ${answers.intensidadeDor}/10). Estou aqui para ajudar a avaliar e direcionar o seu alívio agora no domicílio.`;
+    },
     options: [
       {
         id: 'opt_iniciar',
@@ -29,18 +40,18 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     ]
   },
 
-  // NÓ 2: TRIAGEM BLOQUEANTE DE SINAIS DE EMERGÊNCIA / ALERTA VERMELHO
+  // NÓ 2: TRIAGEM BLOQUEANTE DE SINAIS DE EMERGÊNCIA / ALERTA VERMELHO (IVC = 1,00)
   'triagem_emergencia': {
     id: 'triagem_emergencia',
     speaker: 'zelo',
     title: 'Enfermeira Virtual Zelo · Checagem de Segurança',
     message:
-      'Antes de seguirmos com as medidas de alívio no domicílio, preciso checar se há alguma dessas 4 situações graves acontecendo com você neste momento:',
+      'Antes de seguirmos com as medidas de alívio no domicílio, preciso checar se há alguma dessas situações de alerta grave acontecendo agora:',
     bullets: [
-      '1. Queda recente com suspeita de fratura ou batida na cabeça;',
-      '2. Perda repentina de força ou de sensibilidade nas pernas ou braços;',
-      '3. Feridas bolhosas novas com muita dor na pele;',
-      '4. Sonolência excessiva em que você quase não consegue acordar após tomar morfina/remédio forte.'
+      '1. Queda recente com suspeita de fratura ou pancada na cabeça;',
+      '2. Perda repentina de força ou sensibilidade nas pernas ou braços;',
+      '3. Sonolência profunda ou quase não conseguir acordar após tomar morfina/remédio forte;',
+      '4. Mais de 3 dias sem evacuar nem eliminar gases, acompanhado de barriga dura, muito inchada ou vômitos.'
     ],
     options: [
       {
@@ -82,98 +93,151 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     ]
   },
 
-  // NÓ 3: SEMIOLOGIA SENSORIAL DA DOR (VALIDADA POR JUÍZES - )
+  // NÓ 3: SEMIOLOGIA SENSORIAL DA DOR E DESCONFORTO (VALIDADA POR JUÍZES - IVC = 0,91 A 1,00)
   'semiologia_dor': {
     id: 'semiologia_dor',
     speaker: 'zelo',
-    title: 'Enfermeira Virtual Zelo · Avaliação da Dor',
-    message:
-      'Para direcionarmos a melhor orientação de cuidado, como você descreve a sensação dessa dor que está sentindo agora?',
+    title: 'Enfermeira Virtual Zelo · Avaliação da Sensação',
+    message: (answers) =>
+      answers.sintomaGatilho === 'constipacao'
+        ? 'Como você descreveria o desconforto ou dor na região da barriga neste momento?'
+        : 'Para direcionarmos a melhor orientação de cuidado, como você descreve a sensação dessa dor que está sentindo agora?',
     options: [
       {
+        id: 'opt_dor_visceral',
+        label: 'Parece uma cólica, peso ou dor espalhada por dentro da barriga',
+        sublabel: 'Desconforto visceral típico em abdômen ou constipação intestinal (IVC = 0,91)',
+        action: () => ({ caracteristicaDor: 'visceral' }),
+        nextNodeId: 'temporalidade_dor'
+      },
+      {
         id: 'opt_dor_somatica',
-        label: 'Parece uma pontada, aperto no corpo ou sensação de facada',
-        sublabel: 'Dor muscular, óssea ou articular',
+        label: 'Parece uma pontada, aperto ou sensação de facada em ponto definido',
+        sublabel: 'Dor somática em ossos, músculos ou articulações (IVC = 1,00)',
         action: () => ({ caracteristicaDor: 'somatica' }),
         nextNodeId: 'temporalidade_dor'
       },
       {
         id: 'opt_dor_neuropatica',
         label: 'Parece queimação, choque elétrico ou formigamento',
-        sublabel: 'Dor nos nervos, queimação ou irradiação',
+        sublabel: 'Dor neuropática em nervos ou queimação contínua (IVC = 0,95)',
         action: () => ({ caracteristicaDor: 'neuropatica' }),
         nextNodeId: 'temporalidade_dor'
       },
       {
-        id: 'opt_dor_visceral',
-        label: 'Parece uma cólica ou dor espalhada por dentro da barriga',
-        sublabel: 'Dor em órgãos internos ou cólica',
-        action: () => ({ caracteristicaDor: 'visceral' }),
-        nextNodeId: 'temporalidade_dor'
-      },
-      {
         id: 'opt_dor_outra',
-        label: 'Outra sensação / Não consigo definir exatamente',
-        sublabel: 'Desconforto geral ou outra manifestação',
+        label: 'Outra sensação / Desconforto geral ou dificuldade de evacuar',
+        sublabel: 'Desconforto geral ou outra manifestação clínica',
         action: () => ({ caracteristicaDor: 'outra' }),
         nextNodeId: 'temporalidade_dor'
       }
     ]
   },
 
-  // NÓ 4: TEMPORALIDADE DA DOR (AGUDA VS. CRÔNICA - )
+  // NÓ 4: TEMPORALIDADE (AGUDA VS. CRÔNICA - IVC = 0,91)
   'temporalidade_dor': {
     id: 'temporalidade_dor',
     speaker: 'zelo',
     title: 'Enfermeira Virtual Zelo · Duração do Sintoma',
     message:
-      'Essa dor começou há mais de 2 semanas (dor contínua/crônica) ou começou há poucos dias/hoje (dor aguda nova)?',
+      'Esse desconforto começou há mais de 2 semanas (dor/sintoma contínuo ou crônico) ou começou há poucos dias/hoje (quadro agudo recente)?',
     options: [
       {
         id: 'opt_duracao_cronica',
-        label: 'Sim, essa dor começou há mais de 2 semanas (Crônica)',
+        label: 'Sim, começou há mais de 2 semanas (Crônico)',
+        sublabel: 'Sintoma persistente ou contínuo há mais de 14 dias',
         action: () => ({ duracaoDor: 'cronica', maisDeDuasSemanas: true }),
-        nextNodeId: 'manejo_resgate'
+        nextNodeId: 'sintomas_acompanhantes'
       },
       {
         id: 'opt_duracao_aguda',
-        label: 'Não, começou há poucos dias ou hoje (Dor Aguda)',
+        label: 'Não, começou há poucos dias ou hoje (Agudo)',
+        sublabel: 'Início recente ou piora súbita',
         action: () => ({ duracaoDor: 'aguda', maisDeDuasSemanas: false }),
+        nextNodeId: 'sintomas_acompanhantes'
+      }
+    ]
+  },
+
+  // NÓ 5: SINTOMAS ACOMPANHANTES E CONSTIPAÇÃO (VALIDADO POR JUÍZES - IVC = 1,00)
+  'sintomas_acompanhantes': {
+    id: 'sintomas_acompanhantes',
+    speaker: 'zelo',
+    title: 'Enfermeira Virtual Zelo · Sintomas Acompanhantes (IVC = 1,00)',
+    message:
+      'Além do sintoma principal, você está apresentando algum outro desconforto associado, como intestino preso (constipação), enjoo ou cansaço?',
+    options: [
+      {
+        id: 'opt_acompanhante_constipacao',
+        label: 'Sim, estou com constipação intestinal (intestino preso há dias)',
+        sublabel: 'Sintoma muito comum e prevalente pelo uso contínuo de opioides',
+        action: () => ({
+          temSintomaAcompanhante: true,
+          temConstipacao: true,
+          sintomaAcompanhanteDesc: 'Constipação intestinal / intestino preso associado'
+        }),
+        nextNodeId: 'manejo_resgate'
+      },
+      {
+        id: 'opt_acompanhante_nausea',
+        label: 'Sim, sinto enjoo, náusea ou cansaço intenso',
+        sublabel: 'Desconforto gástrico ou fadiga corporal',
+        action: () => ({
+          temSintomaAcompanhante: true,
+          temConstipacao: false,
+          sintomaAcompanhanteDesc: 'Náusea / cansaço associado'
+        }),
+        nextNodeId: 'manejo_resgate'
+      },
+      {
+        id: 'opt_acompanhante_nenhum',
+        label: 'Não apresento outro sintoma associado no momento',
+        sublabel: 'Apenas a manifestação inicial relatada',
+        action: () => ({
+          temSintomaAcompanhante: false,
+          temConstipacao: false,
+          sintomaAcompanhanteDesc: null
+        }),
         nextNodeId: 'manejo_resgate'
       }
     ]
   },
 
-  // NÓ 5: MANEJO FARMACOLÓGICO E DOSE DE RESGATE
+  // NÓ 6: MANEJO FARMACOLÓGICO E DOSE DE RESGATE (IVC = 0,90 E 0,95)
   'manejo_resgate': {
     id: 'manejo_resgate',
     speaker: 'zelo',
     title: 'Enfermeira Virtual Zelo · Uso de Medicamentos',
-    message:
-      'Você já fez uso da dose de resgate (medicamento extra prescrito pelo médico para alívio rápido da dor forte) hoje? E os remédios habituais estão ajudando?',
+    message: (answers) =>
+      answers.temConstipacao || answers.sintomaGatilho === 'constipacao'
+        ? 'Você já fez uso do laxativo de rotina ou dose de alívio prescrita pelo médico hoje? E os medicamentos habituais estão funcionando?'
+        : 'Você já fez uso da dose de resgate (medicamento extra prescrito pelo médico para alívio rápido da dor forte) hoje? E os remédios habituais estão ajudando?',
     options: [
       {
         id: 'opt_resgate_tomado_sem_alivio',
-        label: 'Já tomei a dose de resgate, mas a dor continua forte',
+        label: 'Já tomei a medicação prescrita hoje, mas o desconforto continua forte',
+        sublabel: 'Dose administrada sem controle adequado',
         action: () => ({ fezDoseResgate: true, medicamentosEfetivos: false }),
         nextNodeId: 'conforto_nao_farmacologico'
       },
       {
         id: 'opt_resgate_nao_tomado',
-        label: 'Ainda não tomei a dose de resgate prescrita',
+        label: 'Ainda não tomei a dose de alívio/resgate prescrita para hoje',
+        sublabel: 'Medicação de resgate ou laxativo ainda não administrado',
         action: () => ({ fezDoseResgate: false, medicamentosEfetivos: false }),
         nextNodeId: 'conforto_nao_farmacologico'
       },
       {
         id: 'opt_resgate_tomado_com_alivio',
-        label: 'Tomei o resgate e já estou sentindo alívio gradual',
+        label: 'Tomei a medicação e já estou sentindo alívio gradual',
+        sublabel: 'Efeito terapêutico perceptível em andamento',
         action: () => ({ fezDoseResgate: true, medicamentosEfetivos: true }),
         nextNodeId: 'conforto_nao_farmacologico'
       }
     ]
   },
 
-  // NÓ 6: MEDIDAS NÃO FARMACOLÓGICAS BASEADAS EM EVIDÊNCIAS
+  // NÓ 7: MEDIDAS NÃO FARMACOLÓGICAS BASEADAS EM EVIDÊNCIAS
   'conforto_nao_farmacologico': {
     id: 'conforto_nao_farmacologico',
     speaker: 'zelo',
@@ -181,15 +245,20 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     message:
       'Enquanto a medicação age no organismo, adote imediatamente estas medidas práticas de alívio validadas pela equipe de cuidados paliativos:',
     bullets: [
-      'Posicionamento do corpo: Coloque travesseiros macios sob as pernas ou na lombar para aliviar a pressão muscular.',
+      'Posicionamento do corpo: Coloque travesseiros macios sob as pernas ou lombar para aliviar a tensão abdominal e muscular.',
+      'Alívio para Constipação: Beba pequenos goles de água morna ou chás suaves. Ao sentar no vaso sanitário, coloque um banquinho baixo sob os pés para elevar os joelhos, facilitando a evacuação sem esforço.',
+      'Massagem abdominal circular: Faça massagem suave e relaxante sobre a barriga, em círculos no sentido horário (dos ponteiros do relógio).',
       'Respiração suave: Puxe o ar devagar pelo nariz contando mentalmente até 3 e solte suavemente pela boca.',
-      'Ambiente calmo: Diminua luzes diretas no quarto, feche janelas para ruídos externos e coloque uma música suave.',
-      'Hidratação e apoio: Beba pequenos goles de água e mantenha um familiar cuidador próximo para apoio e segurança.'
+      'Ambiente calmo e apoio: Diminua luzes diretas no quarto, feche ruídos externos e mantenha um familiar cuidador por perto.'
     ],
-    clinicalTip: answers =>
-      !answers.fezDoseResgate
+    clinicalTip: answers => {
+      if (answers.temConstipacao || answers.sintomaGatilho === 'constipacao') {
+        return 'Dica clínica importante: Em uso de analgésicos opioides, o intestino fica naturalmente preguiçoso. Mantenha os laxativos de rotina prescritos e nunca force a evacuação se houver dor intensa.';
+      }
+      return !answers.fezDoseResgate
         ? 'Dica clínica importante: Se o seu médico prescreveu medicação de resgate para dor forte, este é o momento adequado para fazer uso conforme a posologia da sua receita.'
-        : 'Como você já tomou o resgate, aguarde cerca de 30 a 45 minutos para o pico de ação da medicação enquanto repousa.',
+        : 'Como você já tomou o resgate, aguarde cerca de 30 a 45 minutos para o pico de ação da medicação enquanto repousa.';
+    },
     options: [
       {
         id: 'opt_continuar_desfecho',
@@ -199,7 +268,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     ]
   },
 
-  // NÓ 7: DESFECHO CLÍNICO E SOLICITAÇÃO DE CONTATO DA EQUIPE
+  // NÓ 8: DESFECHO CLÍNICO E SOLICITAÇÃO DE CONTATO DA EQUIPE (IVC = 0,95)
   'desfecho_contato': {
     id: 'desfecho_contato',
     speaker: 'zelo',
@@ -222,7 +291,7 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
     ]
   },
 
-  // NÓ 8: CONCLUSÃO E TRANSMISSÃO DO CASO AO PRONTUÁRIO
+  // NÓ 9: CONCLUSÃO E TRANSMISSÃO DO CASO AO PRONTUÁRIO
   'conclusao': {
     id: 'conclusao',
     speaker: 'zelo',
@@ -233,8 +302,8 @@ export const CHATBOT_SCRIPT_TREE: Record<string, ChatNode> = {
         ? 'Suas respostas foram salvas no prontuário da Equipe Médica. Foi gerado um alerta prioritário na Central da equipe de saúde para retorno ágil.'
         : 'Suas respostas foram salvas com sucesso no seu prontuário diário para monitoramento contínuo da Equipe Médica.',
     bullets: [
-      'As medidas não farmacológicas permanecem salvas para consulta.',
-      'Se a dor aumentar ou surgirem novos sintomas, você pode refazer a avaliação a qualquer momento.',
+      'As medidas não farmacológicas de alívio e cuidados com o intestino permanecem salvas para consulta.',
+      'Se a dor ou constipação aumentarem ou surgirem novos sintomas, você pode refazer a avaliação a qualquer momento.',
       'Em caso de agravamento súbito, ligue para a Equipe Médica: (41) 3333-0000.'
     ]
   }

@@ -2,7 +2,7 @@
 
 Modulo FastAPI com endpoints para:
 - Autenticacao e gestao de usuarios (Equipe Assistencial, Pacientes e Cuidadores)
-- Registro e consulta da Escala ESAS (9 sintomas multidimensionais)
+- Registro e consulta da Escala ESAS (10 sintomas multidimensionais, incluindo constipação)
 - Fluxo conversacional da Triagem da Dor validado por juizes especialistas (IVC = 0,95)
 - Central de Alertas e Triagem de Risco da Equipe de Saude (Novo -> Em revisao -> Tratado)
 - Prontuario integrado, Medicamentos (RENAME), Mapa de Dor e Evolucoes Clinicas

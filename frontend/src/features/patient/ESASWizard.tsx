@@ -8,7 +8,7 @@ export interface ESASWizardProps {
   ultimasAvaliacoes: ESAS[];
   refresh: () => Promise<void>;
   notice: (kind: 'success' | 'error', text: string) => void;
-  onConcluirComGrave: (dorScore: number) => void;
+  onConcluirComGrave: (score: number, sintomaGatilho?: string) => void;
   onConcluirLeve: () => void;
 }
 
@@ -122,11 +122,29 @@ export function ESASWizard({
       );
       const maxScore = Math.max(...Object.values(scoresNumericos));
       const temGrave = maxScore >= 7;
-      const dorScore = Number(scores.dor) || maxScore;
+
+      // Identifica o sintoma prioritário que acionou o gatilho crítico
+      let sintomaGatilho = 'dor';
+      let gatilhoScore = scoresNumericos.dor;
+      if (scoresNumericos.dor >= 7) {
+        sintomaGatilho = 'dor';
+        gatilhoScore = scoresNumericos.dor;
+      } else if (scoresNumericos.constipacao >= 7) {
+        sintomaGatilho = 'constipacao';
+        gatilhoScore = scoresNumericos.constipacao;
+      } else {
+        const graveEntry = Object.entries(scoresNumericos).find(([_, v]) => v >= 7);
+        if (graveEntry) {
+          sintomaGatilho = graveEntry[0];
+          gatilhoScore = graveEntry[1];
+        } else {
+          gatilhoScore = maxScore;
+        }
+      }
 
       await api.registrarESAS(usuario.id, {
         ...scoresNumericos,
-        observacao: temGrave ? 'Gatilho de intensidade severa acionado no domicílio' : ''
+        observacao: temGrave ? `Gatilho de intensidade severa acionado no domicílio (${sintomaGatilho}: ${gatilhoScore}/10)` : ''
       });
 
       await refresh();
@@ -134,13 +152,19 @@ export function ESASWizard({
       setStep(0);
 
       if (temGrave) {
+        const nomeSintoma =
+          sintomaGatilho === 'constipacao'
+            ? 'Constipação / Intestino Preso'
+            : sintomaGatilho === 'dor'
+            ? 'Dor'
+            : sintomaGatilho;
         notice(
           'success',
-          `Avaliação enviada. Como você indicou nota alta (${dorScore}/10), abrimos o Chatbot Zelo para direcionar seu alívio imediato.`
+          `Avaliação enviada. Como você indicou nota alta (${gatilhoScore}/10 em ${nomeSintoma}), abrimos o Chatbot Zelo para direcionar seu alívio e conforto imediato.`
         );
-        onConcluirComGrave(dorScore);
+        onConcluirComGrave(gatilhoScore, sintomaGatilho);
       } else {
-        notice('success', 'Avaliação ESAS enviada com sucesso para a equipe médica.');
+        notice('success', 'Avaliação ESAS de 10 sintomas enviada com sucesso para a equipe médica.');
         onConcluirLeve();
       }
     } catch (e) {
@@ -155,7 +179,7 @@ export function ESASWizard({
       <PageHeading
         kicker="ESCALA EDMONTON DE SINTOMAS (ESAS)"
         title="Avaliação Diária de Sintomas"
-        description="Escolha uma nota de 0 a 10 para cada um dos 10 sintomas. Notas 7 ou mais acionam o direcionamento imediato do Chatbot Zelo para alívio no domicílio."
+        description="Escolha uma nota de 0 a 10 para cada um dos 10 sintomas (incluindo Constipação). Notas 7 ou mais acionam o direcionamento imediato do Chatbot Zelo para alívio no domicílio."
       />
 
       <div className="wizard-card">

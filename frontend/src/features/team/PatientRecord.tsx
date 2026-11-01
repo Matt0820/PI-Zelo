@@ -143,7 +143,7 @@ export function PatientRecord({
           {details.esas.slice(1, 4).length > 0 ? (
             details.esas.slice(1, 4).map(e => (
               <p className="history-line" key={e.id}>
-                {dateFmt(e.data_registro)} · Dor {e.dor}/10 · Cansaço {e.cansaco}/10 · Gravidade: {e.gravidade_maxima}
+                {dateFmt(e.data_registro)} · Dor {e.dor}/10 · Constipação {e.constipacao ?? 0}/10 · Cansaço {e.cansaco}/10 · Gravidade: {e.gravidade_maxima}
               </p>
             ))
           ) : (
@@ -179,6 +179,7 @@ export function PatientRecord({
                 <p>
                   Resgate tomado: {t.fez_dose_resgate ? 'Sim' : 'Não'} · Remédios efetivos:{' '}
                   {t.medicamentos_efetivos ? 'Sim' : 'Não'}
+                  {t.tem_sintoma_acompanhante ? ` · Acompanhante: ${t.sintoma_acompanhante_desc || 'Presente'}` : ''}
                   {t.solicitou_agendamento ? ' · Solicitou contato prioritário' : ''}
                 </p>
               </div>

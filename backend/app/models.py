@@ -4,7 +4,7 @@ Representa a estrutura de dados baseada na pesquisa de mestrado
 (Bruna Tres Grzybowski, 2023) e no desenvolvimento do sistema web Zelo
 para cuidados paliativos.
 
-Engloba pacientes, cuidadores, equipe multiprofissional, escala ESAS (9 sintomas),
+Engloba pacientes, cuidadores, equipe multiprofissional, escala ESAS (10 sintomas),
 fluxo conversacional validado por juízes (triagem da dor), central de alertas
 assistenciais, medicamentos (RENAME) e evoluções de enfermagem/medicina.
 """
@@ -86,7 +86,7 @@ class ESASAssessment(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     data_registro: Mapped[datetime] = mapped_column(DateTime, default=utc_now, nullable=False)
 
-    # 9 sintomas oficiais da ESAS (0 = Ausência do sintoma; 10 = Pior intensidade possível)
+    # Sintomas da ESAS (10 sintomas validados na pesquisa) (0 = Ausência do sintoma; 10 = Pior intensidade possível)
     dor: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     cansaco: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     nausea: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

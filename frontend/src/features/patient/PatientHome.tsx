@@ -13,7 +13,7 @@ export interface PatientHomeProps {
   orientacoes: Orientacao[];
   dor: LocalDor[];
   onNavigate: (page: 'inicio' | 'esas' | 'chatbot' | 'mapa' | 'medicacoes' | 'orientacoes') => void;
-  onOpenChatbotComDor: (dorScore: number) => void;
+  onOpenChatbotComDor: (score: number, sintoma?: string) => void;
   refresh: () => Promise<void>;
   notice: (kind: 'success' | 'error', text: string) => void;
 }
@@ -231,23 +231,36 @@ export function PatientHome({
             <div>
               <span className="alert-tag">Atenção Prioritária</span>
               <h3>
-                Aviso Clínico: Sua última avaliação registrou sintoma intenso (Nota {lastScoreMax}/10)
+                {lastESAS.constipacao && lastESAS.constipacao >= 7 && (lastESAS.dor < 7 || lastESAS.constipacao >= lastESAS.dor)
+                  ? `Aviso Clínico: Sua última avaliação registrou Constipação / Intestino Preso intenso (Nota ${lastESAS.constipacao}/10)`
+                  : `Aviso Clínico: Sua última avaliação registrou sintoma intenso (Nota ${lastScoreMax}/10)`}
               </h3>
               <p>
-                A equipe médica foi notificada. O Chatbot Zelo está pronto para avaliar e direcionar o seu alívio imediato no domicílio.
+                A equipe médica foi notificada. O Chatbot Zelo está pronto para avaliar e direcionar o seu alívio e conforto no domicílio.
               </p>
             </div>
           </div>
 
           <div className="button-row">
-            <Button
-              variant="danger"
-              size="large"
-              onClick={() => onOpenChatbotComDor(lastESAS.dor || lastScoreMax)}
-              style={{ minHeight: '50px' }}
-            >
-              Abrir Chatbot Zelo para Cuidado da Dor ›
-            </Button>
+            {lastESAS.constipacao && lastESAS.constipacao >= 7 && (lastESAS.dor < 7 || lastESAS.constipacao >= lastESAS.dor) ? (
+              <Button
+                variant="danger"
+                size="large"
+                onClick={() => onOpenChatbotComDor(lastESAS.constipacao || lastScoreMax, 'constipacao')}
+                style={{ minHeight: '50px' }}
+              >
+                Abrir Chatbot Zelo para Cuidados de Constipação e Alívio ›
+              </Button>
+            ) : (
+              <Button
+                variant="danger"
+                size="large"
+                onClick={() => onOpenChatbotComDor(lastESAS.dor || lastScoreMax, 'dor')}
+                style={{ minHeight: '50px' }}
+              >
+                Abrir Chatbot Zelo para Cuidado da Dor ›
+              </Button>
+            )}
             <a
               href="tel:4133330000"
               className="button button-call"
