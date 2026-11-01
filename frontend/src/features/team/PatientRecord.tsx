@@ -5,6 +5,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { PageHeading } from '../../components/PageHeading';
 import { DataCell } from '../../components/DataCell';
 import { TeamModalType } from './TeamModal';
+import { EsasTrendChart } from './EsasTrendChart';
 
 export interface PatientRecordProps {
   patient: Usuario;
@@ -113,6 +114,23 @@ export function PatientRecord({
               value={patient.cuidador_principal ? `${patient.cuidador_principal}${patient.parentesco_cuidador ? ` (${patient.parentesco_cuidador})` : ''}` : null}
             />
           </dl>
+        </article>
+
+        {/* EVOLUÇÃO TEMPORAL DOS SINTOMAS (ESAS-r) */}
+        <article className="record-card record-wide">
+          <div className="section-title" style={{ marginTop: 0 }}>
+            <div>
+              <h2>Curva de Tendência Temporal dos Sintomas (ESAS-r)</h2>
+              <p>Acompanhe a resposta às condutas farmacológicas e o controle dos sintomas ao longo do tempo.</p>
+            </div>
+            {last && (
+              <span className={`pill ${Number(last.gravidade_maxima || 0) >= 7 ? 'severity-high' : ''}`}>
+                Gravidade máxima recente: {last.gravidade_maxima}/10
+              </span>
+            )}
+          </div>
+
+          <EsasTrendChart esas={details.esas} />
         </article>
 
         {/* ÚLTIMA AVALIAÇÃO ESAS */}
