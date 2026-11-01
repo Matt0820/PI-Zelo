@@ -337,7 +337,7 @@ export function TeamModal({
             </label>
             <label>
               Plano de cuidado ou conduta
-              <textarea name="plano" rows={3} placeholder="Condutas previstas pela equipe para este paciente..." />
+              <textarea name="plano" rows={3} placeholder="Condutas previstas pela equipe para este paciente…" />
             </label>
             <p className="helper">
               Será registrada como evolução clínica no prontuário, com autoria profissional e carimbo de data.
@@ -359,7 +359,7 @@ export function TeamModal({
             </div>
             <label>
               Motivo do atendimento
-              <input name="motivo" placeholder="Consulta de acompanhamento ou visita domiciliar..." />
+              <input name="motivo" placeholder="Consulta de acompanhamento ou visita domiciliar…" />
             </label>
             <label>
               Orientação para o paciente
@@ -432,7 +432,7 @@ export function TeamModal({
                   name="frequencia"
                   value={medFreq}
                   onChange={e => setMedFreq(e.target.value)}
-                  placeholder="Ex.: A cada 8 horas, 1x ao dia..."
+                  placeholder="Ex.: A cada 8 horas, 1x ao dia…"
                 />
               </label>
             </div>

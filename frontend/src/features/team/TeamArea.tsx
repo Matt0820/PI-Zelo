@@ -149,7 +149,7 @@ export function TeamArea({
             className="search"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Buscar por nome, prontuário ou diagnóstico..."
+            placeholder="Buscar por nome, prontuário ou diagnóstico…"
             aria-label="Campo de busca de pacientes"
           />
           <span className="muted">{filteredPatients.length} pacientes localizados</span>

@@ -244,7 +244,7 @@ export default function App(): React.JSX.Element {
           }}
           aria-label="Ir para o início do Zelo"
         >
-          <img src={logo} alt="Logotipo do Zelo" />
+          <img src={logo} alt="Logotipo do Zelo" width="160" height="40" style={{ objectFit: 'contain' }} />
           <span>
             <b>zelo</b>
             <small>{isTeam ? 'Portal assistencial' : 'Área do paciente'}</small>

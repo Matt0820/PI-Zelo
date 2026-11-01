@@ -394,7 +394,7 @@ export function PainBodyMap({
                 rows={3}
                 value={observacao}
                 onChange={e => setObservacao(e.target.value)}
-                placeholder="Ex.: Piora ao deitar de lado; há vermelhidão no local; curativo foi trocado pela manhã..."
+                placeholder="Ex.: Piora ao deitar de lado; há vermelhidão no local; curativo foi trocado pela manhã…"
               />
             </label>
 
