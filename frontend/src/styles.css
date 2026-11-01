@@ -2532,6 +2532,21 @@ html.theme-high-contrast .catalog-precautions-box,
   color: #ffffff !important;
 }
 
+html.theme-high-contrast .catalog-precautions-box strong,
+:root[data-visual="alto-contraste"] .catalog-precautions-box strong {
+  color: #ffff00 !important;
+}
+
+html.theme-high-contrast .catalog-posology-box strong,
+:root[data-visual="alto-contraste"] .catalog-posology-box strong {
+  color: #ffff00 !important;
+}
+
+html.theme-high-contrast .catalog-posology-box span,
+:root[data-visual="alto-contraste"] .catalog-posology-box span {
+  color: #ffffff !important;
+}
+
 /* Beacon Indicator (Alerta Crítico / Ação Imediata) nos modos de acessibilidade */
 html.theme-high-contrast .beacon-indicator,
 :root[data-visual="alto-contraste"] .beacon-indicator {

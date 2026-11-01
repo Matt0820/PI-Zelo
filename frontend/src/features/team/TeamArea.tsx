@@ -42,11 +42,7 @@ import { TeamModalType } from './TeamModal';
 
 import { AccessibilityPage } from '../accessibility';
 
-
-
 export type TeamPage = 'painel' | 'pacientes' | 'alertas' | 'catalogo' | 'acessibilidade';
-
-
 
 export interface TeamAreaProps {
 
@@ -98,8 +94,6 @@ export interface TeamAreaProps {
 
 }
 
-
-
 export function TeamArea({
 
   page,
@@ -146,8 +140,6 @@ export function TeamArea({
 
   const [sintomaFilter, setSintomaFilter] = useState('todos');
 
-
-
   const carregarCatalogo = useCallback(async () => {
 
     setLoadingCatalog(true);
@@ -178,8 +170,6 @@ export function TeamArea({
 
   }, [catalogSearch, sintomaFilter, notice]);
 
-
-
   useEffect(() => {
 
     if (page === 'catalogo') {
@@ -189,8 +179,6 @@ export function TeamArea({
     }
 
   }, [page, carregarCatalogo]);
-
-
 
   const filteredPatients = useMemo(
 
@@ -210,13 +198,9 @@ export function TeamArea({
 
   );
 
-
-
   const pendingAlerts = alerts.filter(a => a.estado !== 'Tratado');
 
   const criticalAlerts = alerts.filter(a => a.severidade === 'grave' && a.estado !== 'Tratado');
-
-
 
   async function inativarFarmaco(med: MedicamentoCatalogo) {
 
@@ -241,8 +225,6 @@ export function TeamArea({
     }
 
   }
-
-
 
   // Se um paciente estiver aberto, exibe seu prontuário detalhado
 
@@ -280,8 +262,6 @@ export function TeamArea({
 
   }
 
-
-
   // TELA: ALERTAS CLÍNICOS
 
   if (page === 'alertas') {
@@ -300,8 +280,6 @@ export function TeamArea({
 
         />
 
-
-
         <div className="filter-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
 
           <span className="state">Todos os alertas ativos</span>
@@ -310,11 +288,7 @@ export function TeamArea({
 
         </div>
 
-
-
         {busy && <div className="loading" role="status">Atualizando alertas…</div>}
-
-
 
         {alerts.length === 0 ? (
 
@@ -354,8 +328,6 @@ export function TeamArea({
 
   }
 
-
-
   // TELA: CATÁLOGO DE FÁRMACOS & PROTOCOLOS
 
   if (page === 'catalogo') {
@@ -365,8 +337,6 @@ export function TeamArea({
     const totalResgate = catalogMeds.filter(m => m.eh_dose_resgate).length;
 
     const totalVias = new Set(catalogMeds.map(m => m.via_administracao)).size;
-
-
 
     const sintomasOpcoes = [
 
@@ -383,8 +353,6 @@ export function TeamArea({
       { id: 'Secreção', label: 'Secreção e estertor' }
 
     ];
-
-
 
     return (
 
@@ -410,8 +378,6 @@ export function TeamArea({
 
         />
 
-
-
         {/* Indicadores do Catálogo */}
 
         <div className="metric-grid">
@@ -425,8 +391,6 @@ export function TeamArea({
           <MetricCard label="Status do banco de dados" value="Sincronizado" />
 
         </div>
-
-
 
         {/* Filtros e Busca */}
 
@@ -470,8 +434,6 @@ export function TeamArea({
 
           </div>
 
-
-
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
 
             {sintomasOpcoes.map(s => (
@@ -512,11 +474,7 @@ export function TeamArea({
 
         </div>
 
-
-
         {loadingCatalog && <div className="loading" role="status">Consultando catálogo no banco de dados…</div>}
-
-
 
         {catalogMeds.length === 0 && !loadingCatalog ? (
 
@@ -634,8 +592,6 @@ export function TeamArea({
 
                     </div>
 
-
-
                     <span
 
                       className="pill"
@@ -659,8 +615,6 @@ export function TeamArea({
                     </span>
 
                   </div>
-
-
 
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '14px' }}>
 
@@ -688,29 +642,9 @@ export function TeamArea({
 
                     )}
 
-
-
                     {med.eh_dose_resgate && (
 
-                      <span
-
-                        className="pill"
-
-                        style={{
-
-                          backgroundColor: '#fef3c7',
-
-                          color: '#92400e',
-
-                          border: '1px solid #fde68a',
-
-                          fontWeight: 800,
-
-                          fontSize: '12px'
-
-                        }}
-
-                      >
+                      <span className="pill badge-sos">
 
                         ⚡ Resgate SOS
 
@@ -720,25 +654,7 @@ export function TeamArea({
 
                   </div>
 
-
-
-                  <div
-
-                    style={{
-
-                      background: 'var(--paper-soft, #faf7f2)',
-
-                      border: '1px solid var(--border)',
-
-                      borderRadius: '8px',
-
-                      padding: '12px',
-
-                      marginBottom: '14px'
-
-                    }}
-
-                  >
+                  <div className="catalog-posology-box">
 
                     <div style={{ fontSize: '13px', marginBottom: '6px' }}>
 
@@ -766,33 +682,9 @@ export function TeamArea({
 
                   </div>
 
-
-
                   {med.orientacoes_padrao && (
 
-                    <div
-
-                      style={{
-
-                        fontSize: '13px',
-
-                        lineHeight: '1.5',
-
-                        color: 'var(--muted)',
-
-                        background: '#f8fafc',
-
-                        borderLeft: '3px solid var(--green)',
-
-                        padding: '10px 12px',
-
-                        borderRadius: '0 6px 6px 0',
-
-                        marginBottom: '14px'
-
-                      }}
-
-                    >
+                    <div className="catalog-precautions-box">
 
                       <strong style={{ color: 'var(--green)', display: 'block', marginBottom: '4px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
 
@@ -807,8 +699,6 @@ export function TeamArea({
                   )}
 
                 </div>
-
-
 
                 <div
 
@@ -870,15 +760,11 @@ export function TeamArea({
 
   }
 
-
-
   if (page === 'acessibilidade') {
 
     return <AccessibilityPage />;
 
   }
-
-
 
   // TELA: LISTA DE PACIENTES MONITORADOS
 
@@ -908,8 +794,6 @@ export function TeamArea({
 
         />
 
-
-
         <div className="toolbar">
 
           <input
@@ -930,11 +814,7 @@ export function TeamArea({
 
         </div>
 
-
-
         {busy && <div className="loading" role="status">Carregando carteira de pacientes…</div>}
-
-
 
         {filteredPatients.length === 0 ? (
 
@@ -965,8 +845,6 @@ export function TeamArea({
     );
 
   }
-
-
 
   // TELA: PAINEL / DASHBOARD PRINCIPAL
 
@@ -1004,8 +882,6 @@ export function TeamArea({
 
       />
 
-
-
       {/* Indicadores do Turno */}
 
       <div className="metric-grid">
@@ -1019,8 +895,6 @@ export function TeamArea({
         <MetricCard label="Avisos emitidos" value={alerts.length} />
 
       </div>
-
-
 
       {/* Fila de Casos Prioritários para Ação */}
 
@@ -1041,8 +915,6 @@ export function TeamArea({
         </Button>
 
       </div>
-
-
 
       {pendingAlerts.length === 0 ? (
 
@@ -1076,8 +948,6 @@ export function TeamArea({
 
       )}
 
-
-
       {/* Carteira Rápida de Pacientes */}
 
       <div className="section-title" style={{ marginTop: '36px' }}>
@@ -1097,8 +967,6 @@ export function TeamArea({
         </Button>
 
       </div>
-
-
 
       <div className="patient-grid">
 
